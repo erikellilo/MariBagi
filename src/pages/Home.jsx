@@ -1,4 +1,8 @@
 import styled from "styled-components";
+import Form from "../ui/Form";
+import FormRow from "../ui/FormRow";
+import Button from "../ui/Button";
+import ExistNameRow from "../Home.jsx/ExistNameRow";
 
 const HomeStyled = styled.div`
   display: flex;
@@ -47,152 +51,40 @@ const HomeContent = styled.div`
   width: 100%;
 `;
 
-const FormStyled = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  align-items: stretch;
-  justify-content: stretch;
-  width: 100%;
-`;
-
-const FormRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  gap: 0.5;
-`;
-
-const Button = styled.button`
-  border-style: solid;
-  border-color: var(--color-grey-900);
-  border-width: 0.4rem 0.6rem 0.6rem 0.4rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--color-grey-0);
-  font-weight: 800;
-
-  transition: border-width 0.3s ease;
-  &:hover {
-    border-width: 0.5rem 0.8rem 0.6rem 0.4rem;
-  }
-  &:active {
-    border-width: 0.4rem;
-  }
-`;
-
-const FormContent = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Label = styled.label`
-  font-weight: bold;
-  font-size: medium;
-  color: var(--color-grey-900);
-`;
 const Input = styled.input`
-  padding: 0.9rem;
+  padding: 0.75rem;
   background-color: var(--color-grey-50);
+  height: 5rem;
+`;
+
+const InputWithButton = styled.div`
+  display: flex;
   width: 100%;
-`;
-const ExistNameRow = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-`;
-
-const ExistNameRowList = styled.li`
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: var(--color-gray-900);
-  background-color: var(--color-grey-0);
-  padding: 0.5rem 0.75rem;
-  border-radius: 25px;
-  border-style: solid;
-  border-color: var(--color-grey-900);
-  border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  cursor: pointer;
-
-  transition: border-width 0.3s ease;
-  &:hover {
-    border-width: 0.3rem 0.6rem 0.5rem 0.25rem;
-  }
-  &:active {
-    border-width: 0.25rem;
-  }
+  align-items: stretch;
+  gap: 0.25rem;
 `;
 
 const Home = () => (
   <HomeStyled>
     <HomeContent>
-      <FormStyled>
-        <FormRow>
-          <Label htmlFor="bagi">Berbagi Untuk</Label>
-          <FormContent>
-            <Input
-              type="text"
-              id="bagi"
-              name="bagi"
-              placeholder="Tiket Dufan, Makan Senop, Nongkrong Blok M ..."
-            />
-          </FormContent>
+      <Form>
+        <FormRow name="BAGI">
+          <Input
+            type="text"
+            id="bagi"
+            name="bagi"
+            placeholder="Tiket Dufan, Makan Senop, Nongkrong Blok M ..."
+          />
         </FormRow>
-        <FormRow>
-          <Label htmlFor="name">Nama Orang</Label>
-          <FormContent>
+        <FormRow name="NAMA">
+          <InputWithButton>
             <Input type="text" id="name" name="name" />
             <Button onClick={(e) => e.preventDefault()}>ADD</Button>
-          </FormContent>
-          <FormContent>
-            <ExistNameRow>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-              <ExistNameRowList>
-                <span>Nama 1</span>
-                <span>&#x2716;</span>
-              </ExistNameRowList>
-            </ExistNameRow>
-          </FormContent>
+          </InputWithButton>
         </FormRow>
+        <ExistNameRow />
         <Button>Get Started</Button>
-      </FormStyled>
+      </Form>
     </HomeContent>
   </HomeStyled>
 );

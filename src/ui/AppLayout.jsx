@@ -1,8 +1,8 @@
-import Header from "./Header";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import MenuBar from "./MenuBar";
 import { BackgroundStyle } from "../GlobalStyles";
+import Header from "./Header";
 
 const StyledAppLayout = styled.div`
   background-color: var(--color-grey-50);
@@ -16,7 +16,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
-  max-width: 45rem;
+  max-width: 37.5rem;
   height: 100%;
   gap: 1rem;
   ${BackgroundStyle}
@@ -25,6 +25,10 @@ const Container = styled.div`
 const StyledMain = styled.main`
   flex-grow: 1;
   ${BackgroundStyle}
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
 `;
 
 const AppLayout = () => {

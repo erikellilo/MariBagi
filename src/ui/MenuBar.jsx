@@ -7,12 +7,13 @@ const StyledNavUl = styled.ul`
   gap: 1.4rem;
   list-style-type: none;
   margin: 0.5rem 1rem;
+  justify-content: space-evenly;
 `;
 
 const StyledNavLink = styled(NavLink)`
   text-decoration: none;
 
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 900;
   color: var(--color-gray-900);
   background-color: var(--color-grey-0);
