@@ -55,13 +55,15 @@ const Input = styled.input`
   padding: 0.75rem;
   background-color: var(--color-grey-50);
   height: 5rem;
+  width: 100%;
+  flex-grow: 1;
 `;
 
 const InputWithButton = styled.div`
   display: flex;
   width: 100%;
   align-items: stretch;
-  gap: 0.25rem;
+  gap: 1rem;
 `;
 
 const Home = () => (

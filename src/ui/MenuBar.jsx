@@ -18,19 +18,22 @@ const StyledNavLink = styled(NavLink)`
   color: var(--color-gray-900);
   background-color: var(--color-grey-0);
   padding: 0.5rem 0.75rem;
-  border-radius: 25px;
   border-style: solid;
   border-color: var(--color-grey-900);
   border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
+  border-radius: 1rem;
+  padding: 0.5rem 0.75rem;
+  width: 5rem;
 
+  transition: border-width 0.05s ease;
   &:hover {
-    border-width: 0.3rem 0.6rem 0.5rem 0.25rem;
+    border-width: 0.1rem 0.4rem 0.5rem 0.1rem;
   }
 
   &:active,
   &.active:link,
   &.active:visited {
-    border-width: 0.25rem;
+    border-width: 0.2rem 0.25rem 0.2rem 0.2rem;
   }
 `;
 
