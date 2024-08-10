@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
+import CalculateUserList from "../Calculate/CalculateUserRow";
+import Button from "../ui/Button";
 
 const CalculateStyled = styled.div`
   display: flex;
@@ -77,16 +79,63 @@ const ExpanseCurrency = styled.div`
   }
 `;
 
+const ToggleContainer = styled.div`
+  display: inline-block;
+  position: relative;
+  width: 6rem;
+  height: 3.5rem;
+`;
+
+const ToggleInput = styled.input.attrs({ type: "checkbox" })`
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+
+  &:checked + span {
+    background-color: #808080;
+  }
+
+  &:checked + span:before {
+    transform: translateX(26px);
+  }
+`;
+
+const ToggleSlider = styled.span`
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-grey-500);
+  background-color: var(--color-brand-700);
+  outline: 2px solid var(--color-grey-900);
+  transition: 0.4s;
+  border-radius: 34px;
+
+  &:before {
+    position: absolute;
+    content: "";
+    height: 2.75rem;
+    width: 2.75rem;
+    left: 5%;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+`;
+
 const ExpanseContent = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: center;
   width: 100%;
 
-  transition: border-width 0.1s ease;
   &:focus-within ${ExpanseCurrency} {
-    /* Styles for ExpanseCurrency when input is focused */
-    outline: 2px solid var(--color-grey-900);
+    background-color: var(--color-grey-500);
+    outline: 2px solid var(--color-brand-600);
     outline-offset: -1px;
   }
 `;
@@ -113,6 +162,14 @@ const CalculatePage = () => {
               />
             </ExpanseContent>
           </FormRow>
+          <FormRow name="Shared?" flexDirection="row">
+            <ToggleContainer>
+              <ToggleInput name="sharedToggle" id="sharedToggle"></ToggleInput>
+              <ToggleSlider />
+            </ToggleContainer>
+          </FormRow>
+          <CalculateUserList />
+          <Button>Add New Items</Button>
         </Form>
       </CalculateContent>
     </CalculateStyled>

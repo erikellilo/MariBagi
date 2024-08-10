@@ -8,12 +8,14 @@ const Button = styled.button`
   background-color: var(--color-grey-0);
   font-weight: 800;
 
-  transition: border-width 0.1s ease;
+  transition: all 0.1s ease;
   &:hover {
     border-width: 0.1rem 0.5rem 0.5rem 0.1rem;
+    transform: scale(1.05);
   }
   &:active {
     border-width: 0.4rem 0.2rem 0.2rem 0.4rem;
+    transform: scale(1);
   }
 `;
 export default Button;

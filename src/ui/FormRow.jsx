@@ -9,10 +9,12 @@ const FormRowStyles = styled.div`
 
 const FormContent = styled.div`
   display: flex;
-  align-items: flex-start;
-  flex-direction: column;
+  align-items: ${(props) =>
+    props.flexDirection === "column" ? "flex-start" : "center"};
+  flex-direction: ${(props) =>
+    props.flexDirection === "column" ? "column" : "row"};
   justify-content: flex-start;
-  gap: 0;
+  gap: ${(props) => (props.flexDirection === "column" ? 0 : "1rem;")};
 `;
 
 const Label = styled.label`
@@ -22,10 +24,10 @@ const Label = styled.label`
   color: var(--color-grey-900);
 `;
 
-const FormRow = ({ children, name }) => {
+const FormRow = ({ children, name, flexDirection = "column" }) => {
   return (
     <FormRowStyles>
-      <FormContent>
+      <FormContent flexDirection={flexDirection}>
         <Label htmlFor="">{name}</Label>
         {children}
       </FormContent>
