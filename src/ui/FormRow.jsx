@@ -5,30 +5,35 @@ const FormRowStyles = styled.div`
   flex-direction: column;
   align-items: stretch;
   justify-content: stretch;
+  width: 100%;
 `;
 
 const FormContent = styled.div`
   display: flex;
+  width: 100%;
   align-items: ${(props) =>
-    props.flexDirection === "column" ? "flex-start" : "center"};
+    props.flexdirection === "column" ? "flex-start" : "center"};
   flex-direction: ${(props) =>
-    props.flexDirection === "column" ? "column" : "row"};
-  justify-content: flex-start;
-  gap: ${(props) => (props.flexDirection === "column" ? 0 : "1rem;")};
+    props.flexdirection === "column" ? "column" : "row"};
+  justify-content: space-evenly;
+  flex: 1;
 `;
 
 const Label = styled.label`
+  flex: 0;
   font-weight: 900;
-
-  font-size: small;
+  font-size: ${(props) =>
+    props.flexdirection === "row" ? "xx-small" : "small;"};
   color: var(--color-grey-900);
 `;
 
-const FormRow = ({ children, name, flexDirection = "column" }) => {
+const FormRow = ({ children, name, flexdirection = "column" }) => {
   return (
     <FormRowStyles>
-      <FormContent flexDirection={flexDirection}>
-        <Label htmlFor="">{name}</Label>
+      <FormContent flexdirection={flexdirection}>
+        <Label htmlFor="" flexdirection={flexdirection}>
+          {name}
+        </Label>
         {children}
       </FormContent>
     </FormRowStyles>

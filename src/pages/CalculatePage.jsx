@@ -3,18 +3,27 @@ import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
 import CalculateUserList from "../Calculate/CalculateUserRow";
 import Button from "../ui/Button";
+import CalculateSummary from "../Calculate/CalculateSummary";
+import CalculateSummaryItems from "../Calculate/CalculateSummaryItems";
+
+const CalculateContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 1rem;
+  gap: 3rem;
+`;
 
 const CalculateStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 3rem;
+  padding: 1rem 2rem;
   flex-wrap: wrap;
-  margin: 1rem;
-  padding: 2rem;
-  border: 0.25rem solid black;
-  width: 100%;
 
+  border: 0.25rem solid black;
   position: relative;
   background-color: #f9f9f9;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -50,6 +59,13 @@ const CalculateContent = styled.div`
   position: relative;
   z-index: 1;
   width: 100%;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-align: center;
+    color: var(--color-brand-900);
+  }
 `;
 
 const Input = styled.input`
@@ -69,7 +85,7 @@ const ExpanseCurrency = styled.div`
   justify-content: center;
 
   transition: border-width 0.1s ease;
-  h1 {
+  h2 {
     font-size: 2.5rem;
     color: var(--color-grey-900);
   }
@@ -79,11 +95,18 @@ const ExpanseCurrency = styled.div`
   }
 `;
 
+const ToggleListContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
 const ToggleContainer = styled.div`
   display: inline-block;
   position: relative;
-  width: 6rem;
-  height: 3.5rem;
+  width: 5rem;
+  height: 2.5rem;
 `;
 
 const ToggleInput = styled.input.attrs({ type: "checkbox" })`
@@ -117,14 +140,36 @@ const ToggleSlider = styled.span`
   &:before {
     position: absolute;
     content: "";
-    height: 2.75rem;
-    width: 2.75rem;
-    left: 5%;
-    bottom: 4px;
-    background-color: white;
+    height: 2rem;
+    width: 2rem;
+    left: 50%;
+    bottom: 3px;
+    background-color: var(--color-grey-50);
     transition: 0.4s;
     border-radius: 50%;
   }
+`;
+
+const ExapanseContentAndAmount = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  p {
+    font-size: small;
+    font-weight: 800;
+    color: var(--color-grey-900);
+  }
+`;
+
+const ExpanseAmount = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 const ExpanseContent = styled.div`
@@ -142,37 +187,94 @@ const ExpanseContent = styled.div`
 
 const CalculatePage = () => {
   return (
-    <CalculateStyled>
-      <CalculateContent>
-        <h1>Calculate</h1>
-        <Form>
-          <FormRow name="Pengeluaran Untuk">
-            <Input id="expanse" name="expanse" placeholder="Bayarin Apa nih" />
-          </FormRow>
-          <FormRow name="Biaya">
-            <ExpanseContent>
-              <ExpanseCurrency>
-                <h1>Rp</h1>
-              </ExpanseCurrency>
+    <CalculateContainer>
+      <CalculateStyled>
+        <CalculateContent>
+          <h1>Calculate</h1>
+          <Form>
+            <FormRow name="Pengeluaran Untuk">
               <Input
-                id="amount"
-                name="amount"
-                placeholder="Berapa nih?"
-                type="number"
+                id="expanse"
+                name="expanse"
+                placeholder="Bayarin Apa nih"
               />
-            </ExpanseContent>
-          </FormRow>
-          <FormRow name="Shared?" flexDirection="row">
-            <ToggleContainer>
-              <ToggleInput name="sharedToggle" id="sharedToggle"></ToggleInput>
-              <ToggleSlider />
-            </ToggleContainer>
-          </FormRow>
-          <CalculateUserList />
-          <Button>Add New Items</Button>
-        </Form>
-      </CalculateContent>
-    </CalculateStyled>
+            </FormRow>
+            <FormRow name="Biaya">
+              <ExapanseContentAndAmount>
+                <ExpanseContent>
+                  <ExpanseCurrency>
+                    <h2>Rp</h2>
+                  </ExpanseCurrency>
+                  <Input
+                    id="amount"
+                    name="amount"
+                    placeholder="Berapa nih?"
+                    type="number"
+                  />
+                </ExpanseContent>
+                <ExpanseAmount>
+                  <p>Jumlah</p>
+                  <div>
+                    <button>-</button>
+                    <span>1</span>
+                    <button>+</button>
+                  </div>
+                </ExpanseAmount>
+              </ExapanseContentAndAmount>
+            </FormRow>
+            <ToggleListContainer>
+              <FormRow name="Include Tax?" flexdirection="row">
+                <ToggleContainer>
+                  <ToggleInput
+                    name="sharedToggle"
+                    id="sharedToggle"
+                  ></ToggleInput>
+                  <ToggleSlider />
+                </ToggleContainer>
+              </FormRow>
+              <FormRow name="Shared?" flexdirection="row">
+                <ToggleContainer>
+                  <ToggleInput
+                    name="sharedToggle"
+                    id="sharedToggle"
+                  ></ToggleInput>
+                  <ToggleSlider />
+                </ToggleContainer>
+              </FormRow>
+              <FormRow name="Service Charge?" flexdirection="row">
+                <ToggleContainer>
+                  <ToggleInput
+                    name="sharedToggle"
+                    id="sharedToggle"
+                  ></ToggleInput>
+                  <ToggleSlider />
+                </ToggleContainer>
+              </FormRow>
+            </ToggleListContainer>
+            <FormRow name="Service Charge">
+              <ExpanseContent>
+                <ExpanseCurrency>
+                  <h2>Rp</h2>
+                </ExpanseCurrency>
+                <Input
+                  id="amount"
+                  name="amount"
+                  placeholder="Berapa nih?"
+                  type="number"
+                />
+              </ExpanseContent>
+            </FormRow>
+            <CalculateUserList />
+            <Button>Add New Items</Button>
+          </Form>
+        </CalculateContent>
+      </CalculateStyled>
+      <CalculateSummary>
+        <CalculateSummaryItems shared={true} />
+        <CalculateSummaryItems />
+        <Button>Details..</Button>
+      </CalculateSummary>
+    </CalculateContainer>
   );
 };
 

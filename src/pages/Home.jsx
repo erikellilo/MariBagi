@@ -10,7 +10,7 @@ const HomeStyled = styled.div`
   align-items: flex-start;
   gap: 3rem;
   flex-wrap: wrap;
-  margin: 2rem;
+  margin: 1rem;
   padding: 2rem;
   border: 0.25rem solid black;
 
