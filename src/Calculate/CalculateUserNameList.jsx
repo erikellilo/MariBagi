@@ -1,20 +1,11 @@
 import styled from "styled-components";
 
 const NameListStyled = styled.div`
+  width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-brand-200);
-  color: var(--color-grey-900);
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.25rem;
-
-  border-style: solid;
-  border-color: var(--color-grey-900);
-  border-width: 0.2rem;
-  border-radius: 1rem;
-
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
   span {
     font-weight: 750;
   }
@@ -23,7 +14,7 @@ const NameListStyled = styled.div`
 const NameListButton = styled.button`
   border-style: solid;
   border-color: var(--color-grey-900);
-  border-radius: 0.5rem;
+  border-width: 2px 2px 3px;
 
   width: 2.5rem;
   height: 2.5rem;
@@ -38,15 +29,24 @@ const NameText = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 1.3rem;
-  flex: 1;
+`;
+
+const Container = styled.div`
+  width: 40%;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 1rem;
 `;
 
 const CalculateUserNameList = ({ name }) => {
   return (
     <NameListStyled>
-      <NameListButton>&#8722;</NameListButton>
-      <NameText>{name}</NameText>
-      <NameListButton>&#43;</NameListButton>
+      <Container>
+        <NameListButton>&#8722;</NameListButton>
+        <NameText>{name}</NameText>
+        <NameListButton>&#43;</NameListButton>
+      </Container>
     </NameListStyled>
   );
 };

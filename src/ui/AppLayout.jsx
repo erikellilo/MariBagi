@@ -6,8 +6,8 @@ import Header from "./Header";
 
 const StyledAppLayout = styled.div`
   background-color: var(--color-grey-50);
-  height: 100vh;
   padding: 2rem 0;
+  min-height: 100vh;
 `;
 
 const Container = styled.div`
