@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
 import Button from "../ui/Button";
-import ExistNameRow from "../Home.jsx/ExistNameRow";
+import ExistNameRow from "../home/ExistNameRow";
 
 const HomeStyled = styled.div`
   display: flex;
