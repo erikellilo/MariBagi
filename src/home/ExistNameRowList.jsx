@@ -9,7 +9,6 @@ const ExistNameRowListStyled = styled.li`
   border-color: var(--color-grey-900);
   border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
   border-radius: 1rem;
-  padding: 0.5rem 0.75rem;
 
   display: flex;
   align-items: center;
@@ -18,6 +17,9 @@ const ExistNameRowListStyled = styled.li`
   width: 8rem;
   height: 4.5rem;
   cursor: pointer;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
 
   transition: border-width 0.1s ease;
   &:hover {

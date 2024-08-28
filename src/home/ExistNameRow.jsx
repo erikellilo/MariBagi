@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import ExistNameRowList from "./ExistNameRowList";
 
@@ -6,14 +7,16 @@ const ExistNameRowStyled = styled.ul`
   flex-wrap: wrap;
   gap: 0.25rem;
   margin-top: 1rem;
+  max-width: 25rem;
+  justify-content: flex-start;
 `;
 
 const ExistNameRow = () => {
-  const blankArray = Array.from({ length: 5 }, (_, index) => ({ index }));
+  const users = useSelector((state) => state.users?.listUsers);
   return (
     <ExistNameRowStyled>
-      {blankArray.map((_, index) => (
-        <ExistNameRowList key={index} name={index + 1} />
+      {users.map((user, index) => (
+        <ExistNameRowList key={index} name={user.userName} />
       ))}
     </ExistNameRowStyled>
   );

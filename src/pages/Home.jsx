@@ -1,8 +1,11 @@
+import { useState, useRef } from "react";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
 import Button from "../ui/Button";
 import ExistNameRow from "../home/ExistNameRow";
+import { insertNewUser } from "../features/usersSlicer";
 
 const HomeStyled = styled.div`
   display: flex;
@@ -44,13 +47,11 @@ const HomeStyled = styled.div`
     opacity: 0.3;
   }
 `;
-
 const HomeContent = styled.div`
   position: relative;
   z-index: 1;
   width: 100%;
 `;
-
 const Input = styled.input`
   padding: 0.75rem;
   background-color: var(--color-grey-50);
@@ -58,7 +59,6 @@ const Input = styled.input`
   width: 100%;
   flex-grow: 1;
 `;
-
 const InputWithButton = styled.div`
   display: flex;
   width: 100%;
@@ -66,29 +66,50 @@ const InputWithButton = styled.div`
   gap: 1rem;
 `;
 
-const Home = () => (
-  <HomeStyled>
-    <HomeContent>
-      <Form>
-        <FormRow name="BAGI">
-          <Input
-            type="text"
-            id="bagi"
-            name="bagi"
-            placeholder="Tiket Dufan, Makan Senop, Nongkrong Blok M ..."
-          />
-        </FormRow>
-        <FormRow name="NAMA">
-          <InputWithButton>
-            <Input type="text" id="name" name="name" />
-            <Button onClick={(e) => e.preventDefault()}>ADD</Button>
-          </InputWithButton>
-        </FormRow>
-        <ExistNameRow />
-        <Button>Get Started</Button>
-      </Form>
-    </HomeContent>
-  </HomeStyled>
-);
+const Home = () => {
+  const dispatch = useDispatch();
+  const [formHome, setFormHome] = useState("");
+  const refUser = useRef(null);
+
+  const handleOnChangeName = (e) => {
+    e.preventDefault();
+    setFormHome(e.target.value);
+  };
+
+  const handleOnChangeUser = (e) => {
+    e.preventDefault();
+    const inputValue = refUser.current.value; // Access input value through ref
+    if (!inputValue) return;
+    dispatch(insertNewUser(inputValue));
+    refUser.current.value = ""; // Clear the input
+  };
+
+  return (
+    <HomeStyled>
+      <HomeContent>
+        <Form>
+          <FormRow name="BAGI">
+            <Input
+              type="text"
+              id="bagi"
+              name="name"
+              value={formHome}
+              placeholder="Tiket Dufan, Makan Senop, Nongkrong Blok M ..."
+              onChange={handleOnChangeName}
+            />
+          </FormRow>
+          <FormRow name="NAMA">
+            <InputWithButton>
+              <Input type="text" id="users" name="users" ref={refUser} />
+              <Button onClick={handleOnChangeUser}>ADD</Button>
+            </InputWithButton>
+          </FormRow>
+          <ExistNameRow />
+          <Button>Get Started</Button>
+        </Form>
+      </HomeContent>
+    </HomeStyled>
+  );
+};
 
 export default Home;

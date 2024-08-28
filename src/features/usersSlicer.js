@@ -9,8 +9,10 @@ const initialState = {
 
 export const usersSlice = createSlice({
   name: "users",
+
   initialState,
-  reducer: {
+
+  reducers: {
     insertName(state, action) {
       state.namaBagi = action.payload;
     },
@@ -30,3 +32,7 @@ export const usersSlice = createSlice({
     },
   },
 });
+
+export const { insertNewUser } = usersSlice.actions;
+
+export default usersSlice.reducer;
