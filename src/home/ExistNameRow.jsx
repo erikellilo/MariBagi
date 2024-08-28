@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import ExistNameRowList from "./ExistNameRowList";
 
@@ -6,7 +6,6 @@ const ExistNameRowStyled = styled.ul`
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
-  margin-top: 1rem;
   max-width: 25rem;
   justify-content: flex-start;
 `;
@@ -16,7 +15,7 @@ const ExistNameRow = () => {
   return (
     <ExistNameRowStyled>
       {users.map((user, index) => (
-        <ExistNameRowList key={index} name={user.userName} />
+        <ExistNameRowList key={index} user={user} />
       ))}
     </ExistNameRowStyled>
   );

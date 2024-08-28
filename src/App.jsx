@@ -22,11 +22,11 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "calculate",
+        path: "calculate/:bagiId",
         element: <CalculatePage />,
       },
       {
-        path: "result/:resultId",
+        path: "result/:bagiId",
         element: <Result />,
       },
     ],

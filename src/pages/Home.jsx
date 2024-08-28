@@ -5,7 +5,7 @@ import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
 import Button from "../ui/Button";
 import ExistNameRow from "../home/ExistNameRow";
-import { insertNewUser } from "../features/usersSlicer";
+import { insertNewUser, insertName } from "../features/usersSlicer";
 
 const HomeStyled = styled.div`
   display: flex;
@@ -67,6 +67,7 @@ const InputWithButton = styled.div`
 `;
 
 const Home = () => {
+  const users = useSelector((state) => state.users.listUsers);
   const dispatch = useDispatch();
   const [formHome, setFormHome] = useState("");
   const refUser = useRef(null);
@@ -79,15 +80,31 @@ const Home = () => {
   const handleOnChangeUser = (e) => {
     e.preventDefault();
     const inputValue = refUser.current.value; // Access input value through ref
+    if (users.length > 0 && users.find((user) => user.userName === inputValue))
+      return;
     if (!inputValue) return;
     dispatch(insertNewUser(inputValue));
     refUser.current.value = ""; // Clear the input
   };
 
+  const handleOnSubmitFromEnter = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      dispatch(insertNewUser(e.target.value));
+      e.target.value = "";
+    }
+  };
+
+  const handleSubmitForm = (e) => {
+    e.preventDefault();
+    dispatch(insertName(formHome));
+    setFormHome("");
+  };
+
   return (
     <HomeStyled>
       <HomeContent>
-        <Form>
+        <Form onSubmit={handleSubmitForm}>
           <FormRow name="BAGI">
             <Input
               type="text"
@@ -100,12 +117,20 @@ const Home = () => {
           </FormRow>
           <FormRow name="NAMA">
             <InputWithButton>
-              <Input type="text" id="users" name="users" ref={refUser} />
-              <Button onClick={handleOnChangeUser}>ADD</Button>
+              <Input
+                type="text"
+                id="users"
+                name="users"
+                ref={refUser}
+                onKeyDown={handleOnSubmitFromEnter}
+              />
+              <Button type="button" onClick={handleOnChangeUser}>
+                ADD
+              </Button>
             </InputWithButton>
           </FormRow>
           <ExistNameRow />
-          <Button>Get Started</Button>
+          <Button type="submit">Get Started</Button>
         </Form>
       </HomeContent>
     </HomeStyled>

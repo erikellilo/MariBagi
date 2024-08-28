@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   namaBagi: "",
+  bagiId: 0,
   includeService: false,
   includeTax: false,
   listUsers: [],
@@ -21,7 +22,7 @@ export const usersSlice = createSlice({
         return {
           payload: {
             userId: new Date().getUTCMilliseconds(),
-            userName,
+            userName: userName.toUpperCase(),
             items: [],
           },
         };
@@ -30,9 +31,14 @@ export const usersSlice = createSlice({
         state.listUsers.push(action.payload);
       },
     },
+    deleteUser(state, action) {
+      state.listUsers = state.listUsers.filter(
+        (user) => user.userId !== action.payload
+      );
+    },
   },
 });
 
-export const { insertNewUser } = usersSlice.actions;
+export const { insertNewUser, insertName, deleteUser } = usersSlice.actions;
 
 export default usersSlice.reducer;

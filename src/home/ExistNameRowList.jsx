@@ -1,3 +1,6 @@
+import { useDispatch } from "react-redux";
+import { deleteUser } from "../features/usersSlicer";
+
 import styled from "styled-components";
 
 const ExistNameRowListStyled = styled.li`
@@ -12,14 +15,14 @@ const ExistNameRowListStyled = styled.li`
 
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  width: 8rem;
-  height: 4.5rem;
+  justify-content: space-evenly;
+  width: 7.5rem;
+  height: 3.25rem;
   cursor: pointer;
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: auto;
+  padding: 0 0.75rem;
 
   transition: border-width 0.1s ease;
   &:hover {
@@ -28,13 +31,34 @@ const ExistNameRowListStyled = styled.li`
   &:active {
     border-width: 0.4rem 0.2rem 0.2rem 0.4rem;
   }
+
+  & span {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
 `;
 
-const ExistNameRowList = ({ name }) => (
-  <ExistNameRowListStyled>
-    <span>{name}</span>
-    <span>&#x2716;</span>
-  </ExistNameRowListStyled>
-);
+const SpanText = styled.span`
+  flex-grow: 1;
+  max-width: 5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ExistNameRowList = ({ user }) => {
+  const dispatch = useDispatch();
+
+  const handleDeleteUser = (e) => {
+    e.preventDefault();
+    dispatch(deleteUser(user.userId));
+  };
+  return (
+    <ExistNameRowListStyled onClick={handleDeleteUser}>
+      <SpanText>{user.userName}</SpanText>
+      <span>&#x2716;</span>
+    </ExistNameRowListStyled>
+  );
+};
 
 export default ExistNameRowList;

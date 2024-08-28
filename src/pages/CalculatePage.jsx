@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
-import CalculateUserList from "../Calculate/CalculateUserRow";
+import CalculateUserList from "../calculate/CalculateUserRow";
 import Button from "../ui/Button";
-import CalculateSummary from "../Calculate/CalculateSummary";
-import CalculateSummaryItems from "../Calculate/CalculateSummaryItems";
+import CalculateSummary from "../calculate/CalculateSummary";
+import CalculateSummaryItems from "../calculate/CalculateSummaryItems";
 
 const CalculateContainer = styled.div`
   display: flex;
