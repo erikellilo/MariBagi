@@ -5,6 +5,7 @@ import CalculateUserList from "../calculate/CalculateUserRow";
 import Button from "../ui/Button";
 import CalculateSummary from "../calculate/CalculateSummary";
 import CalculateSummaryItems from "../calculate/CalculateSummaryItems";
+import { useSelector } from "react-redux";
 
 const CalculateContainer = styled.div`
   display: flex;
@@ -186,6 +187,9 @@ const ExpanseContent = styled.div`
 `;
 
 const CalculatePage = () => {
+  const bagiData = useSelector((state) => state.users);
+  console.log(bagiData);
+
   return (
     <CalculateContainer>
       <CalculateStyled>

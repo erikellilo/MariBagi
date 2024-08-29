@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
 import Button from "../ui/Button";
@@ -67,8 +68,9 @@ const InputWithButton = styled.div`
 `;
 
 const Home = () => {
-  const users = useSelector((state) => state.users.listUsers);
+  const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formHome, setFormHome] = useState("");
   const refUser = useRef(null);
 
@@ -80,7 +82,10 @@ const Home = () => {
   const handleOnChangeUser = (e) => {
     e.preventDefault();
     const inputValue = refUser.current.value; // Access input value through ref
-    if (users.length > 0 && users.find((user) => user.userName === inputValue))
+    if (
+      users?.listUsers.length > 0 &&
+      users?.find((user) => user.userName === inputValue)
+    )
       return;
     if (!inputValue) return;
     dispatch(insertNewUser(inputValue));
@@ -97,8 +102,10 @@ const Home = () => {
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    dispatch(insertName(formHome));
+    const bagiId = new Date().getUTCMilliseconds();
+    dispatch(insertName({ formHome, bagiId }));
     setFormHome("");
+    navigate(`/calculate/${bagiId}`);
   };
 
   return (

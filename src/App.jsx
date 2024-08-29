@@ -26,7 +26,7 @@ const router = createBrowserRouter([
         element: <CalculatePage />,
       },
       {
-        path: "result/:bagiId",
+        path: "result:bagiId",
         element: <Result />,
       },
     ],

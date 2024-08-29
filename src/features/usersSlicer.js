@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   namaBagi: "",
-  bagiId: 0,
+  bagiId: null,
   includeService: false,
   includeTax: false,
   listUsers: [],
@@ -15,7 +15,8 @@ export const usersSlice = createSlice({
 
   reducers: {
     insertName(state, action) {
-      state.namaBagi = action.payload;
+      state.namaBagi = action.payload.formHome;
+      state.bagiId = action.payload.bagiId;
     },
     insertNewUser: {
       prepare(userName) {
