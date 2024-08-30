@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const FormRowStyles = styled.div`
-  display: flex;
+  display: ${(props) => props.hidden || "flex"};
   flex-direction: column;
   align-items: stretch;
   justify-content: stretch;
@@ -27,9 +27,9 @@ const Label = styled.label`
   color: var(--color-grey-900);
 `;
 
-const FormRow = ({ children, name, flexdirection = "column" }) => {
+const FormRow = ({ children, name, flexdirection = "column", hidden }) => {
   return (
-    <FormRowStyles>
+    <FormRowStyles hidden={hidden}>
       <FormContent flexdirection={flexdirection}>
         <Label htmlFor="" flexdirection={flexdirection}>
           {name}

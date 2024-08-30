@@ -7,6 +7,7 @@ import FormRow from "../ui/FormRow";
 import Button from "../ui/Button";
 import ExistNameRow from "../home/ExistNameRow";
 import { insertNewUser, insertName } from "../features/usersSlicer";
+import Input from "../ui/Input";
 
 const HomeStyled = styled.div`
   display: flex;
@@ -53,13 +54,13 @@ const HomeContent = styled.div`
   z-index: 1;
   width: 100%;
 `;
-const Input = styled.input`
-  padding: 0.75rem;
-  background-color: var(--color-grey-50);
-  height: 5rem;
-  width: 100%;
-  flex-grow: 1;
-`;
+// const Input = styled.input`
+//   padding: 0.75rem;
+//   background-color: var(--color-grey-50);
+//   height: 5rem;
+//   width: 100%;
+//   flex-grow: 1;
+// `;
 const InputWithButton = styled.div`
   display: flex;
   width: 100%;
@@ -84,7 +85,7 @@ const Home = () => {
     const inputValue = refUser.current.value; // Access input value through ref
     if (
       users?.listUsers.length > 0 &&
-      users?.find((user) => user.userName === inputValue)
+      users?.listUsers.find((user) => user.userName === inputValue)
     )
       return;
     if (!inputValue) return;
@@ -119,7 +120,7 @@ const Home = () => {
               name="name"
               value={formHome}
               placeholder="Tiket Dufan, Makan Senop, Nongkrong Blok M ..."
-              onChange={handleOnChangeName}
+              handleOnchange={handleOnChangeName}
             />
           </FormRow>
           <FormRow name="NAMA">

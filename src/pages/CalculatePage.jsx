@@ -6,6 +6,9 @@ import Button from "../ui/Button";
 import CalculateSummary from "../calculate/CalculateSummary";
 import CalculateSummaryItems from "../calculate/CalculateSummaryItems";
 import { useSelector } from "react-redux";
+import Input from "../ui/Input";
+import { useState } from "react";
+import ToggleContainer from "../ui/ToggleContainer";
 
 const CalculateContainer = styled.div`
   display: flex;
@@ -69,14 +72,6 @@ const CalculateContent = styled.div`
   }
 `;
 
-const Input = styled.input`
-  padding: 0.75rem;
-  background-color: var(--color-grey-50);
-  height: 5rem;
-  width: 100%;
-  flex-grow: 1;
-`;
-
 const ExpanseCurrency = styled.div`
   background-color: var(--color-brand-200);
   padding: 0.3rem 0.5rem 0rem 0.5rem;
@@ -90,10 +85,6 @@ const ExpanseCurrency = styled.div`
     font-size: 2.5rem;
     color: var(--color-grey-900);
   }
-
-  ${Input}:hover ~ & {
-    background-color: yellow;
-  }
 `;
 
 const ToggleListContainer = styled.div`
@@ -101,54 +92,6 @@ const ToggleListContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-`;
-
-const ToggleContainer = styled.div`
-  display: inline-block;
-  position: relative;
-  width: 5rem;
-  height: 2.5rem;
-`;
-
-const ToggleInput = styled.input.attrs({ type: "checkbox" })`
-  opacity: 0;
-  width: 0;
-  height: 0;
-  position: absolute;
-
-  &:checked + span {
-    background-color: #808080;
-  }
-
-  &:checked + span:before {
-    transform: translateX(26px);
-  }
-`;
-
-const ToggleSlider = styled.span`
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--color-grey-500);
-  background-color: var(--color-brand-700);
-  outline: 2px solid var(--color-grey-900);
-  transition: 0.4s;
-  border-radius: 34px;
-
-  &:before {
-    position: absolute;
-    content: "";
-    height: 2rem;
-    width: 2rem;
-    left: 50%;
-    bottom: 3px;
-    background-color: var(--color-grey-50);
-    transition: 0.4s;
-    border-radius: 50%;
-  }
 `;
 
 const ExapanseContentAndAmount = styled.div`
@@ -188,19 +131,26 @@ const ExpanseContent = styled.div`
 
 const CalculatePage = () => {
   const bagiData = useSelector((state) => state.users);
-  console.log(bagiData);
+  const [expanseName, setExpanseName] = useState("");
+
+  const handleChangeExpanseName = (e) => {
+    e.preventDefault();
+    setExpanseName(e.target.value);
+  };
 
   return (
     <CalculateContainer>
       <CalculateStyled>
         <CalculateContent>
-          <h1>Calculate</h1>
+          <h1>Calculate - {bagiData.namaBagi}</h1>
           <Form>
             <FormRow name="Pengeluaran Untuk">
               <Input
                 id="expanse"
                 name="expanse"
                 placeholder="Bayarin Apa nih"
+                value={expanseName}
+                handleOnchange={handleChangeExpanseName}
               />
             </FormRow>
             <FormRow name="Biaya">
@@ -228,34 +178,16 @@ const CalculatePage = () => {
             </FormRow>
             <ToggleListContainer>
               <FormRow name="Include Tax?" flexdirection="row">
-                <ToggleContainer>
-                  <ToggleInput
-                    name="sharedToggle"
-                    id="sharedToggle"
-                  ></ToggleInput>
-                  <ToggleSlider />
-                </ToggleContainer>
+                <ToggleContainer name="sharedToggle" id="sharedToggle" />
               </FormRow>
               <FormRow name="Shared?" flexdirection="row">
-                <ToggleContainer>
-                  <ToggleInput
-                    name="sharedToggle"
-                    id="sharedToggle"
-                  ></ToggleInput>
-                  <ToggleSlider />
-                </ToggleContainer>
+                <ToggleContainer name="sharedToggle" id="sharedToggle" />
               </FormRow>
               <FormRow name="Service Charge?" flexdirection="row">
-                <ToggleContainer>
-                  <ToggleInput
-                    name="sharedToggle"
-                    id="sharedToggle"
-                  ></ToggleInput>
-                  <ToggleSlider />
-                </ToggleContainer>
+                <ToggleContainer name="sharedToggle" id="sharedToggle" />
               </FormRow>
             </ToggleListContainer>
-            <FormRow name="Service Charge">
+            <FormRow name="Service Charge" hidden={true}>
               <ExpanseContent>
                 <ExpanseCurrency>
                   <h2>Rp</h2>
@@ -273,7 +205,7 @@ const CalculatePage = () => {
           </Form>
         </CalculateContent>
       </CalculateStyled>
-      <CalculateSummary>
+      <CalculateSummary listofexpanse={true}>
         <CalculateSummaryItems shared={true} />
         <CalculateSummaryItems />
         <Button>Details..</Button>

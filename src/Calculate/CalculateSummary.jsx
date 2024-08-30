@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const CalculaterSummaryStyled = styled.div`
-  display: flex;
+  display: ${(props) => (props.listofexpanse ? "none" : "flex")};
   flex-direction: column;
   align-items: flex-start;
   gap: 3rem;
@@ -51,9 +51,9 @@ const CalculatSummaryContent = styled.div`
   flex-direction: column;
   gap: 1rem;
 `;
-const CalculateSummary = ({ children }) => {
+const CalculateSummary = ({ children, listofexpanse }) => {
   return (
-    <CalculaterSummaryStyled>
+    <CalculaterSummaryStyled listofexpanse={listofexpanse ? 1 : 0}>
       <CalculatSummaryContent>{children}</CalculatSummaryContent>
     </CalculaterSummaryStyled>
   );

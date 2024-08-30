@@ -10,6 +10,7 @@ const ExistNameRowStyled = styled.ul`
   align-items: flex-end;
   gap: 0.5rem;
   margin-top: -0.6rem;
+  display: none;
 `;
 
 const CalculateUserList = () => {
