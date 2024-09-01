@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import Input from "../ui/Input";
 import { useState } from "react";
 import ToggleContainer from "../ui/ToggleContainer";
+import Counter from "../ui/Counter";
 
 const CalculateContainer = styled.div`
   display: flex;
@@ -20,6 +21,7 @@ const CalculateContainer = styled.div`
 `;
 
 const CalculateStyled = styled.div`
+  width: 32rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -114,6 +116,13 @@ const ExpanseAmount = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  margin-top: 1rem;
+
+  & p {
+    font-size: 1.75rem;
+    font-weight: bolder;
+    color: var(--color-grey-900);
+  }
 `;
 
 const ExpanseContent = styled.div`
@@ -132,10 +141,28 @@ const ExpanseContent = styled.div`
 const CalculatePage = () => {
   const bagiData = useSelector((state) => state.users);
   const [expanseName, setExpanseName] = useState("");
+  const [expansePrice, setExpansePrice] = useState(0);
+  const [jumlahExpanse, setJumlahExpanse] = useState(0);
 
   const handleChangeExpanseName = (e) => {
     e.preventDefault();
     setExpanseName(e.target.value);
+  };
+
+  const handleChangeExpansePrice = (e) => {
+    e.preventDefault();
+    if (e.target.value < 0) return;
+    setExpansePrice(e.target.value);
+  };
+
+  const handleOnIncrement = (e, increment) => {
+    e.preventDefault();
+    if (jumlahExpanse <= 0 && !increment) return;
+    if (increment === true) {
+      setJumlahExpanse((prev) => (prev = prev + 1));
+    } else {
+      setJumlahExpanse((prev) => (prev = prev - 1));
+    }
   };
 
   return (
@@ -164,19 +191,20 @@ const CalculatePage = () => {
                     name="amount"
                     placeholder="Berapa nih?"
                     type="number"
+                    value={expansePrice}
+                    handleOnchange={handleChangeExpansePrice}
                   />
                 </ExpanseContent>
                 <ExpanseAmount>
                   <p>Jumlah</p>
-                  <div>
-                    <button>-</button>
-                    <span>1</span>
-                    <button>+</button>
-                  </div>
+                  <Button>Match User</Button>
+                  <Counter handleOnIncrement={handleOnIncrement}>
+                    {jumlahExpanse}
+                  </Counter>
                 </ExpanseAmount>
               </ExapanseContentAndAmount>
             </FormRow>
-            <ToggleListContainer>
+            {/* <ToggleListContainer>
               <FormRow name="Include Tax?" flexdirection="row">
                 <ToggleContainer name="sharedToggle" id="sharedToggle" />
               </FormRow>
@@ -186,7 +214,7 @@ const CalculatePage = () => {
               <FormRow name="Service Charge?" flexdirection="row">
                 <ToggleContainer name="sharedToggle" id="sharedToggle" />
               </FormRow>
-            </ToggleListContainer>
+            </ToggleListContainer> */}
             <FormRow name="Service Charge" hidden={true}>
               <ExpanseContent>
                 <ExpanseCurrency>

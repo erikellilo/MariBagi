@@ -4,9 +4,11 @@ const Button = styled.button`
   border-style: solid;
   border-color: var(--color-grey-900);
   border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
-  padding: 0.5rem 0.75rem;
+  border-radius: 1rem;
+  padding: 0.1rem 0.25rem;
   background-color: var(--color-grey-0);
   font-weight: 800;
+  font-size: 1.5rem;
 
   transition: all 0.1s ease;
   &:hover {
