@@ -7,22 +7,26 @@ const ToggleSliderSpan = styled.span`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--color-grey-500);
-  background-color: var(--color-brand-700);
-  outline: 2px solid var(--color-grey-900);
-  transition: 0.4s;
-  border-radius: 34px;
+
+  border: 1rem solid black;
+  height: 25px;
+  width: 25px;
+  background-color: white;
+
+  border-color: var(--color-grey-900);
+  border-width: 0.1rem 0.25rem 0.25rem 0.1rem;
+  border-radius: 0.5rem;
 
   &:before {
     position: absolute;
     content: "";
-    height: 2rem;
-    width: 2rem;
-    left: 50%;
-    bottom: 3px;
-    background-color: var(--color-grey-50);
-    transition: 0.4s;
-    border-radius: 50%;
+  }
+
+  &:hover {
+    border-width: 0.1rem 0.2rem 0.2rem 0.1rem;
+  }
+  &:active {
+    border-width: 0.4rem 0.2rem 0.2rem 0.4rem;
   }
 `;
 

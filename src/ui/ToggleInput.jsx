@@ -6,6 +6,8 @@ const ToggleInputStyle = styled.input.attrs({ type: "checkbox" })`
   height: 0;
   position: absolute;
 
+  transition: all 0.1s ease;
+
   &:checked + span {
     background-color: #808080;
   }

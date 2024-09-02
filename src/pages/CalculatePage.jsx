@@ -139,7 +139,7 @@ const ExpanseContent = styled.div`
 `;
 
 const CalculatePage = () => {
-  const bagiData = useSelector((state) => state.users);
+  const { namaBagi, listUsers } = useSelector((state) => state.users);
   const [expanseName, setExpanseName] = useState("");
   const [expansePrice, setExpansePrice] = useState(0);
   const [jumlahExpanse, setJumlahExpanse] = useState(0);
@@ -153,6 +153,11 @@ const CalculatePage = () => {
     e.preventDefault();
     if (e.target.value < 0) return;
     setExpansePrice(e.target.value);
+  };
+
+  const handleMatchUserCount = (e) => {
+    e.preventDefault();
+    setJumlahExpanse(listUsers.length);
   };
 
   const handleOnIncrement = (e, increment) => {
@@ -169,7 +174,7 @@ const CalculatePage = () => {
     <CalculateContainer>
       <CalculateStyled>
         <CalculateContent>
-          <h1>Calculate - {bagiData.namaBagi}</h1>
+          <h1>Calculate - {namaBagi}</h1>
           <Form>
             <FormRow name="Pengeluaran Untuk">
               <Input
@@ -195,14 +200,20 @@ const CalculatePage = () => {
                     handleOnchange={handleChangeExpansePrice}
                   />
                 </ExpanseContent>
-                <ExpanseAmount>
-                  <p>Jumlah</p>
-                  <Button>Match User</Button>
-                  <Counter handleOnIncrement={handleOnIncrement}>
-                    {jumlahExpanse}
-                  </Counter>
-                </ExpanseAmount>
               </ExapanseContentAndAmount>
+            </FormRow>
+            <FormRow name="">
+              <ExpanseAmount>
+                <p>Jumlah</p>
+                <Button onClick={handleMatchUserCount}>Match User</Button>
+                <Counter handleOnIncrement={handleOnIncrement}>
+                  {jumlahExpanse}
+                </Counter>
+              </ExpanseAmount>
+            </FormRow>
+
+            <FormRow name="Shared" flexdirection="row">
+              <ToggleContainer name="sharedToggle" id="sharedToggle" />
             </FormRow>
             {/* <ToggleListContainer>
               <FormRow name="Include Tax?" flexdirection="row">

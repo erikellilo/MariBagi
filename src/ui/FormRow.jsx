@@ -15,15 +15,13 @@ const FormContent = styled.div`
     props.flexdirection === "column" ? "flex-start" : "center"};
   flex-direction: ${(props) =>
     props.flexdirection === "column" ? "column" : "row"};
-  justify-content: space-evenly;
+  justify-content: space-between;
   flex: 1;
 `;
 
 const Label = styled.label`
   flex: 0;
   font-weight: 900;
-  font-size: ${(props) =>
-    props.flexdirection === "row" ? "xx-small" : "small;"};
   color: var(--color-grey-900);
 `;
 
