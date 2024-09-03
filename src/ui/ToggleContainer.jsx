@@ -59,10 +59,17 @@ const ToggleInputStyle = styled.input.attrs({ type: "checkbox" })`
   }
 `;
 
-const ToggleContainer = ({ name, id }) => {
+const ToggleContainer = ({ name, id, handleOnchange, value }) => {
+  console.log(value);
   return (
     <ToggleContainerContent>
-      <ToggleInputStyle name={name} id={id} />
+      <ToggleInputStyle
+        name={name}
+        id={id}
+        onChange={handleOnchange}
+        value={value}
+        checked={value}
+      />
       <ToggleSliderSpan />
     </ToggleContainerContent>
   );

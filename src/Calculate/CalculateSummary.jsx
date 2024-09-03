@@ -1,7 +1,9 @@
 import styled from "styled-components";
+import CalculateSummaryItems from "./CalculateSummaryItems";
+import { useSelector } from "react-redux";
 
 const CalculaterSummaryStyled = styled.div`
-  display: ${(props) => (props.listofexpanse ? "none" : "flex")};
+  display: ${(props) => (props.listitemslength ? "flex" : "none")};
   flex-direction: column;
   align-items: flex-start;
   gap: 3rem;
@@ -51,10 +53,19 @@ const CalculatSummaryContent = styled.div`
   flex-direction: column;
   gap: 1rem;
 `;
-const CalculateSummary = ({ children, listofexpanse }) => {
+const CalculateSummary = ({ children }) => {
+  const listItems = useSelector((state) => state.users?.listItems);
+
+  const listitemslength = listItems?.length;
   return (
-    <CalculaterSummaryStyled listofexpanse={listofexpanse ? 1 : 0}>
-      <CalculatSummaryContent>{children}</CalculatSummaryContent>
+    <CalculaterSummaryStyled listitemslength={listitemslength ? 1 : 0}>
+      <CalculatSummaryContent>
+        {listItems.map((item) => (
+          <CalculateSummaryItems key={item.itemId} item={item} />
+        ))}
+
+        {children}
+      </CalculatSummaryContent>
     </CalculaterSummaryStyled>
   );
 };

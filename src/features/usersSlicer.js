@@ -6,6 +6,7 @@ const initialState = {
   includeService: false,
   includeTax: false,
   listUsers: [],
+  listItems: [],
 };
 
 export const usersSlice = createSlice({
@@ -37,9 +38,23 @@ export const usersSlice = createSlice({
         (user) => user.userId !== action.payload
       );
     },
+    inserNewItem: {
+      prepare(itemsCalculate, bagiId) {
+        return {
+          payload: {
+            itemId: `${bagiId}_${new Date().getUTCMilliseconds()}`,
+            ...itemsCalculate,
+          },
+        };
+      },
+      reducer(state, action) {
+        state.listItems.push(action.payload);
+      },
+    },
   },
 });
 
-export const { insertNewUser, insertName, deleteUser } = usersSlice.actions;
+export const { insertNewUser, insertName, deleteUser, inserNewItem } =
+  usersSlice.actions;
 
 export default usersSlice.reducer;

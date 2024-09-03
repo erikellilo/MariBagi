@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 const CalculateSummaryItemStyled = styled.div`
@@ -25,13 +26,14 @@ const CalculateSummaryItemStyled = styled.div`
   }
 `;
 
-const CalculateSummaryItems = ({ shared }) => {
+const CalculateSummaryItems = ({ item }) => {
+  console.log(item);
   return (
     <CalculateSummaryItemStyled>
-      <h3>Konser</h3>
+      <h3>{item.calculateName}</h3>
       <div>
-        <p>1.000.000</p>
-        {shared ? (
+        <p>{item.calculatePrice}</p>
+        {item.isShared ? (
           <p>Shared</p>
         ) : (
           <ul>

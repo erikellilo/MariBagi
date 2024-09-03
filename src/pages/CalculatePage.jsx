@@ -4,12 +4,12 @@ import FormRow from "../ui/FormRow";
 import CalculateUserList from "../calculate/CalculateUserRow";
 import Button from "../ui/Button";
 import CalculateSummary from "../calculate/CalculateSummary";
-import CalculateSummaryItems from "../calculate/CalculateSummaryItems";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Input from "../ui/Input";
 import { useState } from "react";
 import ToggleContainer from "../ui/ToggleContainer";
 import Counter from "../ui/Counter";
+import { inserNewItem } from "../features/usersSlicer";
 
 const CalculateContainer = styled.div`
   display: flex;
@@ -89,13 +89,6 @@ const ExpanseCurrency = styled.div`
   }
 `;
 
-const ToggleListContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-`;
-
 const ExapanseContentAndAmount = styled.div`
   width: 100%;
   display: flex;
@@ -138,36 +131,58 @@ const ExpanseContent = styled.div`
   }
 `;
 
+const InitialStateCalculate = {
+  calculateName: "",
+  calculatePrice: 0,
+  calculateAmount: 0,
+  isShared: false,
+};
+
+const minusValidation = (value) => (value < 0 ? true : false);
+
 const CalculatePage = () => {
-  const { namaBagi, listUsers } = useSelector((state) => state.users);
-  const [expanseName, setExpanseName] = useState("");
-  const [expansePrice, setExpansePrice] = useState(0);
-  const [jumlahExpanse, setJumlahExpanse] = useState(0);
+  const { namaBagi, listUsers, bagiId } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
 
-  const handleChangeExpanseName = (e) => {
+  const [objectCalculate, setObjectCalculate] = useState(InitialStateCalculate);
+
+  const handleChangeCalculate = (e) => {
     e.preventDefault();
-    setExpanseName(e.target.value);
+    if (e.target.type === "number" && minusValidation(e.target.value)) return;
+    setObjectCalculate((prev) => {
+      return { ...prev, [e.target.id]: e.target.value };
+    });
   };
 
-  const handleChangeExpansePrice = (e) => {
-    e.preventDefault();
-    if (e.target.value < 0) return;
-    setExpansePrice(e.target.value);
-  };
+  const handleCheckBox = () =>
+    setObjectCalculate((prev) => {
+      return { ...prev, isShared: !prev.isShared };
+    });
 
   const handleMatchUserCount = (e) => {
     e.preventDefault();
-    setJumlahExpanse(listUsers.length);
+    setObjectCalculate((prev) => {
+      return { ...prev, calculateAmount: listUsers.length };
+    });
   };
 
   const handleOnIncrement = (e, increment) => {
     e.preventDefault();
-    if (jumlahExpanse <= 0 && !increment) return;
-    if (increment === true) {
-      setJumlahExpanse((prev) => (prev = prev + 1));
-    } else {
-      setJumlahExpanse((prev) => (prev = prev - 1));
-    }
+    if (objectCalculate.calculateAmount <= 0 && !increment) return;
+    setObjectCalculate((prev) => {
+      return {
+        ...prev,
+        calculateAmount: increment
+          ? prev.calculateAmount + 1
+          : prev.calculateAmount - 1,
+      };
+    });
+  };
+
+  const handleOnSubmitNewItem = (e) => {
+    e.preventDefault();
+    dispatch(inserNewItem(objectCalculate, bagiId));
+    setObjectCalculate(InitialStateCalculate);
   };
 
   return (
@@ -175,14 +190,14 @@ const CalculatePage = () => {
       <CalculateStyled>
         <CalculateContent>
           <h1>Calculate - {namaBagi}</h1>
-          <Form>
+          <Form onSubmit={handleOnSubmitNewItem}>
             <FormRow name="Pengeluaran Untuk">
               <Input
-                id="expanse"
+                id="calculateName"
                 name="expanse"
                 placeholder="Bayarin Apa nih"
-                value={expanseName}
-                handleOnchange={handleChangeExpanseName}
+                value={objectCalculate.calculateName}
+                handleOnchange={handleChangeCalculate}
               />
             </FormRow>
             <FormRow name="Biaya">
@@ -192,12 +207,12 @@ const CalculatePage = () => {
                     <h2>Rp</h2>
                   </ExpanseCurrency>
                   <Input
-                    id="amount"
+                    id="calculatePrice"
                     name="amount"
                     placeholder="Berapa nih?"
                     type="number"
-                    value={expansePrice}
-                    handleOnchange={handleChangeExpansePrice}
+                    value={objectCalculate.calculatePrice}
+                    handleOnchange={handleChangeCalculate}
                   />
                 </ExpanseContent>
               </ExapanseContentAndAmount>
@@ -207,25 +222,19 @@ const CalculatePage = () => {
                 <p>Jumlah</p>
                 <Button onClick={handleMatchUserCount}>Match User</Button>
                 <Counter handleOnIncrement={handleOnIncrement}>
-                  {jumlahExpanse}
+                  {objectCalculate.calculateAmount}
                 </Counter>
               </ExpanseAmount>
             </FormRow>
 
             <FormRow name="Shared" flexdirection="row">
-              <ToggleContainer name="sharedToggle" id="sharedToggle" />
+              <ToggleContainer
+                name="sharedToggle"
+                id="isShared"
+                handleOnchange={handleCheckBox}
+                value={objectCalculate?.isShared}
+              />
             </FormRow>
-            {/* <ToggleListContainer>
-              <FormRow name="Include Tax?" flexdirection="row">
-                <ToggleContainer name="sharedToggle" id="sharedToggle" />
-              </FormRow>
-              <FormRow name="Shared?" flexdirection="row">
-                <ToggleContainer name="sharedToggle" id="sharedToggle" />
-              </FormRow>
-              <FormRow name="Service Charge?" flexdirection="row">
-                <ToggleContainer name="sharedToggle" id="sharedToggle" />
-              </FormRow>
-            </ToggleListContainer> */}
             <FormRow name="Service Charge" hidden={true}>
               <ExpanseContent>
                 <ExpanseCurrency>
@@ -244,9 +253,7 @@ const CalculatePage = () => {
           </Form>
         </CalculateContent>
       </CalculateStyled>
-      <CalculateSummary listofexpanse={true}>
-        <CalculateSummaryItems shared={true} />
-        <CalculateSummaryItems />
+      <CalculateSummary>
         <Button>Details..</Button>
       </CalculateSummary>
     </CalculateContainer>
