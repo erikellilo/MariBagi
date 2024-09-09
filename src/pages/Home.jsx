@@ -72,7 +72,7 @@ const Home = () => {
   const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [formHome, setFormHome] = useState("");
+  const [formHome, setFormHome] = useState(users.namaBagi || "");
   const refUser = useRef(null);
 
   const handleOnChangeName = (e) => {
@@ -103,7 +103,7 @@ const Home = () => {
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    const bagiId = new Date().getUTCMilliseconds();
+    const bagiId = users.bagiId || new Date().getUTCMilliseconds();
     dispatch(insertName({ formHome, bagiId }));
     setFormHome("");
     navigate(`/calculate/${bagiId}`);

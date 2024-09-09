@@ -1,5 +1,9 @@
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const StyledNavUl = styled.ul`
   text-decoration: none;
@@ -38,18 +42,35 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 const MenuBar = () => {
+  const location = useLocation();
+  const [pathName, setpathName] = useState("/home");
+  const { bagiId } = useSelector((state) => state.users);
+  useEffect(() => {
+    if (location.pathname === "/home" || location.pathname === "/") return;
+    if (pathName.includes("result")) return;
+    setpathName(location.pathname);
+  }, [location, pathName]);
+
   return (
     <nav>
       <StyledNavUl>
         <li>
           <StyledNavLink to="/">Home</StyledNavLink>
         </li>
-        <li>
-          <StyledNavLink to="/calculate">Calculate</StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/result/:resultId">Detail</StyledNavLink>
-        </li>
+        {pathName !== "/home" && (
+          <>
+            <li>
+              <StyledNavLink to={`/calculate/${bagiId}`}>
+                Calculate
+              </StyledNavLink>
+            </li>
+            {pathName.includes("result") && (
+              <li>
+                <StyledNavLink to={`/result/${bagiId}`}>Detail</StyledNavLink>
+              </li>
+            )}
+          </>
+        )}
       </StyledNavUl>
     </nav>
   );

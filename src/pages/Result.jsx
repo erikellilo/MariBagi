@@ -1,4 +1,8 @@
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import TableItemResult from "../result/TableItemResult";
+import { Fragment } from "react";
+import currencyFormat from "../assets/currencyFormat";
 
 const ResultContainer = styled.div`
   position: relative;
@@ -17,7 +21,7 @@ const ResultContainer = styled.div`
     position: absolute;
     left: 0;
     right: 0;
-    height: 1rem;
+    height: 0.95rem;
     background-image: radial-gradient(
       circle at 50% 100%,
       transparent 1rem,
@@ -28,11 +32,11 @@ const ResultContainer = styled.div`
   }
 
   &:before {
-    top: -1rem;
+    top: -0.9rem;
     transform: rotate(180deg);
   }
   &:after {
-    bottom: -1rem;
+    bottom: -0.9rem;
   }
 `;
 
@@ -86,17 +90,39 @@ const StyledHeader = styled.div`
 const StyledTDRight = styled.td`
   text-align: right;
 `;
-const StyledSpanForShared = styled.span`
-  font-size: 0.7rem;
-  word-wrap: wrap;
-`;
 
 const Result = () => {
+  const { listItems, listUsers, namaBagi } = useSelector(
+    (state) => state.users
+  );
+  let grandTotal = 0;
+  const listUsersLength = listUsers?.length;
+
+  const getUserItems = (userId) => {
+    return listItems
+      .filter(
+        (item) =>
+          item.userCalculate.some((userCalc) => userCalc.userId === userId) ||
+          item.isShared
+      )
+      .map((item) => {
+        const amount = item.userCalculate
+          .filter((item) => item.userId === userId)
+          .reduce((total, currentItem) => total + currentItem.amount, 0);
+        return {
+          itemName: item.calculateName,
+          itemPrice: item.calculatePrice,
+          isShared: item.isShared,
+          amount: amount === 0 ? item.calculateAmount : amount,
+        };
+      });
+  };
+
   return (
     <ResultContainer>
       <StyledHeader>
         <h1>Split Bill</h1>
-        <p>Pembagian Untuk : Bagi</p>
+        <p>Pembagian Untuk : {namaBagi}</p>
         <p>2024 08 23</p>
       </StyledHeader>
 
@@ -108,55 +134,54 @@ const Result = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td colSpan="6">Erik</td>
-          </tr>
-          <tr>
-            <td>
-              Item1{" "}
-              <StyledSpanForShared>(Shared With 3 People)</StyledSpanForShared>{" "}
-            </td>
-            <StyledTDRight>Rp100.000</StyledTDRight>
-          </tr>
-          <tr>
-            <td>Item2</td>
-            <StyledTDRight>Rp100.000</StyledTDRight>
-          </tr>
-          <tr>
-            <StyledTDRight>Sub Total</StyledTDRight>
-            <StyledTDRight>Rp150.000</StyledTDRight>
-          </tr>
+          {listUsers.map((user, index) => {
+            const itemInUser = getUserItems(user.userId);
 
-          <tr>
-            <td colSpan="2"></td>
-          </tr>
+            const subTotal = itemInUser.reduce(
+              (total, item) =>
+                total +
+                item.itemPrice *
+                  (item.isShared ? item.amount / listUsersLength : item.amount),
+              0
+            );
 
-          <tr>
-            <td colSpan="6">Putri</td>
-          </tr>
-          <tr>
-            <td>
-              Item1
-              <StyledSpanForShared>
-                (Shared With 3 People)
-              </StyledSpanForShared>{" "}
-            </td>
-            <StyledTDRight>Rp100.000</StyledTDRight>
-          </tr>
-          <tr>
-            <td>Item2</td>
-            <StyledTDRight>Rp100.000</StyledTDRight>
-          </tr>
-          <tr>
-            <StyledTDRight>Sub Total</StyledTDRight>
-            <StyledTDRight>Rp150.000</StyledTDRight>
-          </tr>
+            grandTotal += subTotal;
+
+            return (
+              <Fragment key={user.userId}>
+                <tr key={user.userId}>
+                  <td colSpan="6">{user.userName}</td>
+                </tr>
+                {itemInUser.map((item) => (
+                  <TableItemResult
+                    key={user.userId + item.itemName}
+                    itemName={item.itemName}
+                    itemPrice={item.itemPrice}
+                    amount={item.amount}
+                    isShared={item.isShared}
+                    listUsersLength={listUsersLength}
+                  />
+                ))}
+
+                <tr>
+                  <StyledTDRight>Sub Total</StyledTDRight>
+                  <StyledTDRight>{currencyFormat(subTotal)}</StyledTDRight>
+                </tr>
+
+                {index < listUsers.length - 1 && (
+                  <tr>
+                    <td colSpan="2"></td>
+                  </tr>
+                )}
+              </Fragment>
+            );
+          })}
         </tbody>
 
         <tfoot>
           <tr>
             <StyledTDRight>TOTAL</StyledTDRight>
-            <StyledTDRight>Rp430.000</StyledTDRight>
+            <StyledTDRight>{currencyFormat(grandTotal)}</StyledTDRight>
           </tr>
         </tfoot>
       </StyledTable>

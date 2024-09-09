@@ -51,10 +51,20 @@ export const usersSlice = createSlice({
         state.listItems.push(action.payload);
       },
     },
+    deleteItem(state, action) {
+      state.listItems = state.listItems.filter(
+        (item) => item.itemId !== action.payload
+      );
+    },
   },
 });
 
-export const { insertNewUser, insertName, deleteUser, inserNewItem } =
-  usersSlice.actions;
+export const {
+  insertNewUser,
+  insertName,
+  deleteUser,
+  inserNewItem,
+  deleteItem,
+} = usersSlice.actions;
 
 export default usersSlice.reducer;

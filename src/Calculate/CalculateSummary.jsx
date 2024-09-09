@@ -54,13 +54,26 @@ const CalculatSummaryContent = styled.div`
   gap: 1rem;
 `;
 const CalculateSummary = ({ children }) => {
-  const listItems = useSelector((state) => state.users?.listItems);
+  const { listItems, listUsers } = useSelector((state) => state.users);
+
+  const userMap = listUsers.reduce((acc, user) => {
+    acc[user.userId] = user.userName;
+    return acc;
+  }, {});
+
+  const processedItems = listItems.map((item) => ({
+    ...item,
+    userCalculate: item.userCalculate.map((userCalc) => ({
+      ...userCalc,
+      userName: userMap[userCalc.userId] || "Unknown User",
+    })),
+  }));
 
   const listitemslength = listItems?.length;
   return (
     <CalculaterSummaryStyled listitemslength={listitemslength ? 1 : 0}>
       <CalculatSummaryContent>
-        {listItems.map((item) => (
+        {processedItems.map((item) => (
           <CalculateSummaryItems key={item.itemId} item={item} />
         ))}
 

@@ -6,10 +6,11 @@ import Button from "../ui/Button";
 import CalculateSummary from "../calculate/CalculateSummary";
 import { useSelector, useDispatch } from "react-redux";
 import Input from "../ui/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ToggleContainer from "../ui/ToggleContainer";
 import Counter from "../ui/Counter";
 import { inserNewItem } from "../features/usersSlicer";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CalculateContainer = styled.div`
   display: flex;
@@ -135,7 +136,8 @@ const InitialStateCalculate = {
   calculateName: "",
   calculatePrice: 0,
   calculateAmount: 0,
-  isShared: false,
+  isShared: true,
+  userCalculate: [],
 };
 
 const minusValidation = (value) => (value < 0 ? true : false);
@@ -143,8 +145,11 @@ const minusValidation = (value) => (value < 0 ? true : false);
 const CalculatePage = () => {
   const { namaBagi, listUsers, bagiId } = useSelector((state) => state.users);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const [objectCalculate, setObjectCalculate] = useState(InitialStateCalculate);
+  useEffect(() => {
+    if (!bagiId) navigate("/");
+  }, [bagiId, navigate]);
 
   const handleChangeCalculate = (e) => {
     e.preventDefault();
@@ -179,6 +184,41 @@ const CalculatePage = () => {
     });
   };
 
+  const handleDetailRedirect = (e) => {
+    e.preventDefault();
+    navigate(`/result/${bagiId}`);
+  };
+
+  const handleIncrementPerUsers = (e, increment, userInput = null) => {
+    e.preventDefault();
+    if (e.target.value < 0) return;
+    const isExistingUser = objectCalculate?.userCalculate.find(
+      (userExist) => userExist.userId === userInput
+    );
+    if (isExistingUser && isExistingUser?.amount <= 0 && !increment) return;
+
+    setObjectCalculate((prev) => {
+      let newUser = [...prev.userCalculate];
+
+      if (!isExistingUser) {
+        newUser.push({ userId: userInput, amount: increment ? 1 : 0 });
+      } else {
+        const oldData = newUser.findIndex((user) => user.userId === userInput);
+
+        newUser[oldData] = {
+          ...isExistingUser,
+          amount: increment
+            ? isExistingUser?.amount + 1
+            : isExistingUser?.amount - 1,
+        };
+      }
+      return {
+        ...prev,
+        userCalculate: newUser,
+      };
+    });
+  };
+
   const handleOnSubmitNewItem = (e) => {
     e.preventDefault();
     dispatch(inserNewItem(objectCalculate, bagiId));
@@ -190,7 +230,7 @@ const CalculatePage = () => {
       <CalculateStyled>
         <CalculateContent>
           <h1>Calculate - {namaBagi}</h1>
-          <Form onSubmit={handleOnSubmitNewItem}>
+          <Form onSubmit={handleOnSubmitNewItem} form="calculateForm">
             <FormRow name="Pengeluaran Untuk">
               <Input
                 id="calculateName"
@@ -217,10 +257,13 @@ const CalculatePage = () => {
                 </ExpanseContent>
               </ExapanseContentAndAmount>
             </FormRow>
+
             <FormRow name="">
               <ExpanseAmount>
                 <p>Jumlah</p>
-                <Button onClick={handleMatchUserCount}>Match User</Button>
+                <Button onClick={handleMatchUserCount} type="button">
+                  Match User
+                </Button>
                 <Counter handleOnIncrement={handleOnIncrement}>
                   {objectCalculate.calculateAmount}
                 </Counter>
@@ -235,26 +278,37 @@ const CalculatePage = () => {
                 value={objectCalculate?.isShared}
               />
             </FormRow>
-            <FormRow name="Service Charge" hidden={true}>
-              <ExpanseContent>
-                <ExpanseCurrency>
-                  <h2>Rp</h2>
-                </ExpanseCurrency>
-                <Input
-                  id="amount"
-                  name="amount"
-                  placeholder="Berapa nih?"
-                  type="number"
-                />
-              </ExpanseContent>
-            </FormRow>
+
+            {!objectCalculate.isShared && (
+              <>
+                {listUsers.map((user) => {
+                  const data = objectCalculate?.userCalculate.find(
+                    (userInput) => userInput.userId === user.userId
+                  );
+
+                  return (
+                    <FormRow name="" key={user.userId}>
+                      <ExpanseAmount>
+                        <p>{user.userName}</p>
+                        <Counter
+                          handleOnIncrement={handleIncrementPerUsers}
+                          user={user}
+                        >
+                          {data?.amount || 0}
+                        </Counter>
+                      </ExpanseAmount>
+                    </FormRow>
+                  );
+                })}
+              </>
+            )}
             <CalculateUserList />
-            <Button>Add New Items</Button>
+            <Button type="submit">Add New Items</Button>
           </Form>
         </CalculateContent>
       </CalculateStyled>
       <CalculateSummary>
-        <Button>Details..</Button>
+        <Button onClick={handleDetailRedirect}>Details..</Button>
       </CalculateSummary>
     </CalculateContainer>
   );

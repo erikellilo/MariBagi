@@ -60,7 +60,6 @@ const ToggleInputStyle = styled.input.attrs({ type: "checkbox" })`
 `;
 
 const ToggleContainer = ({ name, id, handleOnchange, value }) => {
-  console.log(value);
   return (
     <ToggleContainerContent>
       <ToggleInputStyle

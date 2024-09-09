@@ -10,7 +10,7 @@ const InputStyled = styled.input`
 `;
 
 const Input = forwardRef(function Input(
-  { type, id, name, value, placeholder, handleOnchange, onKeyDown },
+  { type, id, name, value, placeholder, handleOnchange, onKeyDown, isDisable },
   ref
 ) {
   return (
@@ -23,6 +23,7 @@ const Input = forwardRef(function Input(
       placeholder={placeholder}
       onChange={handleOnchange}
       onKeyDown={onKeyDown}
+      disabled={isDisable}
     />
   );
 });

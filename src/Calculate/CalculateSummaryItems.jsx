@@ -1,5 +1,8 @@
-import { useSelector } from "react-redux";
 import styled from "styled-components";
+import currencyFormat from "../assets/currencyFormat";
+import ButtonRectangle from "../ui/ButtonRectangle";
+import { useDispatch } from "react-redux";
+import { deleteItem } from "../features/usersSlicer";
 
 const CalculateSummaryItemStyled = styled.div`
   display: flex;
@@ -10,39 +13,93 @@ const CalculateSummaryItemStyled = styled.div`
   padding: 0.25rem 1rem;
   border-radius: 0.5rem;
   background-color: var(--color-grey-100);
+`;
+
+const ItemContenctDiv = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 
   div {
-    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  span {
+    font-size: 1.25rem;
+
+    font-weight: bold;
+  }
+
+  ul {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: bold;
 
-    ul {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.125rem;
+    li {
+      font-size: 1.25rem;
+      font-weight: bolder;
+    }
+    li:nth-child(3) {
+      font-size: 1rem;
+      align-self: end;
+      font-weight: bold;
     }
   }
 `;
 
 const CalculateSummaryItems = ({ item }) => {
-  console.log(item);
+  const { userCalculate, itemId } = item;
+  const userCalculateLength = userCalculate?.length;
+  const sliceTwouser =
+    userCalculate?.length > 2
+      ? userCalculate?.slice(0, 2)
+      : userCalculate?.slice();
+  const dispatch = useDispatch();
+
+  const handleDelete = (e, _, uniqueId) => {
+    dispatch(deleteItem(uniqueId));
+  };
+
   return (
     <CalculateSummaryItemStyled>
-      <h3>{item.calculateName}</h3>
-      <div>
-        <p>{item.calculatePrice}</p>
+      <ItemContenctDiv>
+        <h3>{item.calculateName}</h3>
+
+        <ButtonRectangle
+          size="small"
+          handleClickButton={handleDelete}
+          uniqueId={itemId}
+        >
+          &#x2716;
+        </ButtonRectangle>
+      </ItemContenctDiv>
+      <ItemContenctDiv>
+        <div>
+          {" "}
+          <p>{currencyFormat(item.calculatePrice)}</p>
+          <span>x{item.calculateAmount}</span>
+        </div>
+
         {item.isShared ? (
-          <p>Shared</p>
+          <span>SHARED</span>
         ) : (
           <ul>
-            <li>Erik,</li>
-            <li>Denis</li>
-            <li> & 2 Others..</li>
+            {sliceTwouser?.map((user) => (
+              <li key={user.userId}>{user.userName}</li>
+            ))}
+            {userCalculateLength > 2 && (
+              <li key="other">And {userCalculateLength - 2} more.. </li>
+            )}
           </ul>
         )}
-      </div>
+      </ItemContenctDiv>
     </CalculateSummaryItemStyled>
   );
 };
