@@ -19,13 +19,27 @@ const FormContent = styled.div`
   flex: 1;
 `;
 
+const ValidationWord = styled.p`
+  color: red;
+  font-weight: bold;
+  font-size: 1rem;
+  display: ${(props) => props.validationhidden || "block"};
+`;
+
 const Label = styled.label`
   flex: 0;
   font-weight: 900;
   color: var(--color-grey-900);
 `;
 
-const FormRow = ({ children, name, flexdirection = "column", hidden }) => {
+const FormRow = ({
+  children,
+  name,
+  flexdirection = "column",
+  hidden,
+  validationWord,
+  validationHidden = "none",
+}) => {
   return (
     <FormRowStyles hidden={hidden}>
       <FormContent flexdirection={flexdirection}>
@@ -33,6 +47,11 @@ const FormRow = ({ children, name, flexdirection = "column", hidden }) => {
           {name}
         </Label>
         {children}
+        <ValidationWord
+          validationhidden={name === validationHidden.name ? "none" : "block"}
+        >
+          {validationWord}
+        </ValidationWord>
       </FormContent>
     </FormRowStyles>
   );

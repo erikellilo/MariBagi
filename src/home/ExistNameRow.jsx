@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import ExistNameRowList from "./ExistNameRowList";
+import { memo } from "react";
 
 const ExistNameRowStyled = styled.ul`
   display: flex;
@@ -10,8 +10,7 @@ const ExistNameRowStyled = styled.ul`
   justify-content: flex-start;
 `;
 
-const ExistNameRow = () => {
-  const users = useSelector((state) => state.users?.listUsers);
+const ExistNameRow = memo(({ users }) => {
   return (
     <ExistNameRowStyled>
       {users.map((user, index) => (
@@ -19,6 +18,7 @@ const ExistNameRow = () => {
       ))}
     </ExistNameRowStyled>
   );
-};
+});
 
+ExistNameRow.displayName = "ExistNameRow";
 export default ExistNameRow;
