@@ -24,6 +24,7 @@ const Input = forwardRef(function Input(
       onChange={handleOnchange}
       onKeyDown={onKeyDown}
       disabled={isDisable}
+      {...(type === "number" ? { min: 1 } : {})}
     />
   );
 });

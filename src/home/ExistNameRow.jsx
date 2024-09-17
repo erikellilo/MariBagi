@@ -13,7 +13,7 @@ const ExistNameRowStyled = styled.ul`
 const ExistNameRow = memo(({ users }) => {
   return (
     <ExistNameRowStyled>
-      {users.map((user, index) => (
+      {users?.map((user, index) => (
         <ExistNameRowList key={index} user={user} />
       ))}
     </ExistNameRowStyled>

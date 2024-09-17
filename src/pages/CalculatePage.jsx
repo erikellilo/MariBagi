@@ -143,7 +143,9 @@ const InitialStateCalculate = {
 const minusValidation = (value) => (value < 0 ? true : false);
 
 const CalculatePage = () => {
-  const { namaBagi, listUsers, bagiId } = useSelector((state) => state.users);
+  const { namaBagi, listUsers, bagiId, isError } = useSelector(
+    (state) => state.users
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [objectCalculate, setObjectCalculate] = useState(InitialStateCalculate);
@@ -221,6 +223,7 @@ const CalculatePage = () => {
 
   const handleOnSubmitNewItem = (e) => {
     e.preventDefault();
+    console.log(objectCalculate);
     dispatch(inserNewItem(objectCalculate, bagiId));
     setObjectCalculate(InitialStateCalculate);
   };
@@ -231,7 +234,11 @@ const CalculatePage = () => {
         <CalculateContent>
           <h1>Calculate - {namaBagi}</h1>
           <Form onSubmit={handleOnSubmitNewItem} form="calculateForm">
-            <FormRow name="Pengeluaran Untuk">
+            <FormRow
+              name="Expanse For"
+              validationWord={isError?.error}
+              validationHidden={isError?.form}
+            >
               <Input
                 id="calculateName"
                 name="expanse"
@@ -240,7 +247,11 @@ const CalculatePage = () => {
                 handleOnchange={handleChangeCalculate}
               />
             </FormRow>
-            <FormRow name="Biaya">
+            <FormRow
+              name="Amount Item"
+              validationWord={isError?.error}
+              validationHidden={isError?.form}
+            >
               <ExapanseContentAndAmount>
                 <ExpanseContent>
                   <ExpanseCurrency>

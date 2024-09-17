@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import getLocalStorage from "../assets/getLocalStorage";
 
-const initialState = {
+const initialStateObject = {
   namaBagi: "",
   bagiId: null,
   bagiDate: null,
@@ -12,6 +12,8 @@ const initialState = {
   isError: {},
   isSubmitting: false,
 };
+
+const initialState = [];
 
 const populateStoreName = (state, id, name, date) => {
   if (Object.keys(state.isError).length === 0) {
@@ -121,7 +123,44 @@ export const usersSlice = createSlice({
         };
       },
       reducer(state, action) {
-        state.listItems.push(action.payload);
+        const { listItems } = state;
+        const { calculateName, calculateAmount, userCalculate, isShared } =
+          action.payload;
+        const isExistListItem = listItems.findIndex(
+          (item) => item.calculateName === calculateName
+        );
+        const amountIntUser = userCalculate?.reduce(
+          (acc, cur) => acc + cur.amount,
+          0
+        );
+
+        if (!calculateName) {
+          state.isError = {
+            form: "Expanse For",
+            error: "Cannot Insert Empty Name",
+          };
+          return;
+        }
+
+        if (isExistListItem >= 0) {
+          state.isError = {
+            form: "Expanse For",
+            error: "Cannot Insert Same Name Of item",
+          };
+
+          return;
+        }
+
+        if (!isShared && amountIntUser > calculateAmount) {
+          state.isError = {
+            form: "Amount Item",
+            error: "Amount In User Item Cannot More Than Amount Item",
+          };
+
+          return;
+        }
+
+        listItems.push(action.payload);
       },
     },
     deleteItem(state, action) {

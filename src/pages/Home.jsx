@@ -125,7 +125,10 @@ const Home = () => {
 
   useEffect(() => {
     if (shouldRedirect === false) return;
-    if (Object.keys(users.isError).length >= 0 && users.isError.form === "BAGI")
+    if (
+      Object.keys(users?.isError).length >= 0 &&
+      users?.isError?.form === "BAGI"
+    )
       return;
 
     setFormHome("");
@@ -141,7 +144,7 @@ const Home = () => {
             <FormRow
               name="BAGI"
               validationWord={users?.isError?.error}
-              validationHidden={users?.isError.form}
+              validationHidden={users?.isError?.form}
             >
               <Input
                 type="text"

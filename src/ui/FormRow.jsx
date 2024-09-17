@@ -48,9 +48,9 @@ const FormRow = ({
         </Label>
         {children}
         <ValidationWord
-          validationhidden={name === validationHidden.name ? "none" : "block"}
+          validationhidden={name === validationHidden ? "block" : "none"}
         >
-          {validationWord}
+          {name === validationHidden && validationWord}
         </ValidationWord>
       </FormContent>
     </FormRowStyles>
