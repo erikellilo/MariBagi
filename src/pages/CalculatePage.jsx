@@ -9,7 +9,7 @@ import Input from "../ui/Input";
 import { useEffect, useState } from "react";
 import ToggleContainer from "../ui/ToggleContainer";
 import Counter from "../ui/Counter";
-import { inserNewItem } from "../features/usersSlicer";
+import { inserNewItem } from "../features/itemsSlice";
 import { useNavigate, useParams } from "react-router-dom";
 
 const CalculateContainer = styled.div`
@@ -143,9 +143,8 @@ const InitialStateCalculate = {
 const minusValidation = (value) => (value < 0 ? true : false);
 
 const CalculatePage = () => {
-  const { namaBagi, listUsers, bagiId, isError } = useSelector(
-    (state) => state.users
-  );
+  const { bagi, user: listUser, item } = useSelector((state) => state);
+  const { bagiId, namaBagi } = bagi;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [objectCalculate, setObjectCalculate] = useState(InitialStateCalculate);
@@ -169,7 +168,7 @@ const CalculatePage = () => {
   const handleMatchUserCount = (e) => {
     e.preventDefault();
     setObjectCalculate((prev) => {
-      return { ...prev, calculateAmount: listUsers.length };
+      return { ...prev, calculateAmount: listUser.length };
     });
   };
 
@@ -223,7 +222,6 @@ const CalculatePage = () => {
 
   const handleOnSubmitNewItem = (e) => {
     e.preventDefault();
-    console.log(objectCalculate);
     dispatch(inserNewItem(objectCalculate, bagiId));
     setObjectCalculate(InitialStateCalculate);
   };
@@ -236,8 +234,8 @@ const CalculatePage = () => {
           <Form onSubmit={handleOnSubmitNewItem} form="calculateForm">
             <FormRow
               name="Expanse For"
-              validationWord={isError?.error}
-              validationHidden={isError?.form}
+              // validationWord={isError?.error}
+              // validationHidden={isError?.form}
             >
               <Input
                 id="calculateName"
@@ -249,8 +247,8 @@ const CalculatePage = () => {
             </FormRow>
             <FormRow
               name="Amount Item"
-              validationWord={isError?.error}
-              validationHidden={isError?.form}
+              // validationWord={isError?.error}
+              // validationHidden={isError?.form}
             >
               <ExapanseContentAndAmount>
                 <ExpanseContent>
@@ -292,7 +290,7 @@ const CalculatePage = () => {
 
             {!objectCalculate.isShared && (
               <>
-                {listUsers.map((user) => {
+                {listUser.map((user) => {
                   const data = objectCalculate?.userCalculate.find(
                     (userInput) => userInput.userId === user.userId
                   );
@@ -318,9 +316,7 @@ const CalculatePage = () => {
           </Form>
         </CalculateContent>
       </CalculateStyled>
-      <CalculateSummary>
-        <Button onClick={handleDetailRedirect}>Details..</Button>
-      </CalculateSummary>
+      <CalculateSummary />
     </CalculateContainer>
   );
 };

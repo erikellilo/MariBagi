@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { deleteUser } from "../features/usersSlicer";
+import { deleteUser } from "../features/usersSlice";
 
 import styled from "styled-components";
 

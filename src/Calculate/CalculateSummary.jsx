@@ -1,6 +1,10 @@
+import { memo } from "react";
+import { useNavigate } from "react-router-dom";
+
 import styled from "styled-components";
 import CalculateSummaryItems from "./CalculateSummaryItems";
 import { useSelector } from "react-redux";
+import Button from "../ui/Button";
 
 const CalculaterSummaryStyled = styled.div`
   display: ${(props) => (props.listitemslength ? "flex" : "none")};
@@ -53,8 +57,13 @@ const CalculatSummaryContent = styled.div`
   flex-direction: column;
   gap: 1rem;
 `;
-const CalculateSummary = ({ children }) => {
-  const { listItems, listUsers } = useSelector((state) => state.users);
+const CalculateSummary = memo(({ children }) => {
+  const {
+    item: listItems,
+    user: listUsers,
+    bagi,
+  } = useSelector((state) => state);
+  const navigate = useNavigate();
 
   const userMap = listUsers.reduce((acc, user) => {
     acc[user.userId] = user.userName;
@@ -69,6 +78,11 @@ const CalculateSummary = ({ children }) => {
     })),
   }));
 
+  const handleDetailRedirect = (e) => {
+    e.preventDefault();
+    navigate(`/result/${bagi.bagiId}`);
+  };
+
   const listitemslength = listItems?.length;
   return (
     <CalculaterSummaryStyled listitemslength={listitemslength ? 1 : 0}>
@@ -76,11 +90,14 @@ const CalculateSummary = ({ children }) => {
         {processedItems.map((item) => (
           <CalculateSummaryItems key={item.itemId} item={item} />
         ))}
-
-        {children}
+        <Button onClick={handleDetailRedirect} type="button">
+          Details..
+        </Button>
       </CalculatSummaryContent>
     </CalculaterSummaryStyled>
   );
-};
+});
+
+CalculateSummary.displayName = "CalculateSummary";
 
 export default CalculateSummary;

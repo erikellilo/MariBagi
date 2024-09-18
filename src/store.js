@@ -1,11 +1,17 @@
-import { configureStore } from "@reduxjs/toolkit";
-import usersReducer from "../src/features/usersSlicer";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import localStorageMiddleware from "./features/localStorageMiddleware";
+import bagiReducer from "../src/features/bagiSlice";
+import userReducer from "../src/features/usersSlice";
+import itemReducer from "../src/features/itemsSlice";
+
+export const rootReducer = combineReducers({
+  bagi: bagiReducer,
+  user: userReducer,
+  item: itemReducer,
+});
 
 export const store = configureStore({
-  reducer: {
-    users: usersReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().prepend(localStorageMiddleware.middleware),
+  reducer: rootReducer,
+  // middleware: (getDefaultMiddleware) =>
+  //   getDefaultMiddleware().prepend(localStorageMiddleware.middleware),
 });

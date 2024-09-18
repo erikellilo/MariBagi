@@ -2,11 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
+import { insertBagi } from "../features/bagiSlice";
+import { insertNewUser } from "../features/usersSlice";
+
 import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
 import Button from "../ui/Button";
 import ExistNameRow from "../home/ExistNameRow";
-import { insertNewUser, insertName, clearError } from "../features/usersSlicer";
 import Input from "../ui/Input";
 import ExistingBagi from "../home/ExistingBagi";
 
@@ -77,18 +80,19 @@ const InputWithButton = styled.div`
 `;
 
 const Home = () => {
-  const users = useSelector((state) => state.users);
+  const { bagi, user } = useSelector((state) => state);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [formHome, setFormHome] = useState(users.namaBagi || "");
+  const [formHome, setFormHome] = useState(bagi.namaBagi || "");
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const refUser = useRef(null);
   const getLocal = localStorage.getItem("users");
   const existingLocalState = JSON.parse(getLocal) || [];
 
   useEffect(() => {
-    setFormHome(users.namaBagi);
-  }, [users.namaBagi]);
+    setFormHome(bagi.namaBagi);
+  }, [bagi.namaBagi]);
 
   const handleOnChangeName = (e) => {
     e.preventDefault();
@@ -99,10 +103,7 @@ const Home = () => {
     e.preventDefault();
     const inputValue = refUser.current.value;
 
-    if (
-      users?.listUsers.length > 0 &&
-      users?.listUsers.find((user) => user.userName === inputValue)
-    )
+    if (user?.length > 0 && user?.find((user) => user.userName === inputValue))
       return;
     if (!inputValue || inputValue?.trim() === "") return;
     dispatch(insertNewUser(inputValue));
@@ -118,23 +119,23 @@ const Home = () => {
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    const bagiId = users.bagiId || new Date().getUTCMilliseconds();
-    dispatch(insertName({ formHome, bagiId }));
+    const bagiId = bagi.bagiId || new Date().getUTCMilliseconds();
+    dispatch(insertBagi({ formHome, bagiId }));
     setShouldRedirect(true);
   };
 
   useEffect(() => {
     if (shouldRedirect === false) return;
-    if (
-      Object.keys(users?.isError).length >= 0 &&
-      users?.isError?.form === "BAGI"
-    )
-      return;
+    // if (
+    //   Object.keys(users?.isError).length >= 0 &&
+    //   users?.isError?.form === "BAGI"
+    // )
+    //   return;
 
     setFormHome("");
     setShouldRedirect(false);
-    navigate(`/calculate/${users.bagiId}`);
-  }, [users.bagiId, users.isError, shouldRedirect, navigate]);
+    navigate(`/calculate/${bagi.bagiId}`);
+  }, [bagi.bagiId, shouldRedirect, navigate]);
 
   return (
     <HomeContainer>
@@ -143,8 +144,8 @@ const Home = () => {
           <Form onSubmit={handleSubmitForm}>
             <FormRow
               name="BAGI"
-              validationWord={users?.isError?.error}
-              validationHidden={users?.isError?.form}
+              // validationWord={users?.isError?.error}
+              // validationHidden={users?.isError?.form}k
             >
               <Input
                 type="text"
@@ -157,8 +158,8 @@ const Home = () => {
             </FormRow>
             <FormRow
               name="NAMA"
-              validationWord={users?.isError?.error?.error}
-              validationHidden={users?.isError?.error?.form}
+              // validationWord={users?.isError?.error?.error}
+              // validationHidden={users?.isError?.error?.form}
             >
               <InputWithButton>
                 <Input
@@ -173,7 +174,7 @@ const Home = () => {
                 </Button>
               </InputWithButton>
             </FormRow>
-            <ExistNameRow users={users.listUsers} />
+            <ExistNameRow users={user} />
             <Button type="submit">Get Started</Button>
           </Form>
         </HomeContent>

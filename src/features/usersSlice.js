@@ -17,13 +17,11 @@ const usersSlice = createSlice({
         };
       },
       reducer(state, action) {
-        state.listUsers.push(action.payload);
+        state.push(action.payload);
       },
     },
     deleteUser(state, action) {
-      state.listUsers = state.listUsers.filter(
-        (user) => user.userId !== action.payload
-      );
+      return state.filter((user) => user.userId !== action.payload);
     },
   },
 });
