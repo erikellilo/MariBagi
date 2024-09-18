@@ -1,16 +1,20 @@
-import styled from "styled-components";
-import Form from "../ui/Form";
-import FormRow from "../ui/FormRow";
-import CalculateUserList from "../calculate/CalculateUserRow";
-import Button from "../ui/Button";
-import CalculateSummary from "../calculate/CalculateSummary";
-import { useSelector, useDispatch } from "react-redux";
-import Input from "../ui/Input";
 import { useEffect, useState } from "react";
-import ToggleContainer from "../ui/ToggleContainer";
-import Counter from "../ui/Counter";
+import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import { inserNewItem } from "../features/itemsSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { addError, clearError } from "../features/errorSlice";
+
+import CalculateUserList from "../calculate/CalculateUserRow";
+import CalculateSummary from "../calculate/CalculateSummary";
+
+import FormRow from "../ui/FormRow";
+import Form from "../ui/Form";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
+import Counter from "../ui/Counter";
+import ToggleContainer from "../ui/ToggleContainer";
 
 const CalculateContainer = styled.div`
   display: flex;
@@ -140,14 +144,27 @@ const InitialStateCalculate = {
   userCalculate: [],
 };
 
+const selectBagiUserItemError = (state) => ({
+  bagi: state.bagi,
+  listUser: state.user,
+  item: state.item,
+  error: state.error,
+});
+
 const minusValidation = (value) => (value < 0 ? true : false);
 
 const CalculatePage = () => {
-  const { bagi, user: listUser, item } = useSelector((state) => state);
+  const {
+    bagi,
+    user: listUser,
+    item,
+    error,
+  } = useSelector(selectBagiUserItemError);
   const { bagiId, namaBagi } = bagi;
+  const [objectCalculate, setObjectCalculate] = useState(InitialStateCalculate);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [objectCalculate, setObjectCalculate] = useState(InitialStateCalculate);
   useEffect(() => {
     if (!bagiId) navigate("/");
   }, [bagiId, navigate]);
@@ -185,11 +202,6 @@ const CalculatePage = () => {
     });
   };
 
-  const handleDetailRedirect = (e) => {
-    e.preventDefault();
-    navigate(`/result/${bagiId}`);
-  };
-
   const handleIncrementPerUsers = (e, increment, userInput = null) => {
     e.preventDefault();
     if (e.target.value < 0) return;
@@ -222,7 +234,63 @@ const CalculatePage = () => {
 
   const handleOnSubmitNewItem = (e) => {
     e.preventDefault();
+
+    const isExistListItem = item.findIndex(
+      (item) =>
+        item.calculateName === objectCalculate.calculateName &&
+        item.calculateName !== bagi.bagiId
+    );
+
+    const amountIntUser = objectCalculate.userCalculate?.reduce(
+      (acc, cur) => acc + cur.amount,
+      0
+    );
+    if (!objectCalculate.calculateName) {
+      dispatch(clearError());
+      dispatch(
+        addError({ form: "Expanse For", message: "Cannot Insert Empty Name" })
+      );
+      return;
+    }
+
+    if (isExistListItem >= 0) {
+      dispatch(clearError());
+      dispatch(
+        addError({
+          form: "Expanse For",
+          message: "Cannot Insert Same Name Of item",
+        })
+      );
+      return;
+    }
+
+    if (
+      !objectCalculate.isShared &&
+      amountIntUser !== objectCalculate.calculateAmount
+    ) {
+      dispatch(
+        addError({
+          form: "Amount Item",
+          message: "Amount In User Item Cannot More Than Amount Item",
+        })
+      );
+
+      return;
+    }
+
+    if (objectCalculate.calculateAmount <= 0) {
+      dispatch(
+        addError({
+          form: "Jumlah",
+          message: "Jumlah Cannot Be 0",
+        })
+      );
+
+      return;
+    }
+
     dispatch(inserNewItem(objectCalculate, bagiId));
+    dispatch(clearError());
     setObjectCalculate(InitialStateCalculate);
   };
 
@@ -234,8 +302,8 @@ const CalculatePage = () => {
           <Form onSubmit={handleOnSubmitNewItem} form="calculateForm">
             <FormRow
               name="Expanse For"
-              // validationWord={isError?.error}
-              // validationHidden={isError?.form}
+              validationWord={error.message}
+              validationHidden={error.form}
             >
               <Input
                 id="calculateName"
@@ -247,8 +315,8 @@ const CalculatePage = () => {
             </FormRow>
             <FormRow
               name="Amount Item"
-              // validationWord={isError?.error}
-              // validationHidden={isError?.form}
+              validationWord={error.message}
+              validationHidden={error.form}
             >
               <ExapanseContentAndAmount>
                 <ExpanseContent>
@@ -267,7 +335,11 @@ const CalculatePage = () => {
               </ExapanseContentAndAmount>
             </FormRow>
 
-            <FormRow name="">
+            <FormRow
+              name="Jumlah"
+              validationWord={error.message}
+              validationHidden={error.form}
+            >
               <ExpanseAmount>
                 <p>Jumlah</p>
                 <Button onClick={handleMatchUserCount} type="button">

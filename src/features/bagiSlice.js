@@ -21,16 +21,9 @@ const bagiSlice = createSlice({
   reducers: {
     insertBagi(state, action) {
       const existingLocal = getLocalStorage();
-      const isExistingLocal = existingLocal?.findIndex(
-        (users) => users.bagiId === action.payload.bagiId
-      );
 
-      const isExistingName = existingLocal?.findIndex(
-        (users) => users.namaBagi === action.payload.formHome
-      );
-
-      if (isExistingLocal >= 0) {
-        const existingData = existingLocal[isExistingLocal];
+      if (action.payload.isExistingLocal >= 0) {
+        const existingData = existingLocal[action.payload.isExistingLocal];
 
         populateStoreName(
           state,

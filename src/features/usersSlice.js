@@ -7,12 +7,12 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     insertNewUser: {
-      prepare(userName) {
+      prepare(userName, bagiId) {
         return {
           payload: {
             userId: new Date().getUTCMilliseconds(),
             userName: userName.toUpperCase(),
-            items: [],
+            bagiId,
           },
         };
       },

@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 import { insertBagi } from "../features/bagiSlice";
 import { insertNewUser } from "../features/usersSlice";
+import { addError, clearError } from "../features/errorSlice";
+
+import getLocalStorage from "../assets/getLocalStorage";
 
 import Form from "../ui/Form";
 import FormRow from "../ui/FormRow";
@@ -79,16 +82,24 @@ const InputWithButton = styled.div`
   gap: 1rem;
 `;
 
+const selectBagiUserError = (state) => ({
+  bagi: state.bagi,
+  user: state.user,
+  error: state.error,
+});
+
 const Home = () => {
-  const { bagi, user } = useSelector((state) => state);
+  const { bagi, user, error } = useSelector(selectBagiUserError);
+  const [formHome, setFormHome] = useState(bagi.namaBagi || "");
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [formHome, setFormHome] = useState(bagi.namaBagi || "");
-  const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  const bagiId = useRef(bagi.bagiId || new Date().getUTCMilliseconds());
   const refUser = useRef(null);
-  const getLocal = localStorage.getItem("users");
-  const existingLocalState = JSON.parse(getLocal) || [];
+
+  const existingLocalState = getLocalStorage();
 
   useEffect(() => {
     setFormHome(bagi.namaBagi);
@@ -106,7 +117,7 @@ const Home = () => {
     if (user?.length > 0 && user?.find((user) => user.userName === inputValue))
       return;
     if (!inputValue || inputValue?.trim() === "") return;
-    dispatch(insertNewUser(inputValue));
+    dispatch(insertNewUser(inputValue, bagiId.current));
     refUser.current.value = "";
   };
 
@@ -119,8 +130,45 @@ const Home = () => {
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    const bagiId = bagi.bagiId || new Date().getUTCMilliseconds();
-    dispatch(insertBagi({ formHome, bagiId }));
+
+    const isExistingLocal = existingLocalState?.findIndex(
+      (users) => users.bagiId === bagiId
+    );
+
+    const isExistingName = existingLocalState?.findIndex(
+      (users) => users.namaBagi === formHome
+    );
+
+    if (user.length < 2) {
+      dispatch(clearError());
+      dispatch(
+        addError({ form: "BAGI", message: "Need to Insert Minimal Of 2 Users" })
+      );
+      return;
+    }
+
+    if (!formHome) {
+      dispatch(clearError());
+      dispatch(
+        addError({
+          form: "BAGI",
+          message: "Cannot Insert Empty String In Bagi Name",
+        })
+      );
+      return;
+    }
+
+    if (
+      isExistingName >= 0 &&
+      existingLocalState[isExistingName].bagiId !== bagiId.current
+    ) {
+      dispatch(clearError());
+      dispatch(addError("BAGI", "Cannot Insert A Same Name with different ID"));
+      return;
+    }
+
+    dispatch(insertBagi({ formHome, bagiId: bagiId.current, isExistingLocal }));
+    dispatch(clearError());
     setShouldRedirect(true);
   };
 
@@ -134,8 +182,8 @@ const Home = () => {
 
     setFormHome("");
     setShouldRedirect(false);
-    navigate(`/calculate/${bagi.bagiId}`);
-  }, [bagi.bagiId, shouldRedirect, navigate]);
+    navigate(`/calculate/${bagiId.current}`);
+  }, [bagiId, shouldRedirect, navigate]);
 
   return (
     <HomeContainer>
@@ -144,8 +192,9 @@ const Home = () => {
           <Form onSubmit={handleSubmitForm}>
             <FormRow
               name="BAGI"
-              // validationWord={users?.isError?.error}
-              // validationHidden={users?.isError?.form}k
+              validationWord={error.message}
+              validationHidden={error.form}
+              k
             >
               <Input
                 type="text"
@@ -158,8 +207,8 @@ const Home = () => {
             </FormRow>
             <FormRow
               name="NAMA"
-              // validationWord={users?.isError?.error?.error}
-              // validationHidden={users?.isError?.error?.form}
+              validationWord={error.message}
+              validationHidden={error.form}
             >
               <InputWithButton>
                 <Input

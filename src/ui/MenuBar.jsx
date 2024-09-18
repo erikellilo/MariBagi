@@ -44,7 +44,7 @@ const StyledNavLink = styled(NavLink)`
 const MenuBar = () => {
   const location = useLocation();
   const [pathName, setpathName] = useState("/home");
-  const bagiId = useSelector((state) => state.users);
+  const { bagiId } = useSelector((state) => state.bagi);
   useEffect(() => {
     if (location.pathname === "/home" || location.pathname === "/") return;
     if (pathName.includes("result")) return;

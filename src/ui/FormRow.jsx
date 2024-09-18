@@ -44,7 +44,7 @@ const FormRow = ({
     <FormRowStyles hidden={hidden}>
       <FormContent flexdirection={flexdirection}>
         <Label htmlFor="" flexdirection={flexdirection}>
-          {name}
+          {name === "Jumlah" ? "" : name}
         </Label>
         {children}
         <ValidationWord
