@@ -15,6 +15,7 @@ import Button from "../ui/Button";
 import ExistNameRow from "../home/ExistNameRow";
 import Input from "../ui/Input";
 import ExistingBagi from "../home/ExistingBagi";
+import homeSelector from "../selector/homeSelector";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -82,28 +83,23 @@ const InputWithButton = styled.div`
   gap: 1rem;
 `;
 
-const selectBagiUserError = (state) => ({
-  bagi: state.bagi,
-  user: state.user,
-  error: state.error,
-});
-
 const Home = () => {
-  const { bagi, user, error } = useSelector(selectBagiUserError);
-  const [formHome, setFormHome] = useState(bagi.namaBagi || "");
+  const { bagiId, namaBagi, userIds, userNames } = useSelector(homeSelector);
+
+  const [formHome, setFormHome] = useState(namaBagi || "");
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const bagiId = useRef(bagi.bagiId || new Date().getUTCMilliseconds());
+  const bagiIdRef = useRef(bagiId || new Date().getUTCMilliseconds());
   const refUser = useRef(null);
 
   const existingLocalState = getLocalStorage();
 
   useEffect(() => {
-    setFormHome(bagi.namaBagi);
-  }, [bagi.namaBagi]);
+    setFormHome(namaBagi);
+  }, [namaBagi]);
 
   const handleOnChangeName = (e) => {
     e.preventDefault();
@@ -113,11 +109,34 @@ const Home = () => {
   const handleOnChangeUser = (e) => {
     e.preventDefault();
     const inputValue = refUser.current.value;
+    console.log(userNames);
 
-    if (user?.length > 0 && user?.find((user) => user.userName === inputValue))
+    if (
+      userIds?.length > 0 &&
+      userNames?.find((user) => user.toUpperCase() === inputValue.toUpperCase())
+    ) {
+      dispatch(clearError());
+      dispatch(
+        addError({ form: "NAMA", message: "Cannot Add Same Name In One Bagi" })
+      );
       return;
-    if (!inputValue || inputValue?.trim() === "") return;
-    dispatch(insertNewUser(inputValue, bagiId.current));
+    }
+
+    if (!inputValue || inputValue?.trim() === "") {
+      {
+        dispatch(clearError());
+        dispatch(
+          addError({
+            form: "NAMA",
+            message: "Cannot Add Empty Name",
+          })
+        );
+        return;
+      }
+    }
+
+    dispatch(insertNewUser(inputValue, bagiIdRef.current));
+    dispatch(clearError());
     refUser.current.value = "";
   };
 
@@ -139,7 +158,7 @@ const Home = () => {
       (users) => users.namaBagi === formHome
     );
 
-    if (user.length < 2) {
+    if (userIds.length < 2) {
       dispatch(clearError());
       dispatch(
         addError({ form: "BAGI", message: "Need to Insert Minimal Of 2 Users" })
@@ -160,14 +179,16 @@ const Home = () => {
 
     if (
       isExistingName >= 0 &&
-      existingLocalState[isExistingName].bagiId !== bagiId.current
+      existingLocalState[isExistingName].bagiId !== bagiIdRef.current
     ) {
       dispatch(clearError());
       dispatch(addError("BAGI", "Cannot Insert A Same Name with different ID"));
       return;
     }
 
-    dispatch(insertBagi({ formHome, bagiId: bagiId.current, isExistingLocal }));
+    dispatch(
+      insertBagi({ formHome, bagiId: bagiIdRef.current, isExistingLocal })
+    );
     dispatch(clearError());
     setShouldRedirect(true);
   };
@@ -190,12 +211,7 @@ const Home = () => {
       <HomeStyled>
         <HomeContent>
           <Form onSubmit={handleSubmitForm}>
-            <FormRow
-              name="BAGI"
-              validationWord={error.message}
-              validationHidden={error.form}
-              k
-            >
+            <FormRow name="BAGI" k>
               <Input
                 type="text"
                 id="bagi"
@@ -205,11 +221,7 @@ const Home = () => {
                 handleOnchange={handleOnChangeName}
               />
             </FormRow>
-            <FormRow
-              name="NAMA"
-              validationWord={error.message}
-              validationHidden={error.form}
-            >
+            <FormRow name="NAMA">
               <InputWithButton>
                 <Input
                   type="text"
@@ -223,7 +235,7 @@ const Home = () => {
                 </Button>
               </InputWithButton>
             </FormRow>
-            <ExistNameRow users={user} />
+            <ExistNameRow />
             <Button type="submit">Get Started</Button>
           </Form>
         </HomeContent>

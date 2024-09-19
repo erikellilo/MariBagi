@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 
 const FormRowStyles = styled.div`
   display: ${(props) => props.hidden || "flex"};
@@ -32,14 +33,8 @@ const Label = styled.label`
   color: var(--color-grey-900);
 `;
 
-const FormRow = ({
-  children,
-  name,
-  flexdirection = "column",
-  hidden,
-  validationWord,
-  validationHidden = "none",
-}) => {
+const FormRow = ({ children, name, flexdirection = "column", hidden }) => {
+  const { form, message } = useSelector((state) => state.error);
   return (
     <FormRowStyles hidden={hidden}>
       <FormContent flexdirection={flexdirection}>
@@ -47,10 +42,8 @@ const FormRow = ({
           {name === "Jumlah" ? "" : name}
         </Label>
         {children}
-        <ValidationWord
-          validationhidden={name === validationHidden ? "block" : "none"}
-        >
-          {name === validationHidden && validationWord}
+        <ValidationWord validationhidden={name === form ? "block" : "none"}>
+          {name === form && message}
         </ValidationWord>
       </FormContent>
     </FormRowStyles>

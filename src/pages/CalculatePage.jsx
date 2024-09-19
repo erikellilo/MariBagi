@@ -300,11 +300,7 @@ const CalculatePage = () => {
         <CalculateContent>
           <h1>Calculate - {namaBagi}</h1>
           <Form onSubmit={handleOnSubmitNewItem} form="calculateForm">
-            <FormRow
-              name="Expanse For"
-              validationWord={error.message}
-              validationHidden={error.form}
-            >
+            <FormRow name="Expanse For">
               <Input
                 id="calculateName"
                 name="expanse"
@@ -313,11 +309,7 @@ const CalculatePage = () => {
                 handleOnchange={handleChangeCalculate}
               />
             </FormRow>
-            <FormRow
-              name="Amount Item"
-              validationWord={error.message}
-              validationHidden={error.form}
-            >
+            <FormRow name="Amount Item">
               <ExapanseContentAndAmount>
                 <ExpanseContent>
                   <ExpanseCurrency>
@@ -335,11 +327,7 @@ const CalculatePage = () => {
               </ExapanseContentAndAmount>
             </FormRow>
 
-            <FormRow
-              name="Jumlah"
-              validationWord={error.message}
-              validationHidden={error.form}
-            >
+            <FormRow name="Jumlah">
               <ExpanseAmount>
                 <p>Jumlah</p>
                 <Button onClick={handleMatchUserCount} type="button">
