@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { inserNewItem } from "../features/itemsSlice";
 import { addError, clearError } from "../features/errorSlice";
 
+import { calculateSelector } from "../selector/selectorState";
+
 import CalculateUserList from "../calculate/CalculateUserRow";
 import CalculateSummary from "../calculate/CalculateSummary";
 
@@ -154,13 +156,8 @@ const selectBagiUserItemError = (state) => ({
 const minusValidation = (value) => (value < 0 ? true : false);
 
 const CalculatePage = () => {
-  const {
-    bagi,
-    user: listUser,
-    item,
-    error,
-  } = useSelector(selectBagiUserItemError);
-  const { bagiId, namaBagi } = bagi;
+  const { bagiId, namaBagi, userObject, calculateName } =
+    useSelector(calculateSelector);
   const [objectCalculate, setObjectCalculate] = useState(InitialStateCalculate);
 
   const dispatch = useDispatch();
@@ -185,7 +182,7 @@ const CalculatePage = () => {
   const handleMatchUserCount = (e) => {
     e.preventDefault();
     setObjectCalculate((prev) => {
-      return { ...prev, calculateAmount: listUser.length };
+      return { ...prev, calculateAmount: userObject.length };
     });
   };
 
@@ -235,10 +232,8 @@ const CalculatePage = () => {
   const handleOnSubmitNewItem = (e) => {
     e.preventDefault();
 
-    const isExistListItem = item.findIndex(
-      (item) =>
-        item.calculateName === objectCalculate.calculateName &&
-        item.calculateName !== bagi.bagiId
+    const isExistListItem = calculateName.findIndex(
+      (item) => item === objectCalculate.calculateName && item !== bagiId
     );
 
     const amountIntUser = objectCalculate.userCalculate?.reduce(
@@ -350,7 +345,7 @@ const CalculatePage = () => {
 
             {!objectCalculate.isShared && (
               <>
-                {listUser.map((user) => {
+                {userObject.map((user) => {
                   const data = objectCalculate?.userCalculate.find(
                     (userInput) => userInput.userId === user.userId
                   );
@@ -371,7 +366,6 @@ const CalculatePage = () => {
                 })}
               </>
             )}
-            <CalculateUserList />
             <Button type="submit">Add New Items</Button>
           </Form>
         </CalculateContent>

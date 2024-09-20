@@ -3,6 +3,7 @@ import { createSelector } from "reselect";
 // Input selectors
 const selectBagiState = (state) => state.bagi;
 const selectUserState = (state) => state.user;
+const selectItemState = (state) => state.item;
 
 // Memoized selectors
 const selectBagi = createSelector([selectBagiState], (bagi) => ({
@@ -19,7 +20,12 @@ const selectUsers = createSelector(
     })) || []
 );
 
-// Combined selector
+const selectItem = createSelector(
+  [selectItemState],
+  (items) => items.map((item) => ({ calculateName: item.calculateName })) || []
+);
+
+// Combined selector for Home
 export const homeSelector = createSelector(
   [selectBagi, selectUsers],
   (bagi, users) => ({
@@ -30,4 +36,12 @@ export const homeSelector = createSelector(
   })
 );
 
-export default homeSelector;
+export const calculateSelector = createSelector(
+  [selectBagi, selectUsers, selectItem],
+  (bagi, users, items) => ({
+    bagiId: bagi.bagiId,
+    namaBagi: bagi.namaBagi,
+    userObject: users,
+    calculateName: items.map((item) => item.calculateName),
+  })
+);

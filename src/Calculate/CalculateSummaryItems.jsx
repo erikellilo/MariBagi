@@ -2,7 +2,7 @@ import styled from "styled-components";
 import currencyFormat from "../assets/currencyFormat";
 import ButtonRectangle from "../ui/ButtonRectangle";
 import { useDispatch } from "react-redux";
-import { deleteItem } from "../features/usersSlicer";
+import { deleteItem } from "../features/itemsSlice";
 
 const CalculateSummaryItemStyled = styled.div`
   display: flex;

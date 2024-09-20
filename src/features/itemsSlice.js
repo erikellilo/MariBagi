@@ -19,28 +19,19 @@ export const itemsSlice = createSlice({
           payload: {
             itemId: `${bagiId}_${new Date().getUTCMilliseconds()}`,
             ...itemsCalculate,
+            userCalculate: itemsCalculate.userCalculate.filter(
+              (user) => user.amount > 0
+            ),
           },
         };
       },
       reducer(state, action) {
         const listItems = state;
-        const { calculateName, calculateAmount, userCalculate, isShared } =
-          action.payload;
-        const isExistListItem = listItems?.findIndex(
-          (item) => item.calculateName === calculateName
-        );
-        const amountIntUser = userCalculate?.reduce(
-          (acc, cur) => acc + cur.amount,
-          0
-        );
-
         listItems.push(action.payload);
       },
     },
     deleteItem(state, action) {
-      state.listItems = state.listItems.filter(
-        (item) => item.itemId !== action.payload
-      );
+      return state.filter((item) => item.itemId !== action.payload);
     },
   },
 });

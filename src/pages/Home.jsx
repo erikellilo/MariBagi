@@ -15,7 +15,7 @@ import Button from "../ui/Button";
 import ExistNameRow from "../home/ExistNameRow";
 import Input from "../ui/Input";
 import ExistingBagi from "../home/ExistingBagi";
-import homeSelector from "../selector/homeSelector";
+import { homeSelector } from "../selector/selectorState";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -203,7 +203,7 @@ const Home = () => {
 
     setFormHome("");
     setShouldRedirect(false);
-    navigate(`/calculate/${bagiId.current}`);
+    navigate(`/calculate/${bagiId}`);
   }, [bagiId, shouldRedirect, navigate]);
 
   return (
