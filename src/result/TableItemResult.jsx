@@ -26,7 +26,7 @@ const TableItemResult = ({
           {itemName}
           <StyledSpanForShared>
             {" "}
-            x {isShared ? listUsersLength / amount : amount}
+            x {isShared ? `${amount} (Shared With All)` : Math.floor(amount)}
           </StyledSpanForShared>{" "}
         </td>
         <StyledTDRight>{currencyFormat(getTotalPerItems)}</StyledTDRight>

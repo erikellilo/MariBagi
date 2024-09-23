@@ -95,11 +95,15 @@ const Home = () => {
   const bagiIdRef = useRef(bagiId || new Date().getUTCMilliseconds());
   const refUser = useRef(null);
 
-  const existingLocalState = getLocalStorage();
+  const existingLocalState = getLocalStorage("bagi");
 
   useEffect(() => {
     setFormHome(namaBagi);
   }, [namaBagi]);
+
+  useEffect(() => {
+    if (bagiId && bagiId !== bagiIdRef.current) bagiIdRef.current = bagiId;
+  }, [bagiId]);
 
   const handleOnChangeName = (e) => {
     e.preventDefault();
@@ -109,7 +113,6 @@ const Home = () => {
   const handleOnChangeUser = (e) => {
     e.preventDefault();
     const inputValue = refUser.current.value;
-    console.log(userNames);
 
     if (
       userIds?.length > 0 &&
@@ -155,7 +158,7 @@ const Home = () => {
     );
 
     const isExistingName = existingLocalState?.findIndex(
-      (users) => users.namaBagi === formHome
+      (users) => users.namaBagi.toUpperCase() === formHome.toUpperCase()
     );
 
     if (userIds.length < 2) {
@@ -182,7 +185,12 @@ const Home = () => {
       existingLocalState[isExistingName].bagiId !== bagiIdRef.current
     ) {
       dispatch(clearError());
-      dispatch(addError("BAGI", "Cannot Insert A Same Name with different ID"));
+      dispatch(
+        addError({
+          form: "BAGI",
+          message: "Cannot Insert A Same Name with different ID",
+        })
+      );
       return;
     }
 
@@ -195,11 +203,6 @@ const Home = () => {
 
   useEffect(() => {
     if (shouldRedirect === false) return;
-    // if (
-    //   Object.keys(users?.isError).length >= 0 &&
-    //   users?.isError?.form === "BAGI"
-    // )
-    //   return;
 
     setFormHome("");
     setShouldRedirect(false);

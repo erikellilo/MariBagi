@@ -1,7 +1,10 @@
-import styled from "styled-components";
+import { Fragment, useMemo } from "react";
 import { useSelector } from "react-redux";
+import styled from "styled-components";
+
+import { resultSelector } from "../selector/selectorState";
+
 import TableItemResult from "../result/TableItemResult";
-import { Fragment } from "react";
 import currencyFormat from "../assets/currencyFormat";
 
 const ResultContainer = styled.div`
@@ -92,31 +95,43 @@ const StyledTDRight = styled.td`
 `;
 
 const Result = () => {
-  const { listItems, listUsers, namaBagi } = useSelector(
-    (state) => state.users
-  );
+  const { itemObject, userObject, namaBagi, itemObjectLength } =
+    useSelector(resultSelector);
   let grandTotal = 0;
-  const listUsersLength = listUsers?.length;
 
-  const getUserItems = (userId) => {
-    return listItems
-      .filter(
-        (item) =>
-          item.userCalculate.some((userCalc) => userCalc.userId === userId) ||
-          item.isShared
-      )
-      .map((item) => {
-        const amount = item.userCalculate
-          .filter((item) => item.userId === userId)
-          .reduce((total, currentItem) => total + currentItem.amount, 0);
-        return {
-          itemName: item.calculateName,
-          itemPrice: item.calculatePrice,
-          isShared: item.isShared,
-          amount: amount === 0 ? item.calculateAmount : amount,
-        };
-      });
-  };
+  console.log(itemObjectLength);
+  const processedItems = itemObject.map((item) => ({
+    ...item,
+    userCalculateMap: new Map(item.userCalculate.map((uc) => [uc.userId, uc])),
+  }));
+
+  const getUserItems = useMemo(
+    () => (userId) => {
+      const userItems = processedItems
+        .filter((item) => item.userCalculateMap?.has(userId) || item.isShared)
+        .map((item) => {
+          const usercalc = item.userCalculateMap.get(userId);
+          const amount = usercalc ? usercalc.amount : 0;
+          return {
+            itemName: item.calculateName,
+            itemPrice: item.calculatePrice,
+            isShared: item.isShared,
+            amount: amount === 0 ? item.calculateAmount : amount,
+          };
+        });
+
+      const subTotal = userItems.reduce(
+        (total, item) =>
+          total +
+          item.itemPrice *
+            (item.isShared ? item.amount / itemObjectLength : item.amount),
+        0
+      );
+
+      return { userItems, subTotal };
+    },
+    [itemObjectLength, processedItems]
+  );
 
   return (
     <ResultContainer>
@@ -134,16 +149,8 @@ const Result = () => {
           </tr>
         </thead>
         <tbody>
-          {listUsers.map((user, index) => {
-            const itemInUser = getUserItems(user.userId);
-
-            const subTotal = itemInUser.reduce(
-              (total, item) =>
-                total +
-                item.itemPrice *
-                  (item.isShared ? item.amount / listUsersLength : item.amount),
-              0
-            );
+          {userObject.map((user, index) => {
+            const { userItems, subTotal } = getUserItems(user.userId);
 
             grandTotal += subTotal;
 
@@ -152,14 +159,14 @@ const Result = () => {
                 <tr key={user.userId}>
                   <td colSpan="6">{user.userName}</td>
                 </tr>
-                {itemInUser.map((item) => (
+                {userItems.map((item) => (
                   <TableItemResult
                     key={user.userId + item.itemName}
                     itemName={item.itemName}
                     itemPrice={item.itemPrice}
                     amount={item.amount}
                     isShared={item.isShared}
-                    listUsersLength={listUsersLength}
+                    listUsersLength={itemObjectLength}
                   />
                 ))}
 
@@ -168,7 +175,7 @@ const Result = () => {
                   <StyledTDRight>{currencyFormat(subTotal)}</StyledTDRight>
                 </tr>
 
-                {index < listUsers.length - 1 && (
+                {index < itemObjectLength.length - 1 && (
                   <tr>
                     <td colSpan="2"></td>
                   </tr>

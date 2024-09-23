@@ -1,8 +1,13 @@
-import styled from "styled-components";
-import Button from "../ui/Button";
 import { useDispatch } from "react-redux";
-import { editFromExisting } from "../features/usersSlicer";
+import styled from "styled-components";
 import { memo } from "react";
+
+import { editFromExistingBagi } from "../features/bagiSlice";
+import { editFromExistingUserBagi } from "../features/usersSlice";
+import { editFromExistingitemBagi } from "../features/itemsSlice";
+import getLocalStorage from "../assets/getLocalStorage";
+
+import Button from "../ui/Button";
 
 const ExistingBagiStyled = styled.div`
   width: 100%;
@@ -37,18 +42,21 @@ const ExistingBagiStyled = styled.div`
 `;
 
 const ExistingBagi = memo(({ dataBagi, setShouldRedirect }) => {
+  const getLocalUser = getLocalStorage("user").filter(
+    (user) => user.bagiId === dataBagi.bagiId
+  );
   const sliceTwouser =
-    dataBagi?.listUsers?.length > 2
-      ? dataBagi?.listUsers?.slice(0, 2)
-      : dataBagi?.listUsers?.slice();
+    getLocalUser.length > 2 ? getLocalUser?.slice(0, 2) : getLocalUser?.slice();
 
-  const userCalculateLength = dataBagi?.listUsers?.length;
+  const userCalculateLength = getLocalUser?.length;
   const dispatch = useDispatch();
 
   const handleOnClickExisting = (e) => {
     e.preventDefault();
     setShouldRedirect(false);
-    dispatch(editFromExisting(dataBagi));
+    dispatch(editFromExistingBagi(dataBagi));
+    dispatch(editFromExistingUserBagi(dataBagi.bagiId));
+    dispatch(editFromExistingitemBagi(dataBagi.bagiId));
   };
 
   const date = new Date(dataBagi.bagiDate);
@@ -65,7 +73,7 @@ const ExistingBagi = memo(({ dataBagi, setShouldRedirect }) => {
           {sliceTwouser.map((user) => (
             <li key={user.userId}>{user.userName},</li>
           ))}
-          {dataBagi?.listUsers?.length > 2 && (
+          {userCalculateLength > 2 && (
             <li key="other">And {userCalculateLength - 2} more.. </li>
           )}
         </ul>

@@ -20,7 +20,7 @@ const bagiSlice = createSlice({
   initialState,
   reducers: {
     insertBagi(state, action) {
-      const existingLocal = getLocalStorage();
+      const existingLocal = getLocalStorage("bagi");
 
       if (action.payload.isExistingLocal >= 0) {
         const existingData = existingLocal[action.payload.isExistingLocal];

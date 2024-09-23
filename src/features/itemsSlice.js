@@ -1,13 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  itemId: null,
-  calculateName: "",
-  calculatePrice: 0,
-  calculateAmount: 0,
-  isShared: false,
-  userCalculate: [],
-};
+import getLocalStorage from "../assets/getLocalStorage";
 
 export const itemsSlice = createSlice({
   name: "items",
@@ -17,8 +10,9 @@ export const itemsSlice = createSlice({
       prepare(itemsCalculate, bagiId) {
         return {
           payload: {
-            itemId: `${bagiId}_${new Date().getUTCMilliseconds()}`,
+            itemId: Date.now(),
             ...itemsCalculate,
+            bagiId: bagiId,
             userCalculate: itemsCalculate.userCalculate.filter(
               (user) => user.amount > 0
             ),
@@ -31,10 +25,18 @@ export const itemsSlice = createSlice({
       },
     },
     deleteItem(state, action) {
+      console.log(action.payload);
       return state.filter((item) => item.itemId !== action.payload);
+    },
+    editFromExistingitemBagi(state, action) {
+      const getLocalItem = getLocalStorage("item").filter(
+        (item) => item.bagiId === action.payload
+      );
+      return getLocalItem;
     },
   },
 });
 
-export const { inserNewItem, deleteItem } = itemsSlice.actions;
+export const { inserNewItem, deleteItem, editFromExistingitemBagi } =
+  itemsSlice.actions;
 export default itemsSlice.reducer;

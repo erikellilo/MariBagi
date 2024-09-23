@@ -25,6 +25,11 @@ const selectItem = createSelector(
   (items) => items.map((item) => ({ calculateName: item.calculateName })) || []
 );
 
+const selectItemAllObject = createSelector(
+  [selectItemState],
+  (items) => items.map((item) => item) || []
+);
+
 // Combined selector for Home
 export const homeSelector = createSelector(
   [selectBagi, selectUsers],
@@ -43,5 +48,16 @@ export const calculateSelector = createSelector(
     namaBagi: bagi.namaBagi,
     userObject: users,
     calculateName: items.map((item) => item.calculateName),
+  })
+);
+
+export const resultSelector = createSelector(
+  [selectBagi, selectUsers, selectItemAllObject],
+  (bagi, users, items) => ({
+    namaBagi: bagi.namaBagi,
+    userObject: users,
+
+    itemObject: items,
+    itemObjectLength: users.length || 0,
   })
 );

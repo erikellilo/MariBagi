@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import getLocalStorage from "../assets/getLocalStorage";
 
 const initialState = [];
 
@@ -23,9 +24,16 @@ const usersSlice = createSlice({
     deleteUser(state, action) {
       return state.filter((user) => user.userId !== action.payload);
     },
+    editFromExistingUserBagi(state, action) {
+      const localUser = getLocalStorage("user").filter(
+        (user) => user.bagiId === action.payload
+      );
+      return localUser;
+    },
   },
 });
 
-export const { insertNewUser, deleteUser } = usersSlice.actions;
+export const { insertNewUser, deleteUser, editFromExistingUserBagi } =
+  usersSlice.actions;
 
 export default usersSlice.reducer;

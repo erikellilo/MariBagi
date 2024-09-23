@@ -1,5 +1,5 @@
-const getLocalStorage = () => {
-  const getLocal = localStorage.getItem("users");
+const getLocalStorage = (nameLocal) => {
+  const getLocal = localStorage.getItem(nameLocal);
   return JSON.parse(getLocal) || [];
 };
 
