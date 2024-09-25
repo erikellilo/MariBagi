@@ -3,12 +3,11 @@ import styled from "styled-components";
 const HeaderStyled = styled.header`
   text-align: center;
   text-justify: distribute;
-  background-color: var(--color-brand-900);
   overflow: hidden;
 `;
 
 const H1 = styled.h3`
-  color: var(--color-brand-50);
+  color: var(--color-grey-900);
   display: inline-block;
   white-space: nowrap;
   padding-left: 100%;

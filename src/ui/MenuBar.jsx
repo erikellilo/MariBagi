@@ -20,7 +20,7 @@ const StyledNavLink = styled(NavLink)`
   font-size: 1rem;
   font-weight: 900;
   color: var(--color-gray-900);
-  background-color: var(--color-grey-0);
+  background-color: var(--color-grey-500);
   padding: 0.5rem 0.75rem;
   border-style: solid;
   border-color: var(--color-grey-900);

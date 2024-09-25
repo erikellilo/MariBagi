@@ -1,12 +1,17 @@
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import MenuBar from "./MenuBar";
-import { BackgroundStyle } from "../GlobalStyles";
 import Header from "./Header";
 
 const StyledAppLayout = styled.div`
-  background-color: var(--color-grey-50);
-  padding: 2rem 0;
+  background-color: var(--color-green-100);
+  background-image: linear-gradient(
+      to right,
+      var(--color-grey-900) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, var(--color-grey-900) 1px, transparent 1px);
+  background-size: 25px 25px;
   min-height: 100vh;
 `;
 
@@ -19,12 +24,10 @@ const Container = styled.div`
   max-width: 37.5rem;
   height: 100%;
   gap: 1rem;
-  ${BackgroundStyle}
 `;
 
 const StyledMain = styled.main`
   flex-grow: 1;
-  ${BackgroundStyle}
   display: flex;
   align-items: center;
   justify-content: flex-start;

@@ -2,13 +2,19 @@ import styled from "styled-components";
 
 const Button = styled.button`
   border-style: solid;
-  border-color: var(--color-grey-900);
   border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
   border-radius: 1rem;
-  padding: 0.1rem 0.25rem;
-  background-color: var(--color-grey-0);
-  font-weight: 800;
-  font-size: 1.5rem;
+  border-color: var(--color-grey-900);
+  padding: ${(props) =>
+    props.variant === "rectangle" ? "0.1rem 1.25rem" : "0.75rem"};
+
+  background-color: ${(props) =>
+    props.variant === "rectangle"
+      ? "var(--color-green-500)"
+      : "var(--color-blue-500)"};
+
+  font-weight: 900;
+  font-size: 1.25rem;
 
   transition: all 0.1s ease;
   &:hover {

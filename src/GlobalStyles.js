@@ -2,35 +2,29 @@ import { createGlobalStyle, css } from "styled-components";
 
 const GlobalStyles = createGlobalStyle`
 :root {
+
   /* Green */
-  --color-brand-50: #e5eae8;
-  --color-brand-100: #ccd6d2;
-  --color-brand-200: #809890;
-  --color-brand-500: #668479;
-  --color-brand-600: #4d6f63;
-  --color-brand-700: #1a4637;
-  --color-brand-800: #013221;
-  --color-brand-900: #002d1d;
+  --color-green-100: #F2F8F2;
+  --color-green-500: #8cc084;
+  --color-green-900: #080D07;
+
+  /* Red */
+  --color-red-100: #FFD6E6;
+  --color-red-500: #FF70A6;
+  --color-red-800: #F5005E;
+  --color-red-900: #140008;
+
+  /* Blue */
+  --color-blue-100 : #EBF9FF;
+  --color-blue-500 : #70D6FF;
+  --color-blue-900: #000F14;
 
   /* Grey */
-  --color-grey-0: #fff;
-  --color-grey-50: #f9faf9;
-  --color-grey-100: #f2f5f4;
-  --color-grey-200: #ecf0ee;
-  --color-grey-300: #e6ebe9;
-  --color-grey-400: #ccd6d2;
-  --color-grey-500: #99a19e;
-  --color-grey-600: #666b69;
-  --color-grey-700: #4d504f;
-  --color-grey-800: #333635;
-  --color-grey-900: #1a1b1a;
+  --color-grey-0: #FFFFFF;
+  --color-grey-500: #FCF7FF;
+  --color-grey-900: #0D0014;
 
-  --color-blue-700: #0369a1;
-  --color-red-100: #fee2e2;
-  --color-red-700: #b91c1c;
-  --color-red-800: #991b1b; 
 
-  --backdrop-color: rgba(255, 255, 255, 0.1);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
@@ -101,7 +95,11 @@ select:focus {
   outline-offset: -1px;
 }
 
-/* Parent selector, finally 😃 */
+input::placeholder {
+  color:var(--color-gray-500);
+}
+
+/*  arent selector, finally 😃 */
 button:has(svg) {
   line-height: 0;
 }
@@ -135,16 +133,7 @@ img {
 
 `;
 
-const BackgroundStyle = css`
-  background-color: var(--color-brand-700);
-  background-image: linear-gradient(
-      to right,
-      rgba(0, 0, 0, 0.1) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
-  background-size: 50px 50px;
-`;
+const BackgroundStyle = css``;
 
 export { BackgroundStyle };
 export default GlobalStyles;

@@ -1,4 +1,4 @@
-import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
+import { createListenerMiddleware } from "@reduxjs/toolkit";
 import getLocalStorage from "../assets/getLocalStorage";
 
 import { insertBagi } from "./bagiSlice";
@@ -13,46 +13,55 @@ const actionDelete = (listArray, uniqId, localStorageName, uniqueKey) => {
 };
 
 localStorageMiddleware.startListening({
-  matcher: isAnyOf(insertBagi, deleteUser, inserNewItem, deleteItem),
+  actionCreator: insertBagi,
   effect: (action, listenerApi) => {
-    const { bagi, user, item } = listenerApi.getState();
+    const { bagi, user } = listenerApi.getState();
 
-    if (action.type === "bagi/insertBagi") {
-      const existingLocalBagi = getLocalStorage("bagi");
-      const existingLocalUser = getLocalStorage("user").filter(
-        (user) => user.bagiId !== bagi.bagiId
-      );
-      const newUsersList = existingLocalUser.concat(user);
+    const existingLocalBagi = getLocalStorage("bagi");
+    const existingLocalUser = getLocalStorage("user").filter(
+      (user) => user.bagiId !== bagi.bagiId
+    );
+    const newUsersList = existingLocalUser.concat(user);
 
-      const isExistinLocal = existingLocalBagi.findIndex(
-        (data) => data.bagiId === bagi.bagiId
-      );
+    const isExistinLocal = existingLocalBagi.findIndex(
+      (data) => data.bagiId === bagi.bagiId
+    );
 
-      isExistinLocal === -1
-        ? existingLocalBagi.push(bagi)
-        : (existingLocalBagi[isExistinLocal] = bagi);
+    isExistinLocal === -1
+      ? existingLocalBagi.push(bagi)
+      : (existingLocalBagi[isExistinLocal] = bagi);
 
-      localStorage.setItem("bagi", JSON.stringify(existingLocalBagi));
-      localStorage.setItem("user", JSON.stringify(newUsersList));
-    }
+    localStorage.setItem("bagi", JSON.stringify(existingLocalBagi));
+    localStorage.setItem("user", JSON.stringify(newUsersList));
+  },
+});
 
-    if (action.type === "users/deleteUser") {
-      const existingLocalUser = getLocalStorage("user");
-      actionDelete(existingLocalUser, action.payload, "user", "userId");
-    }
+localStorageMiddleware.startListening({
+  actionCreator: deleteUser,
+  effect: (action) => {
+    const existingLocalUser = getLocalStorage("user");
+    actionDelete(existingLocalUser, action.payload, "user", "userId");
+  },
+});
 
-    if (action.type === "items/inserNewItem") {
-      const existingLocalitem = getLocalStorage("item").filter(
-        (item) => item.bagiId !== bagi.bagiId
-      );
-      const combineList = existingLocalitem.concat(item);
-      localStorage.setItem("item", JSON.stringify(combineList));
-    }
+localStorageMiddleware.startListening({
+  actionCreator: inserNewItem,
+  effect: (action, listenerApi) => {
+    const { bagi, item } = listenerApi.getState();
 
-    if (action.type === "items/deleteItem") {
-      const existingLocalitem = getLocalStorage("item");
-      actionDelete(existingLocalitem, action.payload, "item", "itemId");
-    }
+    const existingLocalitem = getLocalStorage("item").filter(
+      (item) => item.bagiId !== bagi.bagiId
+    );
+    const combineList = existingLocalitem.concat(item);
+    localStorage.setItem("item", JSON.stringify(combineList));
+  },
+});
+
+localStorageMiddleware.startListening({
+  actionCreator: deleteItem,
+  effect: (action) => {
+    const existingLocalitem = getLocalStorage("item");
+    actionDelete(existingLocalitem, action.payload, "item", "itemId");
   },
 });
 

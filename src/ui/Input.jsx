@@ -3,10 +3,12 @@ import { forwardRef } from "react";
 
 const InputStyled = styled.input`
   padding: 0.75rem;
-  background-color: var(--color-grey-50);
+  background-color: var(--color-grey-0);
   height: 5rem;
   width: 100%;
   flex-grow: 1;
+  border: 5px solid black;
+  border-radius: 1rem;
 `;
 
 const Input = forwardRef(function Input(

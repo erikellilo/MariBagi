@@ -23,6 +23,8 @@ const HomeContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   min-width: 30rem;
+  gap: 2rem;
+  margin-top: 2rem;
 `;
 
 const HomeStyled = styled.div`
@@ -31,40 +33,18 @@ const HomeStyled = styled.div`
   align-items: flex-start;
   gap: 3rem;
   flex-wrap: wrap;
-  margin: 1rem;
   padding: 2rem;
-  border: 0.25rem solid black;
   width: 100%;
+  background-color: var(--color-red-100);
 
   position: relative;
-  background-color: #f9f9f9;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 
-  &:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        45deg,
-        transparent 33.33%,
-        var(--color-brand-500) 33.33%,
-        var(--color-brand-500) 66.66%,
-        transparent 66.66%
-      ),
-      linear-gradient(
-        -45deg,
-        transparent 33.33%,
-        var(--color-brand-500) 33.33%,
-        var(--color-brand-500) 66.66%,
-        transparent 66.66%
-      );
-    background-size: 10px 10px;
-    opacity: 0.3;
-  }
+  border: 0.25rem solid black;
+  border-style: solid;
+  border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
+  border-radius: 1rem;
 `;
 const HomeContent = styled.div`
   position: relative;
@@ -233,7 +213,11 @@ const Home = () => {
                   ref={refUser}
                   onKeyDown={handleOnSubmitFromEnter}
                 />
-                <Button type="button" onClick={handleOnChangeUser}>
+                <Button
+                  type="button"
+                  onClick={handleOnChangeUser}
+                  variant="rectangle"
+                >
                   ADD
                 </Button>
               </InputWithButton>

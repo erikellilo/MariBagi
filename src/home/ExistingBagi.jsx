@@ -7,7 +7,8 @@ import { editFromExistingUserBagi } from "../features/usersSlice";
 import { editFromExistingitemBagi } from "../features/itemsSlice";
 import getLocalStorage from "../assets/getLocalStorage";
 
-import Button from "../ui/Button";
+import Closeicon from "../../public/icon-close.svg";
+import Expand from "../../public/icon-pointing.svg";
 
 const ExistingBagiStyled = styled.div`
   width: 100%;
@@ -20,7 +21,9 @@ const ExistingBagiStyled = styled.div`
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.1rem;
+
+  position: relative;
 
   div {
     display: flex;
@@ -39,6 +42,77 @@ const ExistingBagiStyled = styled.div`
     font-size: 1rem;
     font-weight: bold;
   }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  position: absolute;
+  bottom: 80%;
+  left: 2%;
+  gap: 0.5rem;
+`;
+
+const ButtonRound = styled.button`
+  position: relative;
+  background-color: ${(props) =>
+    props.variant === "review"
+      ? "var(--color-green-500)"
+      : "var(--color-red-800)"};
+  color: var(--color-grey-0);
+  font-weight: bolder;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 100%;
+  outline: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  &::after {
+    content: "${(props) => props.tooltip}";
+    position: absolute;
+    top: 100%; /* Adjust this to control the distance */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-grey-0);
+    color: var(--color-grey-900);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    white-space: nowrap;
+
+    border: 0.1rem solid black;
+    border-style: solid;
+    border-radius: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out;
+    font-size: 0.75rem;
+  }
+
+  &:hover::after,
+  &:focus::after,
+  &:active::after {
+    opacity: 1;
+    visibility: visible;
+  }
+  & > * {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-out;
+  }
+
+  &:hover > *,
+  &:focus > *,
+  &:active > * {
+    opacity: 100;
+    visibility: visible;
+  }
+`;
+
+const HeaderExsisting = styled.div`
+  padding-top: 1.5rem;
 `;
 
 const ExistingBagi = memo(({ dataBagi, setShouldRedirect }) => {
@@ -64,10 +138,23 @@ const ExistingBagi = memo(({ dataBagi, setShouldRedirect }) => {
 
   return (
     <ExistingBagiStyled>
-      <div>
+      <ButtonContainer>
+        <ButtonRound variant="delete" title="delete" tooltip="delete">
+          <Closeicon />
+        </ButtonRound>
+        <ButtonRound
+          variant="review"
+          title="review"
+          tooltip="review"
+          onClick={handleOnClickExisting}
+        >
+          <Expand />
+        </ButtonRound>
+      </ButtonContainer>
+      <HeaderExsisting>
         <h3>{dataBagi.namaBagi}</h3>
         <span>{stringDate}</span>
-      </div>
+      </HeaderExsisting>
       <div>
         <ul>
           {sliceTwouser.map((user) => (
@@ -77,10 +164,6 @@ const ExistingBagi = memo(({ dataBagi, setShouldRedirect }) => {
             <li key="other">And {userCalculateLength - 2} more.. </li>
           )}
         </ul>
-
-        <Button type="button" onClick={handleOnClickExisting}>
-          Edit
-        </Button>
       </div>
     </ExistingBagiStyled>
   );
