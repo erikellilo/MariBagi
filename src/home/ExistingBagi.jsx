@@ -6,6 +6,7 @@ import { editFromExistingBagi } from "../features/bagiSlice";
 import { editFromExistingUserBagi } from "../features/usersSlice";
 import { editFromExistingitemBagi } from "../features/itemsSlice";
 import getLocalStorage from "../assets/getLocalStorage";
+import ButtonRound from "../ui/ButtonRound";
 
 import Closeicon from "../../public/icon-close.svg";
 import Expand from "../../public/icon-pointing.svg";
@@ -52,122 +53,83 @@ const ButtonContainer = styled.div`
   gap: 0.5rem;
 `;
 
-const ButtonRound = styled.button`
-  position: relative;
-  background-color: ${(props) =>
-    props.variant === "review"
-      ? "var(--color-green-500)"
-      : "var(--color-red-800)"};
-  color: var(--color-grey-0);
-  font-weight: bolder;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 100%;
-  outline: none;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
-  &::after {
-    content: "${(props) => props.tooltip}";
-    position: absolute;
-    top: 100%; /* Adjust this to control the distance */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--color-grey-0);
-    color: var(--color-grey-900);
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    white-space: nowrap;
-
-    border: 0.1rem solid black;
-    border-style: solid;
-    border-radius: 1rem;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease-in-out;
-    font-size: 0.75rem;
-  }
-
-  &:hover::after,
-  &:focus::after,
-  &:active::after {
-    opacity: 1;
-    visibility: visible;
-  }
-  & > * {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease-out;
-  }
-
-  &:hover > *,
-  &:focus > *,
-  &:active > * {
-    opacity: 100;
-    visibility: visible;
-  }
-`;
-
 const HeaderExsisting = styled.div`
   padding-top: 1.5rem;
 `;
 
-const ExistingBagi = memo(({ dataBagi, setShouldRedirect }) => {
-  const getLocalUser = getLocalStorage("user").filter(
-    (user) => user.bagiId === dataBagi.bagiId
-  );
-  const sliceTwouser =
-    getLocalUser.length > 2 ? getLocalUser?.slice(0, 2) : getLocalUser?.slice();
+const ExistingBagi = memo(
+  ({ dataBagi, setShouldRedirect, setExistingLocalState }) => {
+    const getLocalUser = getLocalStorage("user").filter(
+      (user) => user.bagiId === dataBagi.bagiId
+    );
+    const sliceTwouser =
+      getLocalUser.length > 2
+        ? getLocalUser?.slice(0, 2)
+        : getLocalUser?.slice();
 
-  const userCalculateLength = getLocalUser?.length;
-  const dispatch = useDispatch();
+    const userCalculateLength = getLocalUser?.length;
+    const dispatch = useDispatch();
 
-  const handleOnClickExisting = (e) => {
-    e.preventDefault();
-    setShouldRedirect(false);
-    dispatch(editFromExistingBagi(dataBagi));
-    dispatch(editFromExistingUserBagi(dataBagi.bagiId));
-    dispatch(editFromExistingitemBagi(dataBagi.bagiId));
-  };
+    const handleOnClickExisting = (e) => {
+      e.preventDefault();
+      setShouldRedirect(false);
+      dispatch(editFromExistingBagi(dataBagi));
+      dispatch(editFromExistingUserBagi(dataBagi.bagiId));
+      dispatch(editFromExistingitemBagi(dataBagi.bagiId));
+    };
 
-  const date = new Date(dataBagi.bagiDate);
-  const stringDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+    const handleDeleteExisting = (e) => {
+      e.preventDefault();
 
-  return (
-    <ExistingBagiStyled>
-      <ButtonContainer>
-        <ButtonRound variant="delete" title="delete" tooltip="delete">
-          <Closeicon />
-        </ButtonRound>
-        <ButtonRound
-          variant="review"
-          title="review"
-          tooltip="review"
-          onClick={handleOnClickExisting}
-        >
-          <Expand />
-        </ButtonRound>
-      </ButtonContainer>
-      <HeaderExsisting>
-        <h3>{dataBagi.namaBagi}</h3>
-        <span>{stringDate}</span>
-      </HeaderExsisting>
-      <div>
-        <ul>
-          {sliceTwouser.map((user) => (
-            <li key={user.userId}>{user.userName},</li>
-          ))}
-          {userCalculateLength > 2 && (
-            <li key="other">And {userCalculateLength - 2} more.. </li>
-          )}
-        </ul>
-      </div>
-    </ExistingBagiStyled>
-  );
-});
+      const getLocalBagi = getLocalStorage("bagi").filter(
+        (bagi) => bagi.bagiId !== dataBagi.bagiId
+      );
+
+      localStorage.setItem("bagi", JSON.stringify(getLocalBagi));
+      setExistingLocalState(getLocalBagi);
+    };
+
+    const date = new Date(dataBagi.bagiDate);
+    const stringDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+
+    return (
+      <ExistingBagiStyled>
+        <ButtonContainer>
+          <ButtonRound
+            variant="delete"
+            title="delete"
+            tooltip="delete"
+            onclick={handleDeleteExisting}
+          >
+            <Closeicon />
+          </ButtonRound>
+          <ButtonRound
+            variant="review"
+            title="review"
+            tooltip="review"
+            onclick={handleOnClickExisting}
+          >
+            <Expand />
+          </ButtonRound>
+        </ButtonContainer>
+        <HeaderExsisting>
+          <h3>{dataBagi.namaBagi}</h3>
+          <span>{stringDate}</span>
+        </HeaderExsisting>
+        <div>
+          <ul>
+            {sliceTwouser.map((user) => (
+              <li key={user.userId}>{user.userName},</li>
+            ))}
+            {userCalculateLength > 2 && (
+              <li key="other">And {userCalculateLength - 2} more.. </li>
+            )}
+          </ul>
+        </div>
+      </ExistingBagiStyled>
+    );
+  }
+);
 
 ExistingBagi.displayName = "ExistingBagi";
 

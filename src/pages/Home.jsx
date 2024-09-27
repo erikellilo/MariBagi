@@ -68,14 +68,15 @@ const Home = () => {
 
   const [formHome, setFormHome] = useState(namaBagi || "");
   const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [existingLocalState, setExistingLocalState] = useState(
+    getLocalStorage("bagi") || []
+  );
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const bagiIdRef = useRef(bagiId || new Date().getUTCMilliseconds());
   const refUser = useRef(null);
-
-  const existingLocalState = getLocalStorage("bagi");
 
   useEffect(() => {
     setFormHome(namaBagi);
@@ -236,6 +237,7 @@ const Home = () => {
                 key={local.bagiId}
                 dataBagi={local}
                 setShouldRedirect={setShouldRedirect}
+                setExistingLocalState={setExistingLocalState}
               />
             ))}
           </HomeContent>

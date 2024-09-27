@@ -25,7 +25,6 @@ export const itemsSlice = createSlice({
       },
     },
     deleteItem(state, action) {
-      console.log(action.payload);
       return state.filter((item) => item.itemId !== action.payload);
     },
     editFromExistingitemBagi(state, action) {

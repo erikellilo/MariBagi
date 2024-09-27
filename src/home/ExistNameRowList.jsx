@@ -1,5 +1,7 @@
 import { useDispatch } from "react-redux";
 import { deleteUser } from "../features/usersSlice";
+import ButtonRound from "../ui/ButtonRound";
+import Closeicon from "../../public/icon-close.svg";
 
 import styled from "styled-components";
 
@@ -10,23 +12,23 @@ const ExistNameRowListStyled = styled.li`
   background-color: var(--color-grey-0);
   border-style: solid;
   border-color: var(--color-grey-900);
-  border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
+  border-width: 0.25rem 0.45rem 0.45rem 0.25rem;
   border-radius: 1rem;
 
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  width: 7.5rem;
+  width: 8rem;
   height: 3.25rem;
   cursor: pointer;
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: auto;
   padding: 0 0.75rem;
+  gap: 0.25rem;
 
   transition: border-width 0.1s ease;
   &:hover {
-    border-width: 0.1rem 0.5rem 0.5rem 0.1rem;
+    border-width: 0.1rem 0.6rem 0.6rem 0.1rem;
   }
   &:active {
     border-width: 0.4rem 0.2rem 0.2rem 0.4rem;
@@ -38,8 +40,10 @@ const ExistNameRowListStyled = styled.li`
   }
 `;
 
+const ButtonContainer = styled.div``;
+
 const SpanText = styled.span`
-  flex-grow: 1;
+  flex-grow: 0;
   max-width: 5rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -55,8 +59,17 @@ const ExistNameRowList = ({ user }) => {
   };
   return (
     <ExistNameRowListStyled onClick={handleDeleteUser}>
+      <ButtonContainer>
+        <ButtonRound
+          variant="delete"
+          title="delete"
+          tooltip="delete"
+          onClick={handleDeleteUser}
+        >
+          <Closeicon />
+        </ButtonRound>
+      </ButtonContainer>
       <SpanText>{user.userName}</SpanText>
-      <span>&#x2716;</span>
     </ExistNameRowListStyled>
   );
 };
