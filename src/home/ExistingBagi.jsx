@@ -37,6 +37,16 @@ const ExistingBagiStyled = styled.div`
     align-items: center;
     justify-content: flex-start;
     gap: 0.5rem;
+
+    li {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
+  ul:has(> li:nth-child(3):last-child) > li {
+    max-width: 7.5rem;
   }
 
   span {
