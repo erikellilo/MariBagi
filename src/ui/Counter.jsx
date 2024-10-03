@@ -53,6 +53,7 @@ const Counter = ({ children, handleOnIncrement, user = "" }) => {
         handleClickButton={handleOnIncrement}
         isIncrement={false}
         uniqueId={user.userId}
+        color="green"
       >
         -
       </ButtonRectangle>

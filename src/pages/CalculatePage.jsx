@@ -38,34 +38,14 @@ const CalculateStyled = styled.div`
 
   border: 0.25rem solid black;
   position: relative;
-  background-color: #f9f9f9;
+  background-color: var(--color-red-100);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 
-  &:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        45deg,
-        transparent 33.33%,
-        var(--color-brand-500) 33.33%,
-        var(--color-brand-500) 66.66%,
-        transparent 66.66%
-      ),
-      linear-gradient(
-        -45deg,
-        transparent 33.33%,
-        var(--color-brand-500) 33.33%,
-        var(--color-brand-500) 66.66%,
-        transparent 66.66%
-      );
-    background-size: 10px 10px;
-    opacity: 0.3;
-  }
+  border: 0.25rem solid black;
+  border-style: solid;
+  border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
+  border-radius: 1rem;
 `;
 
 const CalculateContent = styled.div`
@@ -82,12 +62,17 @@ const CalculateContent = styled.div`
 `;
 
 const ExpanseCurrency = styled.div`
-  background-color: var(--color-brand-200);
+  background-color: var(--color-green-500);
   padding: 0.3rem 0.5rem 0rem 0.5rem;
   border: 0.2rem solid var(--color-grey-900);
   display: flex;
   align-items: center;
   justify-content: center;
+
+  border: 0.25rem solid black;
+  border-style: solid;
+  border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
+  border-radius: 1rem;
 
   transition: border-width 0.1s ease;
   h2 {
@@ -122,6 +107,11 @@ const ExpanseAmount = styled.div`
     font-size: 1.75rem;
     font-weight: bolder;
     color: var(--color-grey-900);
+    display: block;
+    max-width: 15rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 `;
 
@@ -130,12 +120,7 @@ const ExpanseContent = styled.div`
   align-items: stretch;
   justify-content: center;
   width: 100%;
-
-  &:focus-within ${ExpanseCurrency} {
-    background-color: var(--color-grey-500);
-    outline: 2px solid var(--color-brand-600);
-    outline-offset: -1px;
-  }
+  gap: 0.5rem;
 `;
 
 const InitialStateCalculate = {
@@ -145,13 +130,6 @@ const InitialStateCalculate = {
   isShared: true,
   userCalculate: [],
 };
-
-const selectBagiUserItemError = (state) => ({
-  bagi: state.bagi,
-  listUser: state.user,
-  item: state.item,
-  error: state.error,
-});
 
 const minusValidation = (value) => (value < 0 ? true : false);
 

@@ -4,7 +4,10 @@ const ButtonRectangleStyled = styled.button`
   font-size: 1.25rem;
   font-weight: 900;
   color: var(--color-gray-900);
-  background-color: var(--color-grey-0);
+  background-color: ${(props) =>
+    props.color === "green"
+      ? "var(--color-green-500)"
+      : "var(--color-red-800)"};
   border-style: solid;
   border-color: var(--color-grey-900);
   border-width: 0.2rem 0.4rem 0.4rem 0.2rem;
@@ -43,12 +46,14 @@ const ButtonRectangle = ({
   uniqueId = null,
   isIncrement = null,
   size,
+  color,
 }) => {
   return (
     <ButtonRectangleStyled
       type="button"
       onClick={(e) => handleClickButton(e, isIncrement, uniqueId)}
       size={size}
+      color={color}
     >
       {children}
     </ButtonRectangleStyled>

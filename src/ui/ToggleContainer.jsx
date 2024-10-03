@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import CheckedIcon from "../../public/icon-check.svg";
 
 const ToggleContainerContent = styled.label`
   display: inline-block;
@@ -69,7 +70,9 @@ const ToggleContainer = ({ name, id, handleOnchange, value }) => {
         value={value}
         checked={value}
       />
-      <ToggleSliderSpan />
+      <ToggleSliderSpan>
+        <CheckedIcon />
+      </ToggleSliderSpan>
     </ToggleContainerContent>
   );
 };
