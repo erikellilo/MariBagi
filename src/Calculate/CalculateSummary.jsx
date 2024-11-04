@@ -15,11 +15,15 @@ const CalculaterSummaryStyled = styled.div`
   flex-wrap: wrap;
   width: 100%;
 
-  border: 0.25rem solid black;
   position: relative;
-  background-color: #f9f9f9;
+  background-color: var(--color-red-100);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+
+  border: 0.25rem solid black;
+  border-style: solid;
+  border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
+  border-radius: 1rem;
 
   &:before {
     content: "";

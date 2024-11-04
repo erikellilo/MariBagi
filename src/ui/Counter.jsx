@@ -48,22 +48,23 @@ const Counter = ({ children, handleOnIncrement, user = "" }) => {
   return (
     <CounterContainer>
       <ButtonRectangle
-        // onClick={(e) => handleOnIncrement(e, false, user.userId)}
+        onClick={(e) => handleOnIncrement(e, false, user.userId)}
         type="button"
         handleClickButton={handleOnIncrement}
         isIncrement={false}
         uniqueId={user.userId}
-        color="green"
+        color="red"
       >
         -
       </ButtonRectangle>
       <span>{children}</span>
       <ButtonRectangle
-        // onClick={(e) => handleOnIncrement(e, true, user.userId)}
+        onClick={(e) => handleOnIncrement(e, true, user.userId)}
         type="button"
         handleClickButton={handleOnIncrement}
         isIncrement={true}
         uniqueId={user.userId}
+        color="green"
       >
         +
       </ButtonRectangle>

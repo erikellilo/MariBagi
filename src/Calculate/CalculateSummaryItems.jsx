@@ -3,16 +3,21 @@ import currencyFormat from "../assets/currencyFormat";
 import ButtonRectangle from "../ui/ButtonRectangle";
 import { useDispatch } from "react-redux";
 import { deleteItem } from "../features/itemsSlice";
+import IconClose from "../../public/icon-close.svg";
 
 const CalculateSummaryItemStyled = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: center;
   flex-direction: column;
-  border: 0.25rem solid var(--color-grey-900);
   padding: 0.25rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--color-grey-100);
+
+  background-color: var(--color-grey-0);
+
+  border: 0.25rem solid black;
+  border-style: solid;
+  border-width: 0.25rem 0.5rem 0.5rem 0.25rem;
+  border-radius: 1rem;
 `;
 
 const ItemContenctDiv = styled.div`
@@ -76,8 +81,9 @@ const CalculateSummaryItems = ({ item }) => {
           size="small"
           handleClickButton={handleDelete}
           uniqueId={itemId}
+          color="red"
         >
-          &#x2716;
+          <IconClose />
         </ButtonRectangle>
       </ItemContenctDiv>
       <ItemContenctDiv>
