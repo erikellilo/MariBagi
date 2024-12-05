@@ -171,36 +171,6 @@ const CalculatePage = () => {
     });
   };
 
-  const handleIncrementPerUsers = (e, increment, userInput = null) => {
-    e.preventDefault();
-    if (e.target.value < 0) return;
-    const isExistingUser = objectCalculate?.userCalculate.find(
-      (userExist) => userExist.userId === userInput
-    );
-    if (isExistingUser && isExistingUser?.amount <= 0 && !increment) return;
-
-    setObjectCalculate((prev) => {
-      let newUser = [...prev.userCalculate];
-
-      if (!isExistingUser) {
-        newUser.push({ userId: userInput, amount: increment ? 1 : 0 });
-      } else {
-        const oldData = newUser.findIndex((user) => user.userId === userInput);
-
-        newUser[oldData] = {
-          ...isExistingUser,
-          amount: increment
-            ? isExistingUser?.amount + 1
-            : isExistingUser?.amount - 1,
-        };
-      }
-      return {
-        ...prev,
-        userCalculate: newUser,
-      };
-    });
-  };
-
   const handleCheckedPartialShared = (e, userInput) => {
     const isExist = objectCalculate.userCalculate.find(
       (user) => user.userId === userInput
