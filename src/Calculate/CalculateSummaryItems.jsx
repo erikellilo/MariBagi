@@ -93,7 +93,7 @@ const CalculateSummaryItems = ({ item }) => {
           <span>x{item.calculateAmount}</span>
         </div>
 
-        {item.isShared ? (
+        {!item.isSharedPartial ? (
           <span>SHARED</span>
         ) : (
           <ul>

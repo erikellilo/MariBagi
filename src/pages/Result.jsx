@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 
@@ -9,7 +9,7 @@ import currencyFormat from "../assets/currencyFormat";
 
 const ResultContainer = styled.div`
   position: relative;
-  background-color: var(--color-grey-200);
+  background-color: #efe4db;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -17,35 +17,35 @@ const ResultContainer = styled.div`
   margin: 3rem 1rem;
   padding: 1rem 2rem;
   min-height: 50vh;
+  padding-bottom: 5rem;
+  position: relative;
 
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 0.95rem;
-    background-image: radial-gradient(
+  background: radial-gradient(
       circle at 50% 100%,
-      transparent 1rem,
-      var(--color-grey-200) 0.8rem
-    );
-    background-size: 1.72rem 1rem;
-    background-repeat: repeat-x;
-  }
+      transparent 15px,
+      #efe4db 16px
+    )
+    0 0/30px 100% repeat-x;
 
   &:before {
-    top: -0.9rem;
-    transform: rotate(180deg);
-  }
-  &:after {
-    bottom: -0.9rem;
+    content: "";
+    position: absolute;
+    top: -18px;
+    left: 0px;
+    width: 100%;
+    height: 20px;
+    background: radial-gradient(
+        circle at 50% 0%,
+        transparent 15px,
+        #efe4db 16px
+      )
+      0 0/30px 100% repeat-x;
   }
 `;
 
 const StyledTable = styled.table`
   max-width: 200rem;
-  width: 27.5rem;
+  width: 30rem;
   margin-top: 3rem;
   th,
   td {
@@ -55,6 +55,7 @@ const StyledTable = styled.table`
   thead {
     background-color: var(--color-brand-200);
     color: var(--color-grey-200);
+    text-align: left;
   }
   tbody {
     padding: 1rem;
@@ -76,6 +77,8 @@ const StyledHeader = styled.div`
   justify-content: center;
   flex-direction: column;
   width: 100%;
+  padding-bottom: 1.25rem;
+  border-bottom: 3px dotted black;
 
   h1 {
     text-align: center;
@@ -92,94 +95,132 @@ const StyledHeader = styled.div`
 
 const StyledTDRight = styled.td`
   text-align: right;
+  font-weight: bolder;
 `;
+
+const itemPricePersonCalculate = (
+  itemPrice,
+  amount,
+  listUsersLength,
+  listShared,
+  isShared
+) => {
+  const itemPricePerPerson = itemPrice * amount;
+  const listSharedLength = listShared?.length;
+  console.log(isShared);
+  const valuuePerItem =
+    listShared?.length >= 0 && !isShared
+      ? itemPricePerPerson / (listSharedLength + 1)
+      : itemPricePerPerson / listUsersLength;
+
+  return valuuePerItem;
+};
 
 const Result = () => {
   const { itemObject, userObject, namaBagi, itemObjectLength } =
     useSelector(resultSelector);
   let grandTotal = 0;
 
-  console.log(itemObjectLength);
-  const processedItems = itemObject.map((item) => ({
-    ...item,
-    userCalculateMap: new Map(item.userCalculate.map((uc) => [uc.userId, uc])),
-  }));
+  const getUserName = useCallback(
+    (userId) => {
+      return userObject.find((user) => user.userId === userId)?.userName;
+    },
+    [userObject]
+  );
 
   const getUserItems = useMemo(
     () => (userId) => {
-      const userItems = processedItems
-        .filter((item) => item.userCalculateMap?.has(userId) || item.isShared)
+      const userItems = itemObject
+        .filter((item) => {
+          return (
+            item.userCalculate?.some((user) => user.userId === userId) ||
+            !item.isSharedPartial
+          );
+        })
         .map((item) => {
-          const usercalc = item.userCalculateMap.get(userId);
-          const amount = usercalc ? usercalc.amount : 0;
+          const sharedPartialList = item.userCalculate
+            .filter((user) => user.userId !== userId)
+            .map((user) => getUserName(user.userId));
           return {
             itemName: item.calculateName,
             itemPrice: item.calculatePrice,
-            isShared: item.isShared,
-            amount: amount === 0 ? item.calculateAmount : amount,
+            isShared: !item.isSharedPartial,
+            amount: item.calculateAmount,
+            listShared: sharedPartialList,
+            itemPricePerson: itemPricePersonCalculate(
+              item.calculatePrice,
+              item.calculateAmount,
+              itemObjectLength,
+              sharedPartialList,
+              !item.isSharedPartial
+            ),
           };
         });
 
       const subTotal = userItems.reduce(
-        (total, item) =>
-          total +
-          item.itemPrice *
-            (item.isShared ? item.amount / itemObjectLength : item.amount),
+        (total, item) => total + item.itemPricePerson,
         0
       );
 
       return { userItems, subTotal };
     },
-    [itemObjectLength, processedItems]
+    [itemObjectLength, itemObject, getUserName]
   );
 
   return (
     <ResultContainer>
       <StyledHeader>
         <h1>Split Bill</h1>
-        <p>Pembagian Untuk : {namaBagi}</p>
+        <h2>{namaBagi}</h2>
         <p>2024 08 23</p>
       </StyledHeader>
 
       <StyledTable>
         <thead>
           <tr>
-            <th>Name/Item</th>
+            <th>Name</th>
             <th>Amount</th>
+            <th>Price Total/Person</th>
           </tr>
         </thead>
         <tbody>
-          {userObject.map((user, index) => {
+          {userObject.map((user) => {
             const { userItems, subTotal } = getUserItems(user.userId);
-
             grandTotal += subTotal;
 
             return (
               <Fragment key={user.userId}>
                 <tr key={user.userId}>
-                  <td colSpan="6">{user.userName}</td>
+                  <td
+                    colSpan="6"
+                    style={{
+                      fontWeight: "bolder",
+                      borderBottom: "2px dotted black",
+                    }}
+                  >
+                    {user.userName}
+                  </td>
                 </tr>
                 {userItems.map((item) => (
                   <TableItemResult
                     key={user.userId + item.itemName}
                     itemName={item.itemName}
-                    itemPrice={item.itemPrice}
                     amount={item.amount}
                     isShared={item.isShared}
-                    listUsersLength={itemObjectLength}
+                    listShared={item.listShared}
+                    itemPricePerson={item.itemPricePerson}
                   />
                 ))}
 
                 <tr>
-                  <StyledTDRight>Sub Total</StyledTDRight>
-                  <StyledTDRight>{currencyFormat(subTotal)}</StyledTDRight>
+                  <td colSpan="2">Sub Total</td>
+                  <StyledTDRight style={{ backgroundColor: "#EEE982" }}>
+                    {currencyFormat(subTotal)}
+                  </StyledTDRight>
                 </tr>
-
-                {index < itemObjectLength.length - 1 && (
-                  <tr>
-                    <td colSpan="2"></td>
-                  </tr>
-                )}
+                <tr>
+                  <td style={{ paddingBottom: "2rem" }}></td>
+                </tr>
               </Fragment>
             );
           })}
@@ -188,7 +229,13 @@ const Result = () => {
         <tfoot>
           <tr>
             <StyledTDRight>TOTAL</StyledTDRight>
-            <StyledTDRight>{currencyFormat(grandTotal)}</StyledTDRight>
+            <td></td>
+
+            <StyledTDRight>
+              <h3 style={{ backgroundColor: "#EEE982" }}>
+                {currencyFormat(grandTotal)}
+              </h3>
+            </StyledTDRight>
           </tr>
         </tfoot>
       </StyledTable>

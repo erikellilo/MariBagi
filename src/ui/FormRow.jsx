@@ -33,13 +33,19 @@ const Label = styled.label`
   color: var(--color-grey-900);
 `;
 
-const FormRow = ({ children, name, flexdirection = "column", hidden }) => {
+const FormRow = ({
+  children,
+  name,
+  hiddenName = false,
+  flexdirection = "column",
+  hidden,
+}) => {
   const { form, message } = useSelector((state) => state.error);
   return (
     <FormRowStyles hidden={hidden}>
       <FormContent flexdirection={flexdirection}>
         <Label htmlFor="" flexdirection={flexdirection}>
-          {name === "Jumlah" ? "" : name}
+          {hiddenName ? "" : name}
         </Label>
         {children}
         <ValidationWord validationhidden={name === form ? "block" : "none"}>

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const ButtonRectangleStyled = styled.button`
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: var(--color-gray-900);
   background-color: ${(props) =>
@@ -16,8 +16,8 @@ const ButtonRectangleStyled = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  width: ${(props) => (props.size === "small" ? "2rem" : "3.25rem")};
-  height: ${(props) => (props.size === "small" ? "2rem" : "3.25rem")};
+  width: ${(props) => (props.size === "small" ? "2rem" : "4rem")};
+  height: ${(props) => (props.size === "small" ? "2rem" : "4rem")};
   cursor: pointer;
   flex-grow: 0;
   flex-shrink: 0;

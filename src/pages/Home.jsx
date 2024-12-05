@@ -218,6 +218,7 @@ const Home = () => {
                   type="button"
                   onClick={handleOnChangeUser}
                   variant="rectangle"
+                  color="green"
                 >
                   ADD
                 </Button>

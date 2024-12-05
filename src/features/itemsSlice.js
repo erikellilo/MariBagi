@@ -13,9 +13,7 @@ export const itemsSlice = createSlice({
             itemId: Date.now(),
             ...itemsCalculate,
             bagiId: bagiId,
-            userCalculate: itemsCalculate.userCalculate.filter(
-              (user) => user.amount > 0
-            ),
+            userCalculate: itemsCalculate.userCalculate,
           },
         };
       },

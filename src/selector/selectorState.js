@@ -51,6 +51,15 @@ export const calculateSelector = createSelector(
   })
 );
 
+export const summarySelector = createSelector(
+  [selectBagi, selectUsers, selectItemAllObject],
+  (bagi, users, items) => ({
+    bagiId: bagi.bagiId,
+    userObject: users,
+    itemObject: items,
+  })
+);
+
 export const resultSelector = createSelector(
   [selectBagi, selectUsers, selectItemAllObject],
   (bagi, users, items) => ({

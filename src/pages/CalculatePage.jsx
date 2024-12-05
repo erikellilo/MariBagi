@@ -8,7 +8,6 @@ import { addError, clearError } from "../features/errorSlice";
 
 import { calculateSelector } from "../selector/selectorState";
 
-import CalculateUserList from "../calculate/CalculateUserRow";
 import CalculateSummary from "../calculate/CalculateSummary";
 
 import FormRow from "../ui/FormRow";
@@ -104,11 +103,11 @@ const ExpanseAmount = styled.div`
   margin-top: 1rem;
 
   & p {
-    font-size: 1.75rem;
+    font-size: 1.25rem;
     font-weight: bolder;
     color: var(--color-grey-900);
     display: block;
-    max-width: 15rem;
+    max-width: 11rem;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -127,7 +126,7 @@ const InitialStateCalculate = {
   calculateName: "",
   calculatePrice: 0,
   calculateAmount: 0,
-  isShared: true,
+  isSharedPartial: false,
   userCalculate: [],
 };
 
@@ -151,11 +150,6 @@ const CalculatePage = () => {
       return { ...prev, [e.target.id]: e.target.value };
     });
   };
-
-  const handleCheckBox = () =>
-    setObjectCalculate((prev) => {
-      return { ...prev, isShared: !prev.isShared };
-    });
 
   const handleMatchUserCount = (e) => {
     e.preventDefault();
@@ -207,6 +201,22 @@ const CalculatePage = () => {
     });
   };
 
+  const handleCheckedPartialShared = (e, userInput) => {
+    const isExist = objectCalculate.userCalculate.find(
+      (user) => user.userId === userInput
+    );
+
+    console.log(e.target.checked);
+    console.log(isExist);
+
+    setObjectCalculate((prev) => ({
+      ...prev,
+      userCalculate: isExist
+        ? prev.userCalculate.filter((user) => user.userId !== userInput)
+        : [...prev.userCalculate, { userId: userInput }],
+    }));
+  };
+
   const handleOnSubmitNewItem = (e) => {
     e.preventDefault();
 
@@ -214,10 +224,10 @@ const CalculatePage = () => {
       (item) => item === objectCalculate.calculateName && item !== bagiId
     );
 
-    const amountIntUser = objectCalculate.userCalculate?.reduce(
-      (acc, cur) => acc + cur.amount,
-      0
-    );
+    // const amountIntUser = objectCalculate.userCalculate?.reduce(
+    //   (acc, cur) => acc + cur.amount,
+    //   0
+    // );
     if (!objectCalculate.calculateName) {
       dispatch(clearError());
       dispatch(
@@ -234,20 +244,6 @@ const CalculatePage = () => {
           message: "Cannot Insert Same Name Of item",
         })
       );
-      return;
-    }
-
-    if (
-      !objectCalculate.isShared &&
-      amountIntUser !== objectCalculate.calculateAmount
-    ) {
-      dispatch(
-        addError({
-          form: "Amount Item",
-          message: "Amount In User Item Cannot More Than Amount Item",
-        })
-      );
-
       return;
     }
 
@@ -282,7 +278,7 @@ const CalculatePage = () => {
                 handleOnchange={handleChangeCalculate}
               />
             </FormRow>
-            <FormRow name="Amount Item">
+            <FormRow name="Price Per Item">
               <ExapanseContentAndAmount>
                 <ExpanseContent>
                   <ExpanseCurrency>
@@ -300,9 +296,8 @@ const CalculatePage = () => {
               </ExapanseContentAndAmount>
             </FormRow>
 
-            <FormRow name="Jumlah">
+            <FormRow name="Amount Item" hiddenName={false}>
               <ExpanseAmount>
-                <p>Jumlah</p>
                 <Button onClick={handleMatchUserCount} type="button">
                   Match User
                 </Button>
@@ -312,19 +307,28 @@ const CalculatePage = () => {
               </ExpanseAmount>
             </FormRow>
 
-            <FormRow name="Shared" flexdirection="row">
-              <ToggleContainer
-                name="sharedToggle"
-                id="isShared"
-                handleOnchange={handleCheckBox}
-                value={objectCalculate?.isShared}
-              />
+            <FormRow name="Shared Option" hiddenName={true}>
+              <ExpanseAmount>
+                <Button
+                  type="button"
+                  onClick={() =>
+                    setObjectCalculate((prev) => {
+                      return {
+                        ...prev,
+                        isSharedPartial: !prev.isSharedPartial,
+                      };
+                    })
+                  }
+                >
+                  Shared With..
+                </Button>
+              </ExpanseAmount>
             </FormRow>
 
-            {!objectCalculate.isShared && (
+            {objectCalculate.isSharedPartial && (
               <>
                 {userObject.map((user) => {
-                  const data = objectCalculate?.userCalculate.find(
+                  const userExist = objectCalculate?.userCalculate?.find(
                     (userInput) => userInput.userId === user.userId
                   );
 
@@ -332,19 +336,23 @@ const CalculatePage = () => {
                     <FormRow name="" key={user.userId}>
                       <ExpanseAmount>
                         <p>{user.userName}</p>
-                        <Counter
-                          handleOnIncrement={handleIncrementPerUsers}
-                          user={user}
-                        >
-                          {data?.amount || 0}
-                        </Counter>
+
+                        <ToggleContainer
+                          name={user.name}
+                          handleOnchange={(e) =>
+                            handleCheckedPartialShared(e, user.userId)
+                          }
+                          value={userExist}
+                        />
                       </ExpanseAmount>
                     </FormRow>
                   );
                 })}
               </>
             )}
-            <Button type="submit">Add New Items</Button>
+            <Button type="submit" color="green">
+              Add New Items
+            </Button>
           </Form>
         </CalculateContent>
       </CalculateStyled>

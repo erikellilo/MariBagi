@@ -11,25 +11,25 @@ const StyledTDRight = styled.td`
 
 const TableItemResult = ({
   itemName,
-  itemPrice,
   amount,
   isShared,
-  listUsersLength,
+  listShared,
+  itemPricePerson,
 }) => {
-  const getTotalPerItems =
-    (isShared ? amount / listUsersLength : amount) * itemPrice;
+  const sharedWith = listShared.join(listShared?.length === 2 ? " & " : ",");
 
   return (
     <>
       <tr>
+        <td style={{ minWidth: "8rem", fontWeight: "bold" }}>{itemName}</td>
         <td>
-          {itemName}
+          {amount}{" "}
           <StyledSpanForShared>
-            {" "}
-            x {isShared ? `${amount} (Shared With All)` : Math.floor(amount)}
-          </StyledSpanForShared>{" "}
+            {isShared ? ` With All` : sharedWith ? `with ${sharedWith}` : ""}
+          </StyledSpanForShared>
         </td>
-        <StyledTDRight>{currencyFormat(getTotalPerItems)}</StyledTDRight>
+
+        <StyledTDRight>{currencyFormat(itemPricePerson)}</StyledTDRight>
       </tr>
     </>
   );

@@ -9,12 +9,13 @@ const Button = styled.button`
     props.variant === "rectangle" ? "0.1rem 1.25rem" : "0.75rem"};
 
   background-color: ${(props) =>
-    props.variant === "rectangle"
+    props.color === "green"
       ? "var(--color-green-500)"
       : "var(--color-blue-500)"};
 
   font-weight: 900;
   font-size: 1.25rem;
+  min-width: 10.5rem;
 
   transition: all 0.1s ease;
   &:hover {

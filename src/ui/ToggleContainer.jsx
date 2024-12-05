@@ -70,7 +70,7 @@ const ToggleContainer = ({ name, id, handleOnchange, value }) => {
         id={id}
         onChange={handleOnchange}
         value={value}
-        checked={value}
+        checked={value ? true : false}
       />
       <ToggleSliderSpan>{value && <CheckedIcon />}</ToggleSliderSpan>
     </ToggleContainerContent>
