@@ -133,9 +133,9 @@ const InitialStateCalculate = {
 const minusValidation = (value) => (value < 0 ? true : false);
 
 const CalculatePage = () => {
-  const { bagiId, namaBagi, userObject, calculateName } =
-    useSelector(calculateSelector);
+  const { bagiId, namaBagi, userObject, calculateName } = useSelector(calculateSelector);
   const [objectCalculate, setObjectCalculate] = useState(InitialStateCalculate);
+  const [displayShare, setDisplayShare] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -164,49 +164,35 @@ const CalculatePage = () => {
     setObjectCalculate((prev) => {
       return {
         ...prev,
-        calculateAmount: increment
-          ? prev.calculateAmount + 1
-          : prev.calculateAmount - 1,
+        calculateAmount: increment ? prev.calculateAmount + 1 : prev.calculateAmount - 1,
       };
     });
   };
 
   const handleCheckedPartialShared = (e, userInput) => {
-    const isExist = objectCalculate.userCalculate.find(
-      (user) => user.userId === userInput
-    );
-
-    console.log(e.target.checked);
-    console.log(isExist);
+    const isExist = objectCalculate.userCalculate.find((user) => user.userId === userInput);
 
     setObjectCalculate((prev) => ({
       ...prev,
-      userCalculate: isExist
-        ? prev.userCalculate.filter((user) => user.userId !== userInput)
-        : [...prev.userCalculate, { userId: userInput }],
+      userCalculate: isExist ? prev.userCalculate.filter((user) => user.userId !== userInput) : [...prev.userCalculate, { userId: userInput }],
     }));
   };
 
   const handleOnSubmitNewItem = (e) => {
     e.preventDefault();
 
-    const isExistListItem = calculateName.findIndex(
-      (item) => item === objectCalculate.calculateName && item !== bagiId
-    );
+    const isExistListItem = calculateName.findIndex((item) => item === objectCalculate.calculateName && item !== bagiId);
 
-    // const amountIntUser = objectCalculate.userCalculate?.reduce(
-    //   (acc, cur) => acc + cur.amount,
-    //   0
-    // );
     if (!objectCalculate.calculateName) {
+      console.log("masuk");
       dispatch(clearError());
-      dispatch(
-        addError({ form: "Expanse For", message: "Cannot Insert Empty Name" })
-      );
+      dispatch(addError({ form: "Expanse For", message: "Cannot Insert Empty Name" }));
       return;
     }
 
     if (isExistListItem >= 0) {
+      console.log("masuk2");
+
       dispatch(clearError());
       dispatch(
         addError({
@@ -218,6 +204,8 @@ const CalculatePage = () => {
     }
 
     if (objectCalculate.calculateAmount <= 0) {
+      console.log("masuk3");
+
       dispatch(
         addError({
           form: "Jumlah",
@@ -233,6 +221,15 @@ const CalculatePage = () => {
     setObjectCalculate(InitialStateCalculate);
   };
 
+  const handleSharedWithAll = (e) => {
+    e.preventDefault();
+    !displayShare && setDisplayShare(true);
+    setObjectCalculate((prev) => ({
+      ...prev,
+      userCalculate: prev.userCalculate?.length > 0 ? [] : userObject.map((user) => ({ userId: user.userId })),
+    }));
+  };
+
   return (
     <CalculateContainer>
       <CalculateStyled>
@@ -240,13 +237,7 @@ const CalculatePage = () => {
           <h1>Calculate - {namaBagi}</h1>
           <Form onSubmit={handleOnSubmitNewItem} form="calculateForm">
             <FormRow name="Expanse For">
-              <Input
-                id="calculateName"
-                name="expanse"
-                placeholder="Bayarin Apa nih"
-                value={objectCalculate.calculateName}
-                handleOnchange={handleChangeCalculate}
-              />
+              <Input id="calculateName" name="expanse" placeholder="Bayarin Apa nih" value={objectCalculate.calculateName} handleOnchange={handleChangeCalculate} />
             </FormRow>
             <FormRow name="Price Per Item">
               <ExapanseContentAndAmount>
@@ -254,14 +245,7 @@ const CalculatePage = () => {
                   <ExpanseCurrency>
                     <h2>Rp</h2>
                   </ExpanseCurrency>
-                  <Input
-                    id="calculatePrice"
-                    name="amount"
-                    placeholder="Berapa nih?"
-                    type="number"
-                    value={objectCalculate.calculatePrice}
-                    handleOnchange={handleChangeCalculate}
-                  />
+                  <Input id="calculatePrice" name="amount" placeholder="Berapa nih?" type="number" value={objectCalculate.calculatePrice} handleOnchange={handleChangeCalculate} />
                 </ExpanseContent>
               </ExapanseContentAndAmount>
             </FormRow>
@@ -271,49 +255,32 @@ const CalculatePage = () => {
                 <Button onClick={handleMatchUserCount} type="button">
                   Match User
                 </Button>
-                <Counter handleOnIncrement={handleOnIncrement}>
-                  {objectCalculate.calculateAmount}
-                </Counter>
+                <Counter handleOnIncrement={handleOnIncrement}>{objectCalculate.calculateAmount}</Counter>
               </ExpanseAmount>
             </FormRow>
 
             <FormRow name="Shared Option" hiddenName={true}>
               <ExpanseAmount>
-                <Button
-                  type="button"
-                  onClick={() =>
-                    setObjectCalculate((prev) => {
-                      return {
-                        ...prev,
-                        isSharedPartial: !prev.isSharedPartial,
-                      };
-                    })
-                  }
-                >
+                <Button type="button" onClick={() => setDisplayShare((prev) => !prev)}>
                   Shared With..
+                </Button>
+                <Button type="button" onClick={handleSharedWithAll}>
+                  Shared All
                 </Button>
               </ExpanseAmount>
             </FormRow>
 
-            {objectCalculate.isSharedPartial && (
+            {displayShare && (
               <>
                 {userObject.map((user) => {
-                  const userExist = objectCalculate?.userCalculate?.find(
-                    (userInput) => userInput.userId === user.userId
-                  );
+                  const userExist = objectCalculate?.userCalculate?.find((userInput) => userInput.userId === user.userId);
 
                   return (
                     <FormRow name="" key={user.userId}>
                       <ExpanseAmount>
                         <p>{user.userName}</p>
 
-                        <ToggleContainer
-                          name={user.name}
-                          handleOnchange={(e) =>
-                            handleCheckedPartialShared(e, user.userId)
-                          }
-                          value={userExist}
-                        />
+                        <ToggleContainer name={user.name} handleOnchange={(e) => handleCheckedPartialShared(e, user.userId)} value={userExist} />
                       </ExpanseAmount>
                     </FormRow>
                   );

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CheckedIcon from "../../public/icon-check.svg";
+import CheckedIcon from "../assets/icon/icon-check.svg";
 
 const ToggleContainerContent = styled.label`
   display: inline-block;

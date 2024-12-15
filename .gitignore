@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+src/Calculate/CalculateSummary.jsx
+src/Calculate/CalculateSummaryItems.jsx

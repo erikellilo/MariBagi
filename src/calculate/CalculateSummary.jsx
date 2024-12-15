@@ -34,20 +34,7 @@ const CalculaterSummaryStyled = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        45deg,
-        transparent 33.33%,
-        var(--color-brand-500) 33.33%,
-        var(--color-brand-500) 66.66%,
-        transparent 66.66%
-      ),
-      linear-gradient(
-        -45deg,
-        transparent 33.33%,
-        var(--color-brand-500) 33.33%,
-        var(--color-brand-500) 66.66%,
-        transparent 66.66%
-      );
+    background: linear-gradient(45deg, transparent 33.33%, var(--color-brand-500) 33.33%, var(--color-brand-500) 66.66%, transparent 66.66%), linear-gradient(-45deg, transparent 33.33%, var(--color-brand-500) 33.33%, var(--color-brand-500) 66.66%, transparent 66.66%);
     background-size: 10px 10px;
     opacity: 0.3;
   }
@@ -72,6 +59,8 @@ const CalculateSummary = memo(() => {
     return acc;
   }, {});
 
+  const userObjectLength = userObject.length;
+
   const processedItems = itemObject.map((item) => ({
     ...item,
     userCalculate: item.userCalculate.map((userCalc) => ({
@@ -90,7 +79,7 @@ const CalculateSummary = memo(() => {
     <CalculaterSummaryStyled listitemslength={listitemslength ? 1 : 0}>
       <CalculatSummaryContent>
         {processedItems.map((item) => (
-          <CalculateSummaryItems key={item.itemId} item={item} />
+          <CalculateSummaryItems key={item.itemId} item={item} userObjectLength={userObjectLength} />
         ))}
         <Button onClick={handleDetailRedirect} type="button" color="green">
           Details..

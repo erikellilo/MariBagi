@@ -3,7 +3,7 @@ import currencyFormat from "../assets/currencyFormat";
 import ButtonRectangle from "../ui/ButtonRectangle";
 import { useDispatch } from "react-redux";
 import { deleteItem } from "../features/itemsSlice";
-import IconClose from "../../public/icon-close.svg";
+import IconClose from "../assets/icon/icon-close.svg";
 
 const CalculateSummaryItemStyled = styled.div`
   display: flex;
@@ -62,10 +62,7 @@ const ItemContenctDiv = styled.div`
 const CalculateSummaryItems = ({ item }) => {
   const { userCalculate, itemId } = item;
   const userCalculateLength = userCalculate?.length;
-  const sliceTwouser =
-    userCalculate?.length > 2
-      ? userCalculate?.slice(0, 2)
-      : userCalculate?.slice();
+  const sliceTwouser = userCalculate?.length > 2 ? userCalculate?.slice(0, 2) : userCalculate?.slice();
   const dispatch = useDispatch();
 
   const handleDelete = (e, _, uniqueId) => {
@@ -77,12 +74,7 @@ const CalculateSummaryItems = ({ item }) => {
       <ItemContenctDiv>
         <h3>{item.calculateName}</h3>
 
-        <ButtonRectangle
-          size="small"
-          handleClickButton={handleDelete}
-          uniqueId={itemId}
-          color="red"
-        >
+        <ButtonRectangle size="small" handleClickButton={handleDelete} uniqueId={itemId} color="red">
           <IconClose />
         </ButtonRectangle>
       </ItemContenctDiv>
@@ -100,9 +92,7 @@ const CalculateSummaryItems = ({ item }) => {
             {sliceTwouser?.map((user) => (
               <li key={user.userId}>{user.userName}</li>
             ))}
-            {userCalculateLength > 2 && (
-              <li key="other">And {userCalculateLength - 2} more.. </li>
-            )}
+            {userCalculateLength > 2 && <li key="other">And {userCalculateLength - 2} more.. </li>}
           </ul>
         )}
       </ItemContenctDiv>
