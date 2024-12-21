@@ -20,12 +20,7 @@ const ResultContainer = styled.div`
   padding-bottom: 5rem;
   position: relative;
 
-  background: radial-gradient(
-      circle at 50% 100%,
-      transparent 15px,
-      #efe4db 16px
-    )
-    0 0/30px 100% repeat-x;
+  background: radial-gradient(circle at 50% 100%, transparent 15px, #efe4db 16px) 0 0/30px 100% repeat-x;
 
   &:before {
     content: "";
@@ -34,12 +29,7 @@ const ResultContainer = styled.div`
     left: 0px;
     width: 100%;
     height: 20px;
-    background: radial-gradient(
-        circle at 50% 0%,
-        transparent 15px,
-        #efe4db 16px
-      )
-      0 0/30px 100% repeat-x;
+    background: radial-gradient(circle at 50% 0%, transparent 15px, #efe4db 16px) 0 0/30px 100% repeat-x;
   }
 `;
 
@@ -98,28 +88,18 @@ const StyledTDRight = styled.td`
   font-weight: bolder;
 `;
 
-const itemPricePersonCalculate = (
-  itemPrice,
-  amount,
-  listUsersLength,
-  listShared,
-  isShared
-) => {
+const itemPricePersonCalculate = (itemPrice, amount, listUsersLength, listShared, userLength) => {
   const itemPricePerPerson = itemPrice * amount;
   const listSharedLength = listShared?.length;
-  console.log(isShared);
-  const valuuePerItem =
-    listShared?.length >= 0 && !isShared
-      ? itemPricePerPerson / (listSharedLength + 1)
-      : itemPricePerPerson / listUsersLength;
+  const valuuePerItem = listShared?.length >= 0 && !userLength ? itemPricePerPerson / (listSharedLength + 1) : itemPricePerPerson / listUsersLength;
 
   return valuuePerItem;
 };
 
 const Result = () => {
-  const { itemObject, userObject, namaBagi, itemObjectLength } =
-    useSelector(resultSelector);
+  const { itemObject, userObject, namaBagi, itemObjectLength } = useSelector(resultSelector);
   let grandTotal = 0;
+  const userLength = userObject?.length;
 
   const getUserName = useCallback(
     (userId) => {
@@ -132,39 +112,26 @@ const Result = () => {
     () => (userId) => {
       const userItems = itemObject
         .filter((item) => {
-          return (
-            item.userCalculate?.some((user) => user.userId === userId) ||
-            !item.isSharedPartial
-          );
+          return item.userCalculate?.some((user) => user.userId === userId) || userLength === item.userCalculate.length;
         })
         .map((item) => {
-          const sharedPartialList = item.userCalculate
-            .filter((user) => user.userId !== userId)
-            .map((user) => getUserName(user.userId));
+          const sharedPartialList = item.userCalculate.filter((user) => user.userId !== userId).map((user) => getUserName(user.userId));
+          const userLengthMap = userLength === item.userCalculate.length;
           return {
             itemName: item.calculateName,
             itemPrice: item.calculatePrice,
             isShared: !item.isSharedPartial,
             amount: item.calculateAmount,
             listShared: sharedPartialList,
-            itemPricePerson: itemPricePersonCalculate(
-              item.calculatePrice,
-              item.calculateAmount,
-              itemObjectLength,
-              sharedPartialList,
-              !item.isSharedPartial
-            ),
+            itemPricePerson: itemPricePersonCalculate(item.calculatePrice, item.calculateAmount, itemObjectLength, sharedPartialList, userLengthMap),
           };
         });
 
-      const subTotal = userItems.reduce(
-        (total, item) => total + item.itemPricePerson,
-        0
-      );
+      const subTotal = userItems.reduce((total, item) => total + item.itemPricePerson, 0);
 
       return { userItems, subTotal };
     },
-    [itemObjectLength, itemObject, getUserName]
+    [itemObjectLength, itemObject, getUserName, userLength]
   );
 
   return (
@@ -202,21 +169,12 @@ const Result = () => {
                   </td>
                 </tr>
                 {userItems.map((item) => (
-                  <TableItemResult
-                    key={user.userId + item.itemName}
-                    itemName={item.itemName}
-                    amount={item.amount}
-                    isShared={item.isShared}
-                    listShared={item.listShared}
-                    itemPricePerson={item.itemPricePerson}
-                  />
+                  <TableItemResult key={user.userId + item.itemName} itemName={item.itemName} amount={item.amount} isShared={item.isShared} listShared={item.listShared} itemPricePerson={item.itemPricePerson} userLength={userLength} />
                 ))}
 
                 <tr>
                   <td colSpan="2">Sub Total</td>
-                  <StyledTDRight style={{ backgroundColor: "#EEE982" }}>
-                    {currencyFormat(subTotal)}
-                  </StyledTDRight>
+                  <StyledTDRight style={{ backgroundColor: "#EEE982" }}>{currencyFormat(subTotal)}</StyledTDRight>
                 </tr>
                 <tr>
                   <td style={{ paddingBottom: "2rem" }}></td>
@@ -232,9 +190,7 @@ const Result = () => {
             <td></td>
 
             <StyledTDRight>
-              <h3 style={{ backgroundColor: "#EEE982" }}>
-                {currencyFormat(grandTotal)}
-              </h3>
+              <h3 style={{ backgroundColor: "#EEE982" }}>{currencyFormat(grandTotal)}</h3>
             </StyledTDRight>
           </tr>
         </tfoot>

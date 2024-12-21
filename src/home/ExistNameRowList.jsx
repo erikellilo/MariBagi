@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { deleteUser } from "../features/usersSlice";
 import ButtonRound from "../ui/ButtonRound";
-import Closeicon from "../../public/icon-close.svg";
+import Closeicon from "../assets/icon/icon-close.svg";
 
 import styled from "styled-components";
 

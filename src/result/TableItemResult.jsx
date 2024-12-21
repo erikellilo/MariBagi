@@ -9,13 +9,9 @@ const StyledTDRight = styled.td`
   text-align: right;
 `;
 
-const TableItemResult = ({
-  itemName,
-  amount,
-  isShared,
-  listShared,
-  itemPricePerson,
-}) => {
+const TableItemResult = ({ itemName, amount, listShared, itemPricePerson, userLength }) => {
+  console.log(listShared);
+  const lengthOfShared = listShared.length === userLength - 1;
   const sharedWith = listShared.join(listShared?.length === 2 ? " & " : ",");
 
   return (
@@ -23,10 +19,7 @@ const TableItemResult = ({
       <tr>
         <td style={{ minWidth: "8rem", fontWeight: "bold" }}>{itemName}</td>
         <td>
-          {amount}{" "}
-          <StyledSpanForShared>
-            {isShared ? ` With All` : sharedWith ? `with ${sharedWith}` : ""}
-          </StyledSpanForShared>
+          {amount} <StyledSpanForShared>{lengthOfShared ? ` With All` : sharedWith ? `with ${sharedWith}` : ""}</StyledSpanForShared>
         </td>
 
         <StyledTDRight>{currencyFormat(itemPricePerson)}</StyledTDRight>

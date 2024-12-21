@@ -8,8 +8,8 @@ import { editFromExistingitemBagi } from "../features/itemsSlice";
 import getLocalStorage from "../assets/getLocalStorage";
 import ButtonRound from "../ui/ButtonRound";
 
-import Closeicon from "../../public/icon-close.svg";
-import Expand from "../../public/icon-pointing.svg";
+import Closeicon from "../assets/icon/icon-close.svg";
+import Expand from "../assets/icon/icon-pointing.svg";
 
 const ExistingBagiStyled = styled.div`
   width: 100%;
