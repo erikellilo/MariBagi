@@ -67,79 +67,58 @@ const HeaderExsisting = styled.div`
   padding-top: 1.5rem;
 `;
 
-const ExistingBagi = memo(
-  ({ dataBagi, setShouldRedirect, setExistingLocalState }) => {
-    const getLocalUser = getLocalStorage("user").filter(
-      (user) => user.bagiId === dataBagi.bagiId
-    );
-    const sliceTwouser =
-      getLocalUser.length > 2
-        ? getLocalUser?.slice(0, 2)
-        : getLocalUser?.slice();
+const ExistingBagi = memo(({ dataBagi, setShouldRedirect, setExistingLocalState }) => {
+  const getLocalUser = getLocalStorage("user").filter((user) => user.bagiId === dataBagi.bagiId);
+  const sliceTwouser = getLocalUser.length > 2 ? getLocalUser?.slice(0, 2) : getLocalUser?.slice();
 
-    const userCalculateLength = getLocalUser?.length;
-    const dispatch = useDispatch();
+  const userCalculateLength = getLocalUser?.length;
+  const dispatch = useDispatch();
 
-    const handleOnClickExisting = (e) => {
-      e.preventDefault();
-      setShouldRedirect(false);
-      dispatch(editFromExistingBagi(dataBagi));
-      dispatch(editFromExistingUserBagi(dataBagi.bagiId));
-      dispatch(editFromExistingitemBagi(dataBagi.bagiId));
-    };
+  const handleOnClickExisting = (e) => {
+    e.preventDefault();
+    setShouldRedirect(false);
+    dispatch(editFromExistingBagi(dataBagi));
+    dispatch(editFromExistingUserBagi(dataBagi.bagiId));
+    dispatch(editFromExistingitemBagi(dataBagi.bagiId));
+  };
 
-    const handleDeleteExisting = (e) => {
-      e.preventDefault();
+  const handleDeleteExisting = (e) => {
+    e.preventDefault();
 
-      const getLocalBagi = getLocalStorage("bagi").filter(
-        (bagi) => bagi.bagiId !== dataBagi.bagiId
-      );
+    const getLocalBagi = getLocalStorage("bagi").filter((bagi) => bagi.bagiId !== dataBagi.bagiId);
 
-      localStorage.setItem("bagi", JSON.stringify(getLocalBagi));
-      setExistingLocalState(getLocalBagi);
-    };
+    localStorage.setItem("bagi", JSON.stringify(getLocalBagi));
+    setExistingLocalState(getLocalBagi);
+  };
 
-    const date = new Date(dataBagi.bagiDate);
-    const stringDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+  const date = new Date(dataBagi.bagiDate);
+  const stringDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
 
-    return (
-      <ExistingBagiStyled>
-        <ButtonContainer>
-          <ButtonRound
-            variant="delete"
-            title="delete"
-            tooltip="delete"
-            onclick={handleDeleteExisting}
-          >
-            <Closeicon />
-          </ButtonRound>
-          <ButtonRound
-            variant="review"
-            title="review"
-            tooltip="review"
-            onclick={handleOnClickExisting}
-          >
-            <Expand />
-          </ButtonRound>
-        </ButtonContainer>
-        <HeaderExsisting>
-          <h3>{dataBagi.namaBagi}</h3>
-          <span>{stringDate}</span>
-        </HeaderExsisting>
-        <div>
-          <ul>
-            {sliceTwouser.map((user) => (
-              <li key={user.userId}>{user.userName},</li>
-            ))}
-            {userCalculateLength > 2 && (
-              <li key="other">And {userCalculateLength - 2} more.. </li>
-            )}
-          </ul>
-        </div>
-      </ExistingBagiStyled>
-    );
-  }
-);
+  return (
+    <ExistingBagiStyled>
+      <ButtonContainer>
+        <ButtonRound variant="delete" title="delete" tooltip="delete" onclick={handleDeleteExisting}>
+          <Closeicon />
+        </ButtonRound>
+        <ButtonRound variant="review" title="review" tooltip="review" onclick={handleOnClickExisting}>
+          <Expand />
+        </ButtonRound>
+      </ButtonContainer>
+      <HeaderExsisting>
+        <h3>{dataBagi.namaBagi}</h3>
+        <span>{stringDate}</span>
+      </HeaderExsisting>
+      <div>
+        <ul>
+          {sliceTwouser.map((user) => (
+            <li key={user.userId}>{user.userName},</li>
+          ))}
+          {userCalculateLength > 2 && <li key="other">And {userCalculateLength - 2} more.. </li>}
+        </ul>
+      </div>
+    </ExistingBagiStyled>
+  );
+});
 
 ExistingBagi.displayName = "ExistingBagi";
 
