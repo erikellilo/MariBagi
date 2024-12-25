@@ -16,6 +16,7 @@ const CalculaterSummaryStyled = styled.div`
   padding: 1rem 2rem;
   flex-wrap: wrap;
   width: 100%;
+  max-width: 35rem;
 
   position: relative;
   background-color: var(--color-red-100);
