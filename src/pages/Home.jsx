@@ -68,9 +68,7 @@ const Home = () => {
 
   const [formHome, setFormHome] = useState(namaBagi || "");
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const [existingLocalState, setExistingLocalState] = useState(
-    getLocalStorage("bagi") || []
-  );
+  const [existingLocalState, setExistingLocalState] = useState(getLocalStorage("bagi") || []);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -95,14 +93,9 @@ const Home = () => {
     e.preventDefault();
     const inputValue = refUser.current.value;
 
-    if (
-      userIds?.length > 0 &&
-      userNames?.find((user) => user.toUpperCase() === inputValue.toUpperCase())
-    ) {
+    if (userIds?.length > 0 && userNames?.find((user) => user.toUpperCase() === inputValue.toUpperCase())) {
       dispatch(clearError());
-      dispatch(
-        addError({ form: "NAMA", message: "Cannot Add Same Name In One Bagi" })
-      );
+      dispatch(addError({ form: "NAMA", message: "Cannot Add Same Name In One Bagi" }));
       return;
     }
 
@@ -134,19 +127,13 @@ const Home = () => {
   const handleSubmitForm = (e) => {
     e.preventDefault();
 
-    const isExistingLocal = existingLocalState?.findIndex(
-      (users) => users.bagiId === bagiId
-    );
+    const isExistingLocal = existingLocalState?.findIndex((users) => users.bagiId === bagiId);
 
-    const isExistingName = existingLocalState?.findIndex(
-      (users) => users.namaBagi.toUpperCase() === formHome.toUpperCase()
-    );
+    const isExistingName = existingLocalState?.findIndex((users) => users.namaBagi.toUpperCase() === formHome.toUpperCase());
 
     if (userIds.length < 2) {
       dispatch(clearError());
-      dispatch(
-        addError({ form: "BAGI", message: "Need to Insert Minimal Of 2 Users" })
-      );
+      dispatch(addError({ form: "BAGI", message: "Need to Insert Minimal Of 2 Users" }));
       return;
     }
 
@@ -161,10 +148,7 @@ const Home = () => {
       return;
     }
 
-    if (
-      isExistingName >= 0 &&
-      existingLocalState[isExistingName].bagiId !== bagiIdRef.current
-    ) {
+    if (isExistingName >= 0 && existingLocalState[isExistingName].bagiId !== bagiIdRef.current) {
       dispatch(clearError());
       dispatch(
         addError({
@@ -175,9 +159,7 @@ const Home = () => {
       return;
     }
 
-    dispatch(
-      insertBagi({ formHome, bagiId: bagiIdRef.current, isExistingLocal })
-    );
+    dispatch(insertBagi({ formHome, bagiId: bagiIdRef.current, isExistingLocal }));
     dispatch(clearError());
     setShouldRedirect(true);
   };
@@ -195,31 +177,13 @@ const Home = () => {
       <HomeStyled>
         <HomeContent>
           <Form onSubmit={handleSubmitForm}>
-            <FormRow name="BAGI" k>
-              <Input
-                type="text"
-                id="bagi"
-                name="name"
-                value={formHome}
-                placeholder="Tiket Dufan, Makan Senop, Nongkrong Blok M ..."
-                handleOnchange={handleOnChangeName}
-              />
+            <FormRow name="Split Group Name">
+              <Input type="text" id="bagi" name="name" value={formHome} placeholder="Tiket Dufan, Makan Senop, Nongkrong Blok M ..." handleOnchange={handleOnChangeName} />
             </FormRow>
-            <FormRow name="NAMA">
+            <FormRow name="Member Name">
               <InputWithButton>
-                <Input
-                  type="text"
-                  id="users"
-                  name="users"
-                  ref={refUser}
-                  onKeyDown={handleOnSubmitFromEnter}
-                />
-                <Button
-                  type="button"
-                  onClick={handleOnChangeUser}
-                  variant="rectangle"
-                  color="green"
-                >
+                <Input type="text" id="users" name="users" ref={refUser} onKeyDown={handleOnSubmitFromEnter} />
+                <Button type="button" onClick={handleOnChangeUser} variant="rectangle" color="green">
                   ADD
                 </Button>
               </InputWithButton>
@@ -234,12 +198,7 @@ const Home = () => {
           <HomeContent>
             <h2>Existing Bagi</h2>
             {existingLocalState?.map((local) => (
-              <ExistingBagi
-                key={local.bagiId}
-                dataBagi={local}
-                setShouldRedirect={setShouldRedirect}
-                setExistingLocalState={setExistingLocalState}
-              />
+              <ExistingBagi key={local.bagiId} dataBagi={local} setShouldRedirect={setShouldRedirect} setExistingLocalState={setExistingLocalState} />
             ))}
           </HomeContent>
         </HomeStyled>

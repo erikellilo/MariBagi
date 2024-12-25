@@ -39,6 +39,12 @@ const ItemContenctDiv = styled.div`
     font-weight: bold;
   }
 
+  h3 {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
   ul {
     display: flex;
     align-items: center;

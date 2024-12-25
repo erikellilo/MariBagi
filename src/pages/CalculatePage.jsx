@@ -27,7 +27,7 @@ const CalculateContainer = styled.div`
 `;
 
 const CalculateStyled = styled.div`
-  width: 32rem;
+  width: 35rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -131,6 +131,12 @@ const InitialStateCalculate = {
 };
 
 const minusValidation = (value) => (value < 0 ? true : false);
+const currencyFormatWithoutCurrencyCode = (number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "decimal",
+    currency: "IDR",
+  }).format(number);
+};
 
 const CalculatePage = () => {
   const { bagiId, namaBagi, userObject, calculateName } = useSelector(calculateSelector);
@@ -145,9 +151,16 @@ const CalculatePage = () => {
 
   const handleChangeCalculate = (e) => {
     e.preventDefault();
-    if (e.target.type === "number" && minusValidation(e.target.value)) return;
     setObjectCalculate((prev) => {
       return { ...prev, [e.target.id]: e.target.value };
+    });
+  };
+
+  const handleChangeCalculatePrice = (e) => {
+    const numericValue = e.target.value.replace(/[^0-9]/g, "");
+    const formattedValue = numericValue.replace(/^0+/, "");
+    setObjectCalculate((prev) => {
+      return { ...prev, [e.target.id]: formattedValue };
     });
   };
 
@@ -237,7 +250,7 @@ const CalculatePage = () => {
           <h1>Calculate - {namaBagi}</h1>
           <Form onSubmit={handleOnSubmitNewItem} form="calculateForm">
             <FormRow name="Expanse For">
-              <Input id="calculateName" name="expanse" placeholder="Bayarin Apa nih" value={objectCalculate.calculateName} handleOnchange={handleChangeCalculate} />
+              <Input id="calculateName" name="expanse" placeholder="Bayarin Apa nih" value={objectCalculate.calculateName} handleOnchange={handleChangeCalculate} type="text" />
             </FormRow>
             <FormRow name="Price Per Item">
               <ExapanseContentAndAmount>
@@ -245,7 +258,7 @@ const CalculatePage = () => {
                   <ExpanseCurrency>
                     <h2>Rp</h2>
                   </ExpanseCurrency>
-                  <Input id="calculatePrice" name="amount" placeholder="Berapa nih?" type="number" value={objectCalculate.calculatePrice} handleOnchange={handleChangeCalculate} />
+                  <Input id="calculatePrice" name="amount" placeholder="Berapa nih?" type="text" value={currencyFormatWithoutCurrencyCode(objectCalculate.calculatePrice)} handleOnchange={handleChangeCalculatePrice} />
                 </ExpanseContent>
               </ExapanseContentAndAmount>
             </FormRow>
@@ -265,7 +278,7 @@ const CalculatePage = () => {
                   Shared With..
                 </Button>
                 <Button type="button" onClick={handleSharedWithAll}>
-                  Shared All
+                  Shared Allno
                 </Button>
               </ExpanseAmount>
             </FormRow>
