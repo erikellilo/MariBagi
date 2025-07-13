@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { BillSharesModule } from './bill-shares/bill-shares.module';
@@ -19,3 +18,4 @@ import { typeOrmConfig } from './config/typeorm.config';
   ],
 })
 export class AppModule {}
+``;

@@ -7,6 +7,7 @@ import { Navigate } from "react-router-dom";
 import GlobalStyles from "./GlobalStyles";
 import { store } from "./store";
 import { Provider } from "react-redux";
+import React from "react";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-const App = () => {
+const App = (): React.JSX.Element => {
   return (
     <Provider store={store}>
       <GlobalStyles />
