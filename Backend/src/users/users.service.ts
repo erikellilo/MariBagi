@@ -1,18 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
-import { CreateUserDTO } from './dto/create-users.dto';
+import {
+  CreateUserRequestDTO,
+  CreateUserResponseDTO,
+} from './dto/create-users.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { UpdateUserDTO } from './dto/update-users.dto';
-import { UpdatePasswordDTO } from './dto/update-password.dto';
+import { UpdateUserDTO } from './dto/update-users.dto-request';
+import { UpdatePasswordDTO } from './dto/update-password-request.dto';
 
 @Injectable()
 export class UsersService {
   private users: User[];
 
   async create(
-    createuserDTO: CreateUserDTO,
+    createuserDTO: CreateUserRequestDTO,
     userCreateById: string,
-  ): Promise<User> {
+  ): Promise<CreateUserResponseDTO> {
     const user = new User();
     user.id = uuidv4.toString();
     user.name = createuserDTO.name;
@@ -23,7 +26,11 @@ export class UsersService {
     user.createdBy = userCreateById;
 
     this.users.push(user);
-    return user;
+    const returnUser = new CreateUserResponseDTO();
+    returnUser.name = user.name;
+    returnUser.email = user.name;
+
+    return returnUser;
   }
 
   async update(updateUserDTO: UpdateUserDTO, userId: string): Promise<User> {
