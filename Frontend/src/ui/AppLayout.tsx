@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import MenuBar from "./MenuBar";
 import Header from "./Header";
+import React from "react";
 
 const StyledAppLayout = styled.div`
   background-color: var(--color-green-100);
@@ -34,7 +35,7 @@ const StyledMain = styled.main`
   flex-direction: column;
 `;
 
-const AppLayout = () => {
+const AppLayout = (): React.JSX.Element => {
   return (
     <StyledAppLayout>
       <Container>

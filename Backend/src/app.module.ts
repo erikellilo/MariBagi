@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { BillSharesModule } from './bill-shares/bill-shares.module';
@@ -21,3 +20,4 @@ import { BillSharesModule } from './bill-shares/bill-shares.module';
   ],
 })
 export class AppModule {}
+``;
