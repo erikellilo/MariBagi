@@ -9,20 +9,25 @@ import {
   Post,
   ParseUUIDPipe,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDTO } from './dto/create-users.dto';
-import { UpdateUserDTO } from './dto/update-users.dto';
-import { UpdatePasswordDTO } from './dto/update-password.dto';
+import {
+  CreateUserRequestDTO,
+  CreateUserResponseDTO,
+} from './dto/create-users.dto';
+import { UpdateUserDTO } from './dto/update-users.dto-request';
+import { UpdatePasswordDTO } from './dto/update-password-request.dto';
 import { ZodValidationPipe } from 'src/shared/pipes/zod-validation.pipe';
 import {
   createUserSchema,
   updateUserSchema,
   updatePasswordSchema,
 } from './schema/user.schema';
-import { User } from './entities/user.entity';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('users')
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -34,9 +39,10 @@ export class UsersController {
   @Post(':userId')
   @HttpCode(HttpStatus.CREATED)
   async create(
-    @Body(new ZodValidationPipe(createUserSchema)) createUserDTO: CreateUserDTO,
+    @Body(new ZodValidationPipe(createUserSchema))
+    createUserDTO: CreateUserRequestDTO,
     @Param('userId', new ParseUUIDPipe()) userId: string,
-  ): Promise<User> {
+  ): Promise<CreateUserResponseDTO> {
     return this.usersService.create(createUserDTO, userId);
   }
 
