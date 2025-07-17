@@ -1,9 +1,9 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import localStorageMiddleware from "./features/localStorageMiddleware";
-import bagiReducer from "../src/features/bagiSlice";
-import userReducer from "../src/features/usersSlice";
-import itemReducer from "../src/features/itemsSlice";
-import errorReducer from "../src/features/errorSlice";
+import bagiReducer from "./features/bagiSlice";
+import userReducer from "./features/usersSlice";
+import itemReducer from "./features/itemsSlice";
+import errorReducer from "./features/errorSlice";
 
 export const rootReducer = combineReducers({
   bagi: bagiReducer,

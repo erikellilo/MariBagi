@@ -25,19 +25,9 @@ const bagiSlice = createSlice({
       if (action.payload.isExistingLocal >= 0) {
         const existingData = existingLocal[action.payload.isExistingLocal];
 
-        populateStoreName(
-          state,
-          existingData.bagiId,
-          action.payload.formHome,
-          existingData.bagiDate
-        );
+        populateStoreName(state, existingData.bagiId, action.payload.formHome, existingData.bagiDate);
       } else {
-        populateStoreName(
-          state,
-          action.payload.bagiId,
-          action.payload.formHome,
-          Date.now()
-        );
+        populateStoreName(state, action.payload.bagiId, action.payload.formHome, Date.now());
       }
     },
     editFromExistingBagi(state, action) {

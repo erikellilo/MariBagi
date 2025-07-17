@@ -135,5 +135,4 @@ img {
 
 const BackgroundStyle = css``;
 
-export { BackgroundStyle };
-export default GlobalStyles;
+export { BackgroundStyle, GlobalStyles };

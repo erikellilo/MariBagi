@@ -1,11 +1,14 @@
+import React from "react";
 import styled from "styled-components";
 
-const ButtonRoundStyled = styled.button`
+interface Props {
+  readonly variant: "review";
+  readonly tooltip: string;
+}
+
+const ButtonRoundStyled = styled.button<Props>`
   position: relative;
-  background-color: ${(props) =>
-    props.variant === "review"
-      ? "var(--color-green-500)"
-      : "var(--color-red-800)"};
+  background-color: ${(props): string => (props.variant === "review" ? "var(--color-green-500)" : "var(--color-red-800)")};
   color: var(--color-grey-0);
   font-weight: bolder;
   width: 1.5rem;
@@ -19,7 +22,7 @@ const ButtonRoundStyled = styled.button`
   text-align: center;
 
   &::after {
-    content: "${(props) => props.tooltip}";
+    content: "${(props): string => props.tooltip}";
     position: absolute;
     top: 100%; /* Adjust this to control the distance */
     left: 50%;
@@ -57,14 +60,19 @@ const ButtonRoundStyled = styled.button`
   }
 `;
 
-const ButtonRound = ({ children, tooltip, variant, onclick }) => {
+const ButtonRound = ({
+  children,
+  tooltip,
+  variant,
+  onclick,
+}: {
+  children: React.ReactNode;
+  tooltip: string;
+  variant: "review";
+  onclick: () => void;
+}): React.JSX.Element => {
   return (
-    <ButtonRoundStyled
-      type="button"
-      tooltip={tooltip}
-      variant={variant}
-      onClick={onclick}
-    >
+    <ButtonRoundStyled type="button" tooltip={tooltip} variant={variant} onClick={onclick}>
       {children}
     </ButtonRoundStyled>
   );
