@@ -26,3 +26,6 @@ dist-ssr
 
 src/Calculate/CalculateSummary.jsx
 src/Calculate/CalculateSummaryItems.jsx
+Backend/package-lock.json
+Frontend/package-lock.json
+nul
