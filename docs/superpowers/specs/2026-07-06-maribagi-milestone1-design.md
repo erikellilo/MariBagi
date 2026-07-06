@@ -198,7 +198,90 @@ The scan endpoint exists in the API surface because the data model must account 
 
 ## 4. Architecture & Layout
 
-> **Status:** Pending — to be drafted. Includes the wizard-vs-scroll-vs-dashboard layout decision (visual companion pending).
+### Form factor
+
+Mobile-first. All layouts are designed for phone-width viewports first, scaling up responsively for larger screens. The 3-step wizard flow is designed specifically for mobile tap targets and one-concern-per-screen focus.
+
+### Flow structure — 3-step wizard
+
+A hybrid wizard that groups concerns sensibly. The user moves linearly through three steps, with back/forward navigation and a persistent step indicator.
+
+**Step 1 — Setup (Bagi + Members combined)**
+- Name the bagi session (e.g. "Tiket Dufan")
+- Toggle tax / service charge options
+- Add members (display names only — no auth). Min 2 members validation carried over from old app.
+- "Next → Items" advances to step 2.
+- Combining bagi header + members on one screen because both are "setup" concerns — no need for separate screens.
+
+**Step 2 — Items**
+- List of expense line items, each with `name`, `amount` (Rupiah), `quantity` (total ordered).
+- Add items manually (inline add row) OR via receipt scan (mocked AI returns a fixture of items).
+- Review/correct any extracted data before advancing.
+- No social assignment here — that's step 3.
+- "Next → Sharing" advances to step 3.
+
+**Step 3 — Sharing allocation**
+- For each item, assign who paid (`paidBy`) and how the cost is shared (`allocation`).
+- Two allocation modes per item, selected via a per-item toggle:
+  - **Equal share** — tap chips to include/exclude members. Amount splits equally among selected. Used for shared costs where quantity is irrelevant (Hotel qty 1 shared by 3 people, service charge, tax).
+  - **By quantity** — tap chips to distribute units (+1 per tap). A "remaining of N" counter tracks unallocated units. Chips with quantity 0 disable when remaining hits 0 (cannot over-assign). Used for countable items (Drink 3x, Rice 2x).
+- "Save Bagi" commits. Disabled until all items are fully allocated (form-level validation).
+
+### Home page — list of bagi sessions
+
+`/bagi` renders a stacked list of all saved sessions (name, date, member count, item count). Tap a session → opens detail/edit. "+ New bagi" entry point starts the wizard.
+
+### Routing
+
+```
+/                        → redirect to /bagi
+/bagi                    → List page (all sessions)
+/bagi/new                → Wizard Step 1 (Setup)
+/bagi/new/items          → Wizard Step 2 (Items)
+/bagi/new/sharing        → Wizard Step 3 (Sharing)
+/bagi/:bagiId            → Read-only detail view of a saved bagi
+/bagi/:bagiId/edit       → Edit mode (re-enters wizard at relevant step)
+```
+
+**Key routing decisions:**
+- Wizard steps are separate URLs (not internal component state). Enables: browser-back per step, deep-linking, refresh-safe.
+- `/bagi/new` (create) vs `/bagi/:bagiId/edit` (edit). Wizard component shared between both; reads mode from URL.
+- `/bagi/:bagiId` (no /edit) = read-only summary. "Edit" button re-enters wizard.
+- No separate scan route — the scan button lives inside Step 2 and populates the form without leaving the step.
+
+### Form state — one instance across all steps
+
+A single react-hook-form instance lives at the wizard-root level. Each step renders a subset of the fields. State persists naturally as the user moves between steps. `useFieldArray` manages the items and allocation arrays at the form root.
+
+Rationale: splitting into separate per-step forms would require manually syncing the arrays between steps — error-prone. One large form is simpler and more correct than three small forms with handoffs.
+
+### Receipt scan integration
+
+The scan button lives in Step 2. Flow: user uploads image → MSW handler returns a fixture of `{ bagi header, items[] }` → the form's `items` field array is populated with the extracted rows → user reviews/adjusts → proceeds to Step 3 to assign allocation.
+
+Scan pre-fills steps 1+2 data only (header + items with name/amount/quantity). Social fields (`paidBy`, `allocation`) are left empty for the user to assign in Step 3.
+
+### Component structure (rough)
+
+```
+pages/
+  BagiListPage.tsx          → /bagi — list of sessions
+  BagiWizardPage.tsx        → /bagi/new/* and /bagi/:id/edit/* — hosts the form + step router
+  BagiDetailPage.tsx        → /bagi/:id — read-only summary
+
+wizard/
+  WizardSteps.tsx           → step indicator + navigation
+  Step1Setup.tsx            → bagi header + member list
+  Step2Items.tsx            → item list + scan button
+  Step3Sharing.tsx          → allocation (equal share / by quantity) per item
+  ScanButton.tsx            → receipt upload + MSW call
+
+components/ui/              → reusable primitives (Button, Input, Chip, etc.)
+```
+
+### Visual design — deferred
+
+The look (colors, spacing, typography, component shapes) is NOT specified in this spec. Wireframes were used during brainstorming to decide flow and interaction only. Visual design happens during implementation when Tailwind styles are written against real components.
 
 ---
 
