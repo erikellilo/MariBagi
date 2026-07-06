@@ -21,7 +21,7 @@ const GlobalStyles = createGlobalStyle`
 
   /* Grey */
   --color-grey-0: #FFFFFF;
-  --color-grey-500: #FCF7FF;
+  --color-grey-500: var(--color-gray-500);
   --color-grey-900: #0D0014;
 
 
