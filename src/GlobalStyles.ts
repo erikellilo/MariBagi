@@ -39,7 +39,6 @@ const GlobalStyles = createGlobalStyle`
   --image-grayscale: 0;
   --image-opacity: 100%;
 
-  /* Full color ramps — Green */
   --color-green-50: #F7FBF7;
   --color-green-200: #DFF0DE;
   --color-green-300: #C5E3C2;
@@ -48,7 +47,6 @@ const GlobalStyles = createGlobalStyle`
   --color-green-700: #517F48;
   --color-green-800: #2E5327;
 
-  /* Full color ramps — Red */
   --color-red-50: #FFEAF2;
   --color-red-200: #FFC0D8;
   --color-red-300: #FFA0C2;
@@ -56,7 +54,6 @@ const GlobalStyles = createGlobalStyle`
   --color-red-600: #FF4D8A;
   --color-red-700: #FA1E72;
 
-  /* Full color ramps — Blue */
   --color-blue-50: #F5FCFF;
   --color-blue-200: #D6F2FF;
   --color-blue-300: #B4E8FF;
@@ -65,7 +62,6 @@ const GlobalStyles = createGlobalStyle`
   --color-blue-700: #1A9CDF;
   --color-blue-800: #00527A;
 
-  /* Gray (American) — full ramp */
   --color-gray-0: #FFFFFF;
   --color-gray-50: #FCF7FF;
   --color-gray-100: #F0EDF5;
@@ -78,12 +74,10 @@ const GlobalStyles = createGlobalStyle`
   --color-gray-800: #2E2933;
   --color-gray-900: #0D0014;
 
-  /* British-spelled aliases — keep existing consumer references resolving */
   --color-grey-200: var(--color-gray-200);
   --color-grey-600: var(--color-gray-600);
   --color-grey-700: var(--color-gray-700);
 
-  /* Brand aliases (brand = green) */
   --color-brand-50: var(--color-green-50);
   --color-brand-100: var(--color-green-100);
   --color-brand-200: var(--color-green-200);
@@ -95,7 +89,6 @@ const GlobalStyles = createGlobalStyle`
   --color-brand-800: var(--color-green-800);
   --color-brand-900: var(--color-green-900);
 
-  /* Semantic role tokens */
   --color-bg: var(--color-gray-0);
   --color-bg-secondary: var(--color-gray-50);
   --color-bg-tertiary: var(--color-gray-100);
@@ -113,7 +106,6 @@ const GlobalStyles = createGlobalStyle`
   --color-danger-hover: var(--color-red-700);
   --color-accent: var(--color-blue-500);
 
-  /* Typography tokens */
   --font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-size-display: 2.4rem;
   --font-size-h1: 2.0rem;
@@ -129,7 +121,6 @@ const GlobalStyles = createGlobalStyle`
   --line-height-normal: 1.4;
   --line-height-relaxed: 1.5;
 
-  /* Spacing (4px grid) */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -141,14 +132,12 @@ const GlobalStyles = createGlobalStyle`
   --space-12: 48px;
   --space-16: 64px;
 
-  /* On-grid radius (legacy off-grid --border-radius-* kept above) */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Card elevation (Notion-style multi-layer) */
   --shadow-card: rgba(25, 25, 25, 0.027) 0px 8px 12px 0px, rgba(25, 25, 25, 0.027) 0px 2px 6px 0px;
   --shadow-card-hover: rgba(0, 0, 0, 0.01) 0px 1px 3px 0px, rgba(0, 0, 0, 0.02) 0px 3px 7px 0px, rgba(0, 0, 0, 0.02) 0px 7px 15px 0px, rgba(0, 0, 0, 0.04) 0px 14px 28px 0px;
 }
