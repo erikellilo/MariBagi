@@ -131,10 +131,15 @@ userbagi {
 item {
   id: string               // uuid
   bagiId: string           // FK -> bagi.id
-  name: string             // "Hotel"
-  amount: number           // 400000 (Rupiah, integer)
-  paidBy: string            // FK -> userbagi.id (who fronted the money)
-  splitBetween: string[]   // array of userbagi.id (who shares this cost; equal split only)
+  name: string             // "Hotel" or "Drink"
+  amount: number           // total line amount in Rupiah (e.g. 90000 for "Drink 3x @ 30000")
+  quantity: number         // total units ordered (e.g. 3 for "Drink 3x")
+  paidBy: string           // FK -> userbagi.id (who fronted the money)
+  allocation: [            // per-member share (replaces splitBetween)
+    { memberId: string, quantity: number }
+    // e.g. [{ memberId: "asep-id", quantity: 2 }, { memberId: "ucup-id", quantity: 1 }]
+    // equal split is a special case: everyone has quantity 1
+  ]
   createdAt: number
 }
 ```
@@ -143,8 +148,9 @@ item {
 
 - **IDs over names for references.** `item.paidBy` and `item.splitBetween[]` store `userbagi.id` values, NOT display names. This is entity primary-key plumbing, NOT authentication. It ensures renaming a member propagates correctly to all items referencing them (no stale name references). Names are resolved to display values at render time via lookup.
 - **No `shared` boolean.** Whether an item is "shared" is derived from `splitBetween.length > 1`. A separate boolean would create two sources of truth that can disagree.
-- **No comma-separated strings.** `splitBetween` is a proper array of IDs. Comma-separated strings are a relational anti-pattern (breaks querying, integrity, editing, and names containing commas).
-- **Equal splits only.** Milestone 1 has no split calculation, so "split equally among these members" is all the model needs to express. Weighted/uneven splits (junction table) are a milestone 2+ concern.
+- **No comma-separated strings.** `allocation` is a proper array of objects. Comma-separated strings are a relational anti-pattern (breaks querying, integrity, editing, and names containing commas).
+- **Weighted allocation (junction-style).** `item.allocation` is an array of `{ memberId, quantity }` pairs, storing per-member share quantities. This replaces the earlier `splitBetween: string[]` model. It handles both equal split (everyone has quantity 1) and weighted split (e.g. asep 2, ucup 1 for "Drink 3x") with one structure. When the real DB arrives, this maps to a proper junction table.
+- **No split calculation in milestone 1.** Milestone 1 only STORES the allocation data. The "who owes whom" proportional math, rounding, and settlement logic are deferred to milestone 2. The added complexity for milestone 1 is limited to the data shape and the Step 3 chip+quantity UI.
 
 ### MSW endpoint surface (mock API)
 
