@@ -1,6 +1,6 @@
 # MariBagi v2 — Milestone 1 Design
 
-> **Status:** Working draft. Sections 1 & 2 approved during brainstorming. Sections 3-6 pending.
+> **Status:** Complete draft — all sections drafted, pending user review.
 > **Date:** 2026-07-06
 > **Branch context:** Clean-slate rebuild on the `frontend` branch (old code preserved in git history for reference).
 
@@ -25,8 +25,8 @@ Learn the modern frontend stack (TanStack Query, Tailwind, MSW, react-hook-form 
 - Indonesian Rupiah currency formatting (carried over from old app via `Intl.NumberFormat("id-ID", ...)`).
 - Manual validation rules carried over: minimum 2 members per bagi, no duplicate member names within a bagi.
 - Two data-entry flows for items:
-  - **Manual entry** — user fills the full item form (name, amount, paidBy, splitBetween).
-  - **Receipt scan (AI-extracted)** — user uploads an image; MSW returns a fixture of extracted header + line items; form is pre-filled as editable draft rows. Receipt-derived fields (name, amount) are populated; social-derived fields (paidBy, splitBetween) are left empty for the user to assign before saving.
+  - **Manual entry** — user fills the full item form (name, amount, quantity, paidBy, allocation).
+  - **Receipt scan (AI-extracted)** — user uploads an image; MSW returns a fixture of extracted header + line items; form is pre-filled as editable draft rows. Receipt-derived fields (name, amount, quantity) are populated; social-derived fields (paidBy, allocation) are left empty for the user to assign before saving.
 
 ### Explicitly out of scope (deferred)
 
@@ -36,7 +36,7 @@ Learn the modern frontend stack (TanStack Query, Tailwind, MSW, react-hook-form 
 - Optimistic updates (keep it simple — re-fetch after mutation).
 - shadcn/ui (plain Tailwind first; adopt shadcn when a complex primitive like a focus-trapped modal or combobox is needed).
 - Zustand / global client state store (defer until `useState` proves insufficient).
-- Weighted / uneven splits (milestone 1 supports equal-split-only via the `splitBetween` member list).
+- The split calculation / "who owes whom" math (milestone 1 stores allocation data; proportional computation is milestone 2).
 - Multi-currency, tags, receipt file attachment, link-sharing.
 
 ### Success criteria
@@ -146,8 +146,8 @@ item {
 
 ### Identity modeling decisions
 
-- **IDs over names for references.** `item.paidBy` and `item.splitBetween[]` store `userbagi.id` values, NOT display names. This is entity primary-key plumbing, NOT authentication. It ensures renaming a member propagates correctly to all items referencing them (no stale name references). Names are resolved to display values at render time via lookup.
-- **No `shared` boolean.** Whether an item is "shared" is derived from `splitBetween.length > 1`. A separate boolean would create two sources of truth that can disagree.
+- **IDs over names for references.** `item.paidBy` and the `memberId` values inside `item.allocation[]` store `userbagi.id` values, NOT display names. This is entity primary-key plumbing, NOT authentication. It ensures renaming a member propagates correctly to all items referencing them (no stale name references). Names are resolved to display values at render time via lookup.
+- **No `shared` boolean.** Whether an item is "shared" is derived from `allocation.length > 1`. A separate boolean would create two sources of truth that can disagree.
 - **No comma-separated strings.** `allocation` is a proper array of objects. Comma-separated strings are a relational anti-pattern (breaks querying, integrity, editing, and names containing commas).
 - **Weighted allocation (junction-style).** `item.allocation` is an array of `{ memberId, quantity }` pairs, storing per-member share quantities. This replaces the earlier `splitBetween: string[]` model. It handles both equal split (everyone has quantity 1) and weighted split (e.g. asep 2, ucup 1 for "Drink 3x") with one structure. When the real DB arrives, this maps to a proper junction table.
 - **No split calculation in milestone 1.** Milestone 1 only STORES the allocation data. The "who owes whom" proportional math, rounding, and settlement logic are deferred to milestone 2. The added complexity for milestone 1 is limited to the data shape and the Step 3 chip+quantity UI.
@@ -177,7 +177,7 @@ RECEIPT SCAN (mocked AI — implementation details TBD within milestone 1)
   POST   /api/bagi/:bagiId/scan          -> upload image, returns fixture:
        {
          bagi: { name, date, includeTax, includeService },  // header (merchant-derived)
-         items: [{ name, amount }, ...]                       // NO paidBy/splitBetween
+         items: [{ name, amount }, ...]                       // NO paidBy/allocation
        }
 ```
 
@@ -186,7 +186,7 @@ RECEIPT SCAN (mocked AI — implementation details TBD within milestone 1)
 - **No redundant child GETs.** `GET /api/bagi/:bagiId` already returns members and items nested. Separate `GET .../userbagi` and `GET .../item` list endpoints are omitted because child collections per bagi are small (a handful of members, maybe 20 items). Fetching nested is correct, not lazy. This is the idiomatic TanStack Query pattern for small nested data.
 - **Lightweight list endpoint.** `GET /api/bagi` (no id) returns only `{ id, name, date }` per row — no members/items. Avoids loading every item of every bagi just to render a session-name list. Eager loading is scoped to the detail view.
 - **Cascade delete is implicit.** `DELETE /api/bagi/:bagiId` removes the bagi AND its members + items in one call. The MSW handler performs the cascade.
-- **Scan returns a partial draft.** Header + items with name/amount only. `paidBy` and `splitBetween` are absent — the user assigns these social fields in the review form before hitting the batch-save endpoint.
+- **Scan returns a partial draft.** Header + items with name/amount/quantity only. `paidBy` and `allocation` are absent — the user assigns these social fields in Step 3 of the wizard before hitting the batch-save endpoint.
 - **Batch save endpoint** (`POST .../item/batch`) saves N reviewed scanned items in one request rather than N round-trips. Manual entry uses the single `POST .../item`.
 - **TanStack Query implications.** One detail query (`useGetBagiDetail(id)`) fetches parent + children and caches the whole tree. After any child mutation, invalidate the parent detail query → refetch → children update. No optimistic updates in milestone 1 (refetch-after-mutation). Child mutation responses can be empty/204.
 
