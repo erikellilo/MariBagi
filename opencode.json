@@ -20,7 +20,7 @@
       }
     }
   },
-  "plugin": ["./node_modules/superpowers"],
+  "plugin": ["./.opencode/node_modules/superpowers"],
   "permission": {
     "read": {
       "~/.ssh/**": "deny",
