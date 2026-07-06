@@ -287,7 +287,32 @@ The look (colors, spacing, typography, component shapes) is NOT specified in thi
 
 ## 5. Error Handling
 
-> **Status:** Pending.
+Three categories of errors, each with a distinct strategy. No try/catch in components — all error states come from TanStack Query's `isError` / `error` fields, populated automatically when a fetch or mutation rejects.
+
+### Form validation errors (client-side, synchronous)
+
+- Handled by react-hook-form + zod at the form level.
+- Displayed inline next to the offending field (red text below the input).
+- Examples: empty bagi name, fewer than 2 members, item amount ≤ 0, allocation not fully distributed (sum of allocation quantities !== item.quantity).
+- The "Save Bagi" button stays disabled until the form is valid. zod validates the whole form on submit attempt, surfacing all errors at once.
+
+### Network / mutation errors (from MSW or future real backend)
+
+- TanStack Query exposes `mutation.isError` and `mutation.error`.
+- Displayed as a toast or banner at the top of the current screen: "Failed to save — try again."
+- MSW handlers simulate failures during dev (random error rate or specific error fixtures) so the failure path is actually exercised, not just the happy path.
+- No automatic retry in milestone 1 (keep it simple). User taps "Retry" or re-triggers the action.
+
+### Query fetch errors (loading a bagi that doesn't exist, etc.)
+
+- TanStack Query exposes `query.isError`.
+- List page (`/bagi`): error state with a retry button.
+- Detail page of a non-existent bagi (`/bagi/:bagiId`): "Bagi not found" message with a link back to `/bagi`.
+
+### Loading & empty states (not errors, but adjacent)
+
+- `query.isLoading` / `mutation.isPending` → spinner or skeleton placeholder.
+- Empty list (no bagi sessions yet) → friendly empty state with a "Create your first bagi" call-to-action.
 
 ---
 
