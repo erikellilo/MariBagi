@@ -318,4 +318,24 @@ Three categories of errors, each with a distinct strategy. No try/catch in compo
 
 ## 6. Testing
 
-> **Status:** Pending.
+### Milestone 1 — no test framework
+
+Milestone 1 ships without a formal test runner. Verification is manual: run `npm run dev`, click through the wizard flows, and watch the TanStack Query DevTools panel to confirm cache behavior.
+
+Rationale: milestone 1 is a learning milestone on a new stack (TanStack Query, Tailwind, MSW, react-hook-form, zod). Adding Vitest + React Testing Library on top would split focus without commensurate value — the code is expected to be rewritten as fluency grows, and the MSW layer already exercises the real data flow during manual dev.
+
+### Automated quality gates
+
+Two commands are gating and must pass before any milestone 1 work is considered done:
+
+- `npm run lint` — ESLint flat config, `--max-warnings 0`. Warnings are fixed, not downgraded.
+- `npm run build` — Vite production build must succeed.
+
+### Future trigger for adding tests
+
+Formal testing arrives when either of these happens (whichever comes first):
+
+- **Milestone 2** — the split calculation. Proportional math, rounding, and settlement are exactly the kind of logic that demands automated tests.
+- **Real backend arrival** — when data correctness against a real DB becomes critical.
+
+At that point: Vitest + React Testing Library. The MSW handlers written in milestone 1 are reused directly as test fixtures (zero rework) — this is the compounding benefit of choosing MSW as the mock layer.
