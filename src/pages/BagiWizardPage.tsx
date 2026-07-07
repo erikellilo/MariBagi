@@ -5,6 +5,7 @@ import { bagiFormSchema } from "@/wizard/bagiFormSchema";
 import type { BagiFormData } from "@/wizard/bagiFormSchema";
 import { WizardSteps } from "@/wizard/WizardSteps";
 import { Step1Setup } from "@/wizard/Step1Setup";
+import { Step2Items } from "@/wizard/Step2Items";
 import { Button } from "@/components/ui/Button";
 
 const DEFAULT_VALUES: BagiFormData = {
@@ -65,9 +66,21 @@ const BagiWizardPage = () => {
         </Button>
       )}
 
+      {currentStep === 2 && <Step2Items form={form} />}
+
       {currentStep === 2 && (
-        <div className="py-12 text-center text-gray-400">Step 2 (Items) — Task 11</div>
+        <Button
+          fullWidth
+          className="mt-6"
+          onClick={async () => {
+            const valid = await form.trigger(["items"]);
+            if (valid) navigate("/bagi/new/sharing");
+          }}
+        >
+          Next → Sharing
+        </Button>
       )}
+
       {currentStep === 3 && (
         <div className="py-12 text-center text-gray-400">Step 3 (Sharing) — Task 12</div>
       )}

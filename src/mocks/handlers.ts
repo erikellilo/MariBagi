@@ -3,6 +3,7 @@ import { db, delay, maybeFail, seedDb } from "./db";
 import type { BagiDetail, BagiListItem } from "@/types/entities";
 import type { BatchCreateItemsRequest, CreateBagiRequest, CreateItemRequest, CreateUserbagiRequest, UpdateBagiRequest, UpdateItemRequest, UpdateUserbagiRequest } from "@/types/api";
 import { v4 as uuid } from "uuid";
+import { scanFixture } from "./fixtures";
 
 const API_BASE = "/api";
 
@@ -244,5 +245,11 @@ export const handlers = [
 
     db.item.delete(id as string);
     return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.post(`${API_BASE}/bagi/:bagiId/scan`, async () => {
+    await delay(800);
+    maybeFail(0.1);
+    return HttpResponse.json(scanFixture);
   }),
 ];
