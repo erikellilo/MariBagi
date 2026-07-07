@@ -1,7 +1,15 @@
+import { useBagiList } from "@/hooks/useBagiList";
+
 const App = () => {
+  const { data, isLoading, isError } = useBagiList();
+
+  if (isLoading) return <div className="p-8">Loading...</div>;
+  if (isError) return <div className="p-8">Error loading bagi</div>;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <h1 className="text-3xl font-bold text-gray-900">MariBagi v2</h1>
+    <div className="p-8">
+      <h1 className="mb-4 text-2xl font-bold">Bagi List (temp verification)</h1>
+      <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 };
