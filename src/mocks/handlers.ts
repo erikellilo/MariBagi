@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { db, delay, maybeFail, seedDb } from "./db";
+import { db, delay, seedDb } from "./db";
 import type { BagiDetail, BagiListItem } from "@/types/entities";
 import type { BatchCreateItemsRequest, CreateBagiRequest, CreateItemRequest, CreateUserbagiRequest, UpdateBagiRequest, UpdateItemRequest, UpdateUserbagiRequest } from "@/types/api";
 import { v4 as uuid } from "uuid";
@@ -12,7 +12,7 @@ seedDb();
 export const handlers = [
   http.get(`${API_BASE}/bagi`, async () => {
     await delay();
-    maybeFail(0.1);
+
 
     const list: BagiListItem[] = Array.from(db.bagi.values()).map((b) => ({
       id: b.id,
@@ -27,7 +27,7 @@ export const handlers = [
 
   http.get(`${API_BASE}/bagi/:bagiId`, async ({ params }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { bagiId } = params;
     const bagi = db.bagi.get(bagiId as string);
@@ -45,7 +45,7 @@ export const handlers = [
 
   http.post(`${API_BASE}/bagi`, async ({ request }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const body = (await request.json()) as CreateBagiRequest;
     const now = Date.now();
@@ -66,7 +66,7 @@ export const handlers = [
 
   http.patch(`${API_BASE}/bagi/:bagiId`, async ({ params, request }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { bagiId } = params;
     const bagi = db.bagi.get(bagiId as string);
@@ -84,7 +84,7 @@ export const handlers = [
 
   http.delete(`${API_BASE}/bagi/:bagiId`, async ({ params }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { bagiId } = params;
 
@@ -105,7 +105,7 @@ export const handlers = [
 
   http.post(`${API_BASE}/bagi/:bagiId/userbagi`, async ({ params, request }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { bagiId } = params;
     if (!db.bagi.has(bagiId as string)) {
@@ -129,7 +129,7 @@ export const handlers = [
 
   http.patch(`${API_BASE}/bagi/:bagiId/userbagi/:id`, async ({ params, request }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { id } = params;
     const member = db.userbagi.get(id as string);
@@ -147,7 +147,7 @@ export const handlers = [
 
   http.delete(`${API_BASE}/bagi/:bagiId/userbagi/:id`, async ({ params }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { id } = params;
     if (!db.userbagi.has(id as string)) {
@@ -160,7 +160,7 @@ export const handlers = [
 
   http.post(`${API_BASE}/bagi/:bagiId/item`, async ({ params, request }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { bagiId } = params;
     if (!db.bagi.has(bagiId as string)) {
@@ -188,7 +188,7 @@ export const handlers = [
 
   http.post(`${API_BASE}/bagi/:bagiId/item/batch`, async ({ params, request }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { bagiId } = params;
     if (!db.bagi.has(bagiId as string)) {
@@ -218,7 +218,7 @@ export const handlers = [
 
   http.patch(`${API_BASE}/bagi/:bagiId/item/:id`, async ({ params, request }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { id } = params;
     const item = db.item.get(id as string);
@@ -236,7 +236,7 @@ export const handlers = [
 
   http.delete(`${API_BASE}/bagi/:bagiId/item/:id`, async ({ params }) => {
     await delay();
-    maybeFail(0.1);
+
 
     const { id } = params;
     if (!db.item.has(id as string)) {
@@ -249,7 +249,7 @@ export const handlers = [
 
   http.post(`${API_BASE}/bagi/:bagiId/scan`, async () => {
     await delay(800);
-    maybeFail(0.1);
+
     return HttpResponse.json(scanFixture);
   }),
 ];

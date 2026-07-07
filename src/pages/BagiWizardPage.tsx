@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -45,39 +46,46 @@ const BagiWizardPage = () => {
   };
 
   const createBagi = useCreateBagi();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSave = async () => {
-    const valid = await form.trigger();
-    if (!valid) return;
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      const valid = await form.trigger();
+      if (!valid) return;
 
-    const data = form.getValues();
+      const data = form.getValues();
 
-    const createdBagi = await createBagi.mutateAsync({
-      name: data.name,
-      includeService: data.includeService,
-      includeTax: data.includeTax,
-    });
-
-    const memberIdMap = new Map<string, string>();
-    for (const member of data.members) {
-      const created = await userbagiApi.create(createdBagi.id, { name: member.name });
-      memberIdMap.set(member.id, created.id);
-    }
-
-    for (const item of data.items) {
-      await itemApi.create(createdBagi.id, {
-        name: item.name,
-        amount: item.amount,
-        quantity: item.quantity,
-        paidBy: memberIdMap.get(item.paidBy) ?? "",
-        allocation: item.allocation.map((a) => ({
-          memberId: memberIdMap.get(a.memberId) ?? "",
-          quantity: a.quantity,
-        })),
+      const createdBagi = await createBagi.mutateAsync({
+        name: data.name,
+        includeService: data.includeService,
+        includeTax: data.includeTax,
       });
-    }
 
-    navigate(`/bagi/${createdBagi.id}`);
+      const memberIdMap = new Map<string, string>();
+      for (const member of data.members) {
+        const created = await userbagiApi.create(createdBagi.id, { name: member.name });
+        memberIdMap.set(member.id, created.id);
+      }
+
+      for (const item of data.items) {
+        await itemApi.create(createdBagi.id, {
+          name: item.name,
+          amount: item.amount,
+          quantity: item.quantity,
+          paidBy: memberIdMap.get(item.paidBy) ?? "",
+          allocation: item.allocation.map((a) => ({
+            memberId: memberIdMap.get(a.memberId) ?? "",
+            quantity: a.quantity,
+          })),
+        });
+      }
+
+      navigate(`/bagi/${createdBagi.id}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -128,9 +136,9 @@ const BagiWizardPage = () => {
           fullWidth
           className="mt-6"
           onClick={handleSave}
-          disabled={createBagi.isPending}
+          disabled={isSubmitting}
         >
-          {createBagi.isPending ? "Saving..." : "Save Bagi"}
+          {isSubmitting ? "Saving..." : "Save Bagi"}
         </Button>
       )}
     </div>
