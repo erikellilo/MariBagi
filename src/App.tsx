@@ -1,45 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import AppLayout from "./ui/AppLayout";
-// import Home from "./pages/Home";
-// import Result from "./pages/Result";
-// import CalculatePage from "./pages/CalculatePage";
-import { Navigate } from "react-router-dom";
-import { GlobalStyles } from "./GlobalStyles";
-import React from "react";
-import { store } from "./store";
-import { Provider } from "react-redux";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/home" replace />,
-      },
-      // {
-      //   path: "home",
-      //   element: <Home />,
-      // },
-      // {
-      //   path: "calculate/:bagiId",
-      //   element: <CalculatePage />,
-      // },
-      // {
-      //   path: "result/:bagiId",
-      //   element: <Result />,
-      // },
-    ],
-  },
-]);
-
-const App = (): React.JSX.Element => {
+const App = () => {
   return (
-    <Provider store={store}>
-      <GlobalStyles />
-      <RouterProvider router={router} />
-    </Provider>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <h1 className="text-3xl font-bold text-gray-900">MariBagi v2</h1>
+    </div>
   );
 };
 
