@@ -20,7 +20,7 @@
       }
     }
   },
-  "plugin": ["./.opencode/node_modules/superpowers"],
+  "plugin": ["./.opencode/node_modules/superpowers", "@dietrichgebert/ponytail"],
   "permission": {
     "read": {
       "~/.ssh/**": "deny",
