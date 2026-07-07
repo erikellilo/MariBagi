@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { db, delay, maybeFail, seedDb } from "./db";
 import type { BagiDetail, BagiListItem } from "@/types/entities";
-import type { CreateBagiRequest, CreateUserbagiRequest, UpdateBagiRequest, UpdateUserbagiRequest } from "@/types/api";
+import type { BatchCreateItemsRequest, CreateBagiRequest, CreateItemRequest, CreateUserbagiRequest, UpdateBagiRequest, UpdateItemRequest, UpdateUserbagiRequest } from "@/types/api";
 import { v4 as uuid } from "uuid";
 
 const API_BASE = "/api";
@@ -154,6 +154,95 @@ export const handlers = [
     }
 
     db.userbagi.delete(id as string);
+    return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.post(`${API_BASE}/bagi/:bagiId/item`, async ({ params, request }) => {
+    await delay();
+    maybeFail(0.1);
+
+    const { bagiId } = params;
+    if (!db.bagi.has(bagiId as string)) {
+      return HttpResponse.json({ message: "Bagi not found" }, { status: 404 });
+    }
+
+    const body = (await request.json()) as CreateItemRequest;
+    const now = Date.now();
+    const id = uuid();
+
+    const item = {
+      id,
+      bagiId: bagiId as string,
+      name: body.name,
+      amount: body.amount,
+      quantity: body.quantity,
+      paidBy: body.paidBy,
+      allocation: body.allocation,
+      createdAt: now,
+    };
+
+    db.item.set(id, item);
+    return HttpResponse.json(item, { status: 201 });
+  }),
+
+  http.post(`${API_BASE}/bagi/:bagiId/item/batch`, async ({ params, request }) => {
+    await delay();
+    maybeFail(0.1);
+
+    const { bagiId } = params;
+    if (!db.bagi.has(bagiId as string)) {
+      return HttpResponse.json({ message: "Bagi not found" }, { status: 404 });
+    }
+
+    const body = (await request.json()) as BatchCreateItemsRequest;
+    const now = Date.now();
+    const created = body.items.map((itemInput) => {
+      const id = uuid();
+      const item = {
+        id,
+        bagiId: bagiId as string,
+        name: itemInput.name,
+        amount: itemInput.amount,
+        quantity: itemInput.quantity,
+        paidBy: "",
+        allocation: [],
+        createdAt: now,
+      };
+      db.item.set(id, item);
+      return item;
+    });
+
+    return HttpResponse.json(created, { status: 201 });
+  }),
+
+  http.patch(`${API_BASE}/bagi/:bagiId/item/:id`, async ({ params, request }) => {
+    await delay();
+    maybeFail(0.1);
+
+    const { id } = params;
+    const item = db.item.get(id as string);
+
+    if (!item) {
+      return HttpResponse.json({ message: "Item not found" }, { status: 404 });
+    }
+
+    const body = (await request.json()) as UpdateItemRequest;
+    const updated = { ...item, ...body };
+    db.item.set(id as string, updated);
+
+    return HttpResponse.json(updated);
+  }),
+
+  http.delete(`${API_BASE}/bagi/:bagiId/item/:id`, async ({ params }) => {
+    await delay();
+    maybeFail(0.1);
+
+    const { id } = params;
+    if (!db.item.has(id as string)) {
+      return HttpResponse.json({ message: "Item not found" }, { status: 404 });
+    }
+
+    db.item.delete(id as string);
     return new HttpResponse(null, { status: 204 });
   }),
 ];
