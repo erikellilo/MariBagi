@@ -1,3 +1,7 @@
+> ⚠️ **Rebuild status — read first.** MariBagi is mid-clean-slate-rebuild. Current `src/` is the **legacy app** (Redux + styled-components + localStorage). The **target rebuild stack** is TanStack Query + Tailwind v4 + MSW + react-hook-form + zod. Canonical for NEW work: `PRD.md` + `docs/superpowers/specs/2026-07-06-maribagi-milestone1-design.md` + `docs/superpowers/plans/2026-07-06-maribagi-milestone1.md`. Rules below describe **legacy code only** — use them when touching existing `src/`; for rebuild work, follow the specs/plans.
+
+---
+
 # AGENTS.md
 
 Guidance for AI coding agents working in the **MariBagi** repository — a
@@ -79,6 +83,8 @@ Note: `src/store.ts` and `src/store/` directory coexist — see Known Issues bel
 - Styled components are declared as `PascalCase` consts (e.g. `StyledAppLayout`).
 
 **Mid-migration caveat:** The codebase is mid-migration from JSX/JS to TypeScript. Most of `ui/`, the entry points (`main.tsx`, `App.tsx`), `GlobalStyles.ts`, and `store.ts` are TypeScript. Some files under `features/`, `pages/`, `selector/`, `home/`, `calculate/`, `assets/` are still `.jsx`/`.js`. When editing an existing file, KEEP its current extension unless explicitly asked to migrate it. New files MUST be `.tsx`/`.ts`.
+
+**Rebuild note:** The legacy stack described in this document (Redux Toolkit, styled-components, localStorage middleware) is scheduled to be replaced by the clean-slate rebuild — see the banner above. Treat all stack/state/styling rules below as legacy-code rules, not target rules.
 
 ### TypeScript patterns
 - Type component props with `interface` or `type` (e.g. `interface ButtonProps { variant?: string; }`).
