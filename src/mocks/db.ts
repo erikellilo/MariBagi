@@ -51,8 +51,9 @@ export const seedDb = (): void => {
   db.userbagi.set(asepId, { id: asepId, bagiId, name: "asep", createdAt: now });
   db.userbagi.set(ucupId, { id: ucupId, bagiId, name: "ucup", createdAt: now });
 
-  db.item.set(uuid(), {
-    id: uuid(),
+  const itemId = uuid();
+  db.item.set(itemId, {
+    id: itemId,
     bagiId,
     name: "Hotel",
     amount: 400000,

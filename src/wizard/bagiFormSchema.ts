@@ -53,15 +53,6 @@ export const bagiFormSchema = z
         return;
       }
 
-      const allocated = item.allocation.reduce((sum, a) => sum + a.quantity, 0);
-      if (allocated !== item.quantity) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Allocation (${allocated}) must sum to quantity (${item.quantity})`,
-          path: ["items", itemIndex, "allocation"],
-        });
-      }
-
       item.allocation.forEach((alloc, allocIndex) => {
         if (!memberIds.has(alloc.memberId)) {
           ctx.addIssue({
