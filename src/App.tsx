@@ -1,19 +1,46 @@
-import { useBagiList } from "@/hooks/useBagiList";
-import { bagiFormSchema } from "@/wizard/bagiFormSchema";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import BagiListPage from "@/pages/BagiListPage";
+import BagiWizardPage from "@/pages/BagiWizardPage";
+import BagiDetailPage from "@/pages/BagiDetailPage";
+import NotFoundPage from "@/pages/NotFoundPage";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/bagi" replace />,
+  },
+  {
+    path: "/bagi",
+    element: <BagiListPage />,
+  },
+  {
+    path: "/bagi/new",
+    element: <BagiWizardPage />,
+  },
+  {
+    path: "/bagi/new/items",
+    element: <BagiWizardPage />,
+  },
+  {
+    path: "/bagi/new/sharing",
+    element: <BagiWizardPage />,
+  },
+  {
+    path: "/bagi/:bagiId",
+    element: <BagiDetailPage />,
+  },
+  {
+    path: "/bagi/:bagiId/edit",
+    element: <BagiWizardPage />,
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
+  },
+]);
 
 const App = () => {
-  const { data, isLoading, isError } = useBagiList();
-  console.log("schema:", bagiFormSchema);
-
-  if (isLoading) return <div className="p-8">Loading...</div>;
-  if (isError) return <div className="p-8">Error loading bagi</div>;
-
-  return (
-    <div className="p-8">
-      <h1 className="mb-4 text-2xl font-bold">Bagi List (temp verification)</h1>
-      <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(data, null, 2)}</pre>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;
