@@ -1,7 +1,9 @@
 import { useBagiList } from "@/hooks/useBagiList";
+import { bagiFormSchema } from "@/wizard/bagiFormSchema";
 
 const App = () => {
   const { data, isLoading, isError } = useBagiList();
+  console.log("schema:", bagiFormSchema);
 
   if (isLoading) return <div className="p-8">Loading...</div>;
   if (isError) return <div className="p-8">Error loading bagi</div>;
