@@ -6,6 +6,10 @@ import type { BagiFormData } from "@/wizard/bagiFormSchema";
 import { WizardSteps } from "@/wizard/WizardSteps";
 import { Step1Setup } from "@/wizard/Step1Setup";
 import { Step2Items } from "@/wizard/Step2Items";
+import { Step3Sharing } from "@/wizard/Step3Sharing";
+import { useCreateBagi } from "@/hooks/useCreateBagi";
+import { userbagiApi } from "@/api/userbagiApi";
+import { itemApi } from "@/api/itemApi";
 import { Button } from "@/components/ui/Button";
 
 const DEFAULT_VALUES: BagiFormData = {
@@ -38,6 +42,42 @@ const BagiWizardPage = () => {
     if (valid) {
       navigate("/bagi/new/items");
     }
+  };
+
+  const createBagi = useCreateBagi();
+
+  const handleSave = async () => {
+    const valid = await form.trigger();
+    if (!valid) return;
+
+    const data = form.getValues();
+
+    const createdBagi = await createBagi.mutateAsync({
+      name: data.name,
+      includeService: data.includeService,
+      includeTax: data.includeTax,
+    });
+
+    const memberIdMap = new Map<string, string>();
+    for (const member of data.members) {
+      const created = await userbagiApi.create(createdBagi.id, { name: member.name });
+      memberIdMap.set(member.id, created.id);
+    }
+
+    for (const item of data.items) {
+      await itemApi.create(createdBagi.id, {
+        name: item.name,
+        amount: item.amount,
+        quantity: item.quantity,
+        paidBy: memberIdMap.get(item.paidBy) ?? "",
+        allocation: item.allocation.map((a) => ({
+          memberId: memberIdMap.get(a.memberId) ?? "",
+          quantity: a.quantity,
+        })),
+      });
+    }
+
+    navigate(`/bagi/${createdBagi.id}`);
   };
 
   return (
@@ -81,8 +121,17 @@ const BagiWizardPage = () => {
         </Button>
       )}
 
+      {currentStep === 3 && <Step3Sharing form={form} />}
+
       {currentStep === 3 && (
-        <div className="py-12 text-center text-gray-400">Step 3 (Sharing) — Task 12</div>
+        <Button
+          fullWidth
+          className="mt-6"
+          onClick={handleSave}
+          disabled={createBagi.isPending}
+        >
+          {createBagi.isPending ? "Saving..." : "Save Bagi"}
+        </Button>
       )}
     </div>
   );
