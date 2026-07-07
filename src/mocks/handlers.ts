@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { db, delay, maybeFail, seedDb } from "./db";
 import type { BagiDetail, BagiListItem } from "@/types/entities";
-import type { CreateBagiRequest, UpdateBagiRequest } from "@/types/api";
+import type { CreateBagiRequest, CreateUserbagiRequest, UpdateBagiRequest, UpdateUserbagiRequest } from "@/types/api";
 import { v4 as uuid } from "uuid";
 
 const API_BASE = "/api";
@@ -99,6 +99,61 @@ export const handlers = [
     }
     db.bagi.delete(bagiId as string);
 
+    return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.post(`${API_BASE}/bagi/:bagiId/userbagi`, async ({ params, request }) => {
+    await delay();
+    maybeFail(0.1);
+
+    const { bagiId } = params;
+    if (!db.bagi.has(bagiId as string)) {
+      return HttpResponse.json({ message: "Bagi not found" }, { status: 404 });
+    }
+
+    const body = (await request.json()) as CreateUserbagiRequest;
+    const now = Date.now();
+    const id = uuid();
+
+    const member = {
+      id,
+      bagiId: bagiId as string,
+      name: body.name,
+      createdAt: now,
+    };
+
+    db.userbagi.set(id, member);
+    return HttpResponse.json(member, { status: 201 });
+  }),
+
+  http.patch(`${API_BASE}/bagi/:bagiId/userbagi/:id`, async ({ params, request }) => {
+    await delay();
+    maybeFail(0.1);
+
+    const { id } = params;
+    const member = db.userbagi.get(id as string);
+
+    if (!member) {
+      return HttpResponse.json({ message: "Member not found" }, { status: 404 });
+    }
+
+    const body = (await request.json()) as UpdateUserbagiRequest;
+    const updated = { ...member, name: body.name };
+    db.userbagi.set(id as string, updated);
+
+    return HttpResponse.json(updated);
+  }),
+
+  http.delete(`${API_BASE}/bagi/:bagiId/userbagi/:id`, async ({ params }) => {
+    await delay();
+    maybeFail(0.1);
+
+    const { id } = params;
+    if (!db.userbagi.has(id as string)) {
+      return HttpResponse.json({ message: "Member not found" }, { status: 404 });
+    }
+
+    db.userbagi.delete(id as string);
     return new HttpResponse(null, { status: 204 });
   }),
 ];
