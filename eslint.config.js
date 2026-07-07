@@ -6,7 +6,7 @@ import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginReactRefresh from "eslint-plugin-react-refresh";
 
 export default [
-  { ignores: ["dist"] },
+  { ignores: ["dist", "public"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
