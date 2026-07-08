@@ -18,6 +18,14 @@ export const Step3Sharing = ({ form }: Step3SharingProps) => {
 
   const [modes, setModes] = useState<Record<number, AllocMode>>({});
 
+  const updateItem = (
+    index: number,
+    updater: (item: BagiFormData["items"][number]) => BagiFormData["items"][number]
+  ) => {
+    const current = form.getValues("items");
+    form.setValue("items", current.map((item, i) => (i === index ? updater(item) : item)));
+  };
+
   const getMode = (index: number, quantity: number): AllocMode => {
     if (modes[index]) return modes[index];
     return quantity > 1 ? "quantity" : "equal";
@@ -25,36 +33,29 @@ export const Step3Sharing = ({ form }: Step3SharingProps) => {
 
   const setMode = (index: number, mode: AllocMode) => {
     setModes((prev) => ({ ...prev, [index]: mode }));
-    const currentItems = form.getValues("items");
-    currentItems[index].allocation = [];
-    form.setValue("items", currentItems);
+    updateItem(index, (it) => ({ ...it, allocation: [] }));
   };
 
   const toggleMemberEqual = (itemIndex: number, memberId: string) => {
-    const currentItems = form.getValues("items");
-    const current = currentItems[itemIndex].allocation;
-    const existing = current.find((a) => a.memberId === memberId);
-    if (existing) {
-      currentItems[itemIndex].allocation = current.filter((a) => a.memberId !== memberId);
-    } else {
-      currentItems[itemIndex].allocation = [...current, { memberId, quantity: 1 }];
-    }
-    form.setValue("items", currentItems);
+    updateItem(itemIndex, (it) => {
+      const existing = it.allocation.find((a) => a.memberId === memberId);
+      const allocation = existing
+        ? it.allocation.filter((a) => a.memberId !== memberId)
+        : [...it.allocation, { memberId, quantity: 1 }];
+      return { ...it, allocation };
+    });
   };
 
   const incrementMemberQty = (itemIndex: number, memberId: string) => {
-    const currentItems = form.getValues("items");
-    const item = currentItems[itemIndex];
-    const allocated = item.allocation.reduce((sum, a) => sum + a.quantity, 0);
-    if (allocated >= item.quantity) return;
-
-    const existing = item.allocation.find((a) => a.memberId === memberId);
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      item.allocation = [...item.allocation, { memberId, quantity: 1 }];
-    }
-    form.setValue("items", currentItems);
+    updateItem(itemIndex, (it) => {
+      const allocated = it.allocation.reduce((sum, a) => sum + a.quantity, 0);
+      if (allocated >= it.quantity) return it;
+      const existing = it.allocation.find((a) => a.memberId === memberId);
+      const allocation = existing
+        ? it.allocation.map((a) => (a.memberId === memberId ? { ...a, quantity: a.quantity + 1 } : a))
+        : [...it.allocation, { memberId, quantity: 1 }];
+      return { ...it, allocation };
+    });
   };
 
   const getRemaining = (itemIndex: number): number => {
@@ -121,11 +122,7 @@ export const Step3Sharing = ({ form }: Step3SharingProps) => {
             <div className="mb-2">
               <select
                 value={item.paidBy}
-                onChange={(e) => {
-                  const current = form.getValues("items");
-                  current[index].paidBy = e.target.value;
-                  form.setValue("items", current);
-                }}
+                onChange={(e) => updateItem(index, (it) => ({ ...it, paidBy: e.target.value }))}
                 className="w-full rounded-md border border-gray-300 bg-white px-2 py-1.5 text-xs"
               >
                 <option value="">Who paid? ▾</option>
