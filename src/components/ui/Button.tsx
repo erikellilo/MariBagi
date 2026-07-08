@@ -9,9 +9,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800",
-  ghost: "bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-50",
-  danger: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800",
+  primary: "bg-brand-500 text-gray-900 hover:bg-brand-600 active:bg-brand-700",
+  ghost: "bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50",
+  danger: "bg-danger text-white hover:bg-danger-dark active:bg-danger-dark",
 };
 
 export const Button = ({
@@ -25,7 +25,7 @@ export const Button = ({
   return (
     <button
       className={cn(
-        "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+        "rounded-lg px-4 py-2 text-sm font-semibold transition-colors",
         "disabled:cursor-not-allowed disabled:opacity-50",
         variantClasses[variant],
         fullWidth && "w-full",
