@@ -42,7 +42,7 @@ const BagiDetailPage = () => {
   return (
     <div className="mx-auto max-w-md px-4 py-6">
       <div className="mb-4">
-        <button onClick={() => navigate("/bagi")} className="text-sm text-blue-600">
+        <button onClick={() => navigate("/bagi")} className="text-sm text-brand-600">
           ‹ Back
         </button>
       </div>
@@ -58,7 +58,7 @@ const BagiDetailPage = () => {
         <h2 className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">Each member&apos;s share</h2>
         <ul className="space-y-2">
           {sortedMembers.map((m) => (
-            <li key={m.memberId} className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3">
+            <li key={m.memberId} className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 shadow-card">
               <span className="font-medium text-gray-900">{memberName(m.memberId)}</span>
               <span className="font-semibold text-gray-900">{formatRupiah(m.share)}</span>
             </li>
@@ -75,7 +75,7 @@ const BagiDetailPage = () => {
             {split.itemBreakdown.map((item) => {
               const original = bagi.items.find((i) => i.id === item.itemId);
               return (
-                <li key={item.itemId} className="rounded-lg border border-gray-200 bg-white p-3">
+                <li key={item.itemId} className="rounded-lg border border-gray-200 bg-white p-3 shadow-card">
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="font-medium text-gray-900">{original?.name ?? "?"}</p>

@@ -55,7 +55,7 @@ export const ScanButton = ({ bagiId, onScanned }: ScanButtonProps) => {
         )}
       </Button>
       {scanMutation.isError && (
-        <p className="mt-1 text-xs text-red-600">Scan failed — try again</p>
+        <p className="mt-1 text-xs text-danger">Scan failed — try again</p>
       )}
     </>
   );

@@ -71,13 +71,13 @@ export const Step1Setup = ({ form }: Step1SetupProps) => {
               <input
                 {...register(`members.${index}.name` as const)}
                 placeholder={`Member ${index + 1} name`}
-                className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {fields.length > 2 && (
                 <button
                   type="button"
                   onClick={() => handleRemoveMember(index)}
-                  className="text-xs text-red-500 hover:text-red-700"
+                  className="text-xs text-danger hover:text-danger-dark"
                 >
                   Remove
                 </button>
@@ -89,7 +89,7 @@ export const Step1Setup = ({ form }: Step1SetupProps) => {
           + Add member
         </Button>
         {form.formState.errors.members && (
-          <p className="mt-1 text-xs text-red-600">
+          <p className="mt-1 text-xs text-danger">
             {form.formState.errors.members.message ?? "Member validation error"}
           </p>
         )}

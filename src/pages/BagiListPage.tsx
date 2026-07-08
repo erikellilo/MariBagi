@@ -54,7 +54,7 @@ const BagiListPage = () => {
             <li
               key={bagi.id}
               onClick={() => navigate(`/bagi/${bagi.id}`)}
-              className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 bg-white p-4 transition-colors hover:border-blue-300"
+              className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 bg-white p-4 transition-colors hover:border-brand-300 shadow-card"
             >
               <div>
                 <p className="font-medium text-gray-900">{bagi.name}</p>
@@ -64,7 +64,7 @@ const BagiListPage = () => {
               </div>
               <button
                 onClick={(e) => handleDelete(e, bagi.id)}
-                className="text-xs text-red-500 hover:text-red-700"
+                className="text-xs text-danger hover:text-danger-dark"
               >
                 Delete
               </button>

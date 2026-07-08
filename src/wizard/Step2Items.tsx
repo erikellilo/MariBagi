@@ -67,25 +67,25 @@ export const Step2Items = ({ form }: Step2ItemsProps) => {
                   <input
                     {...register(`items.${index}.name` as const)}
                     placeholder="Item name"
-                    className="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                    className="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-brand-500 focus:outline-none"
                   />
                   <input
                     type="number"
                     {...register(`items.${index}.quantity` as const, { valueAsNumber: true })}
-                    className="w-14 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                    className="w-14 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-brand-500 focus:outline-none"
                     min={1}
                   />
                   <span className="text-xs text-gray-400">x</span>
                   <input
                     type="number"
                     {...register(`items.${index}.amount` as const, { valueAsNumber: true })}
-                    className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                    className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-brand-500 focus:outline-none"
                     placeholder="Amount"
                   />
                   <button
                     type="button"
                     onClick={() => remove(index)}
-                    className="text-xs text-red-500 hover:text-red-700"
+                    className="text-xs text-danger hover:text-danger-dark"
                   >
                     ✕
                   </button>

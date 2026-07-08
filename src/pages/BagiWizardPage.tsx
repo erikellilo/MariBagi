@@ -94,7 +94,7 @@ const BagiWizardPage = () => {
         {currentStep > 1 && (
           <button
             onClick={() => navigate(-1)}
-            className="text-sm text-blue-600"
+            className="text-sm text-brand-600"
           >
             ‹ Back
           </button>

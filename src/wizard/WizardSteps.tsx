@@ -22,7 +22,7 @@ export const WizardSteps = ({ currentStep }: WizardStepsProps) => {
               className={cn(
                 "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold",
                 isDone && "bg-green-500 text-white",
-                isActive && "bg-blue-600 text-white",
+                isActive && "bg-brand-500 text-gray-900",
                 !isDone && !isActive && "bg-gray-200 text-gray-400"
               )}
             >
@@ -31,7 +31,7 @@ export const WizardSteps = ({ currentStep }: WizardStepsProps) => {
             <span
               className={cn(
                 "text-xs",
-                isActive ? "font-semibold text-blue-600" : "text-gray-400"
+                isActive ? "font-semibold text-brand-600" : "text-gray-400"
               )}
             >
               {step.label}

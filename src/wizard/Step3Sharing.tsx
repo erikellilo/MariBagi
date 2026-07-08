@@ -101,7 +101,7 @@ export const Step3Sharing = ({ form }: Step3SharingProps) => {
                 onClick={() => setMode(index, "equal")}
                 className={cn(
                   "flex-1 rounded px-2 py-1 text-xs font-medium",
-                  mode === "equal" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500"
+                  mode === "equal" ? "bg-white text-brand-600 shadow-sm" : "text-gray-500"
                 )}
               >
                 Equal share
@@ -111,7 +111,7 @@ export const Step3Sharing = ({ form }: Step3SharingProps) => {
                 onClick={() => setMode(index, "quantity")}
                 className={cn(
                   "flex-1 rounded px-2 py-1 text-xs font-medium",
-                  mode === "quantity" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500"
+                  mode === "quantity" ? "bg-white text-brand-600 shadow-sm" : "text-gray-500"
                 )}
               >
                 By quantity
