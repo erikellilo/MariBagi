@@ -26,3 +26,6 @@ dist-ssr
 
 # Superpowers brainstorming session artifacts
 .superpowers/
+
+# RTK tool cache
+.rtk/
