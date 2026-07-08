@@ -120,10 +120,7 @@ const BagiWizardPage = () => {
         <Button
           fullWidth
           className="mt-6"
-          onClick={async () => {
-            const valid = await form.trigger(["items"]);
-            if (valid) navigate("/bagi/new/sharing");
-          }}
+          onClick={() => navigate("/bagi/new/sharing")}
         >
           Next → Sharing
         </Button>
