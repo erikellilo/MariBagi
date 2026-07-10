@@ -106,7 +106,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
           onClick={() => switchMode("shared")}
           className={cn(
             "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
-            mode === "shared" ? "bg-white text-brand-600 shadow-sm" : "text-gray-500"
+            mode === "shared" ? "bg-brand-500 text-white shadow-sm" : "text-gray-500"
           )}
         >
           Shared All
@@ -116,7 +116,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
           onClick={() => switchMode("perUser")}
           className={cn(
             "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
-            mode === "perUser" ? "bg-white text-brand-600 shadow-sm" : "text-gray-500"
+            mode === "perUser" ? "bg-brand-500 text-white shadow-sm" : "text-gray-500"
           )}
         >
           Per User
