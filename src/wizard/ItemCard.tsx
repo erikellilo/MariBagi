@@ -104,7 +104,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
         <button
           type="button"
           onClick={() => switchMode("shared")}
-          disabled={mode === "shared"}
+          disabled={false}
           className={cn(
             "flex-1 rounded px-2 py-1 text-xs font-medium",
             mode === "shared"
@@ -117,7 +117,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
         <button
           type="button"
           onClick={() => switchMode("perUser")}
-          disabled={mode === "perUser"}
+          disabled={false}
           className={cn(
             "flex-1 rounded px-2 py-1 text-xs font-medium",
             mode === "perUser"
@@ -152,7 +152,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
               label={m.name.charAt(0).toUpperCase()}
               selected={isSelected}
               {...(mode === "perUser" && allocEntry ? { count: allocEntry.quantity } : {})}
-              disabled={mode === "shared"}
+              disabled={false}
               onClick={() => {
                 if (mode === "perUser") incrementMemberQty(m.id);
               }}
