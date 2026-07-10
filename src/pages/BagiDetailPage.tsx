@@ -35,7 +35,7 @@ const BagiDetailPage = () => {
 
   if (!bagi || !split) return null;
 
-  const memberName = (id: string): string => bagi.members.find((m) => m.id === id)?.name ?? "?";
+  const memberName = (id: string): string => bagi.members.find(m => m.id === id)?.name ?? "?";
 
   const sortedMembers = [...split.members].sort((a, b) => b.share - a.share);
 
@@ -57,8 +57,11 @@ const BagiDetailPage = () => {
       <section className="mb-6">
         <h2 className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">Each member&apos;s share</h2>
         <ul className="space-y-2">
-          {sortedMembers.map((m) => (
-            <li key={m.memberId} className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 shadow-card">
+          {sortedMembers.map(m => (
+            <li
+              key={m.memberId}
+              className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 shadow-card"
+            >
               <span className="font-medium text-gray-900">{memberName(m.memberId)}</span>
               <span className="font-semibold text-gray-900">{formatRupiah(m.share)}</span>
             </li>
@@ -72,10 +75,10 @@ const BagiDetailPage = () => {
           <p className="py-4 text-center text-sm text-gray-400">No items recorded.</p>
         ) : (
           <ul className="space-y-2">
-            {split.itemBreakdown.map((item) => {
-              const original = bagi.items.find((i) => i.id === item.itemId);
+            {split.itemBreakdown.map(item => {
+              const original = bagi.items.find(i => i.id === item.itemId);
               return (
-                <li key={item.itemId} className="rounded-lg border border-gray-200 bg-white p-3 shadow-card">
+                <li key={item.itemId} className="rounded-lg border border-gray-200 bg-white p-3">
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="font-medium text-gray-900">{original?.name ?? "?"}</p>
