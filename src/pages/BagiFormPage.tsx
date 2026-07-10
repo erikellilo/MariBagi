@@ -60,9 +60,11 @@ const BagiFormPage = () => {
   const createBagi = useCreateBagi();
   const updateBagi = useUpdateBagi();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleSave = async () => {
     if (isSubmitting) return;
+    setSaveError(null);
     setIsSubmitting(true);
     try {
       const valid = await form.trigger();
@@ -123,6 +125,7 @@ const BagiFormPage = () => {
             await itemApi.delete(bagiId, existingId);
           }
         }
+        navigate(`/bagi/${bagiId}`);
       } else {
         const createdBagi = await createBagi.mutateAsync({ name: data.name });
 
@@ -149,6 +152,8 @@ const BagiFormPage = () => {
 
         navigate(`/bagi/${createdBagi.id}`);
       }
+    } catch {
+      setSaveError("Gagal menyimpan. Coba lagi.");
     } finally {
       setIsSubmitting(false);
     }
@@ -184,6 +189,7 @@ const BagiFormPage = () => {
       <Section1Header form={form} />
       <Section2Members form={form} />
       <Section3Items form={form} onSave={handleSave} isSubmitting={isSubmitting} />
+      {saveError && <ErrorBanner message={saveError} />}
     </div>
   );
 };
