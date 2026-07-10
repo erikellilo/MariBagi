@@ -31,7 +31,7 @@ const BagiFormPage = () => {
   const form = useForm<BagiFormData>({
     resolver: zodResolver(bagiFormSchema),
     defaultValues: DEFAULT_VALUES,
-    mode: "onChange",
+    mode: "onSubmit",
   });
 
   const { data: existing, isLoading, isError, refetch } = useBagiDetail(bagiId ?? "");
