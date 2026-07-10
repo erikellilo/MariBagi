@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { bagiFormSchema } from "@/wizard/bagiFormSchema";
 import type { BagiFormData } from "@/wizard/bagiFormSchema";
 import { Section1Header } from "@/wizard/Section1Header";
@@ -12,6 +12,7 @@ import { useBagiDetail } from "@/hooks/useBagiDetail";
 import { useUpdateBagi } from "@/hooks/useUpdateBagi";
 import { userbagiApi } from "@/api/userbagiApi";
 import { itemApi } from "@/api/itemApi";
+import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
@@ -25,8 +26,10 @@ const DEFAULT_VALUES: BagiFormData = {
 
 const BagiFormPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { bagiId } = useParams<{ bagiId: string }>();
   const isEdit = !!bagiId;
+  const isStep2 = location.pathname.includes("/items");
 
   const form = useForm<BagiFormData>({
     resolver: zodResolver(bagiFormSchema),
@@ -61,6 +64,13 @@ const BagiFormPage = () => {
   const updateBagi = useUpdateBagi();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  const handleNext = async () => {
+    const valid = await form.trigger(["name"]);
+    if (valid) {
+      navigate("/bagi/new/items");
+    }
+  };
 
   const handleSave = async () => {
     if (isSubmitting) return;
@@ -175,10 +185,29 @@ const BagiFormPage = () => {
     );
   }
 
+  if (!isEdit && !isStep2) {
+    return (
+      <div className="mx-auto max-w-md px-4 py-6 space-y-6">
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="text-sm text-brand-600">
+            ‹ Back
+          </button>
+          <h1 className="text-lg font-bold text-gray-900">Bagi Baru</h1>
+        </div>
+
+        <Section1Header form={form} />
+
+        <Button fullWidth className="mt-6" onClick={handleNext}>
+          Next → Items
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-md px-4 py-6 space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="text-sm text-brand-600">
+        <button onClick={() => isEdit ? navigate(-1) : navigate("/bagi/new")} className="text-sm text-brand-600">
           ‹ Back
         </button>
         <h1 className="text-lg font-bold text-gray-900">
@@ -186,7 +215,7 @@ const BagiFormPage = () => {
         </h1>
       </div>
 
-      <Section1Header form={form} />
+      {isEdit && <Section1Header form={form} />}
       <Section2Members form={form} />
       <Section3Items form={form} onSave={handleSave} isSubmitting={isSubmitting} />
       {saveError && <ErrorBanner message={saveError} />}
