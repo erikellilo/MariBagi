@@ -1,13 +1,9 @@
 export interface CreateBagiRequest {
   name: string;
-  includeService: boolean;
-  includeTax: boolean;
 }
 
 export interface UpdateBagiRequest {
   name?: string;
-  includeService?: boolean;
-  includeTax?: boolean;
 }
 
 export interface CreateUserbagiRequest {
@@ -23,6 +19,8 @@ export interface CreateItemRequest {
   amount: number;
   quantity: number;
   paidBy: string;
+  includeService: boolean;
+  includeTax: boolean;
   allocation: { memberId: string; quantity: number }[];
 }
 
@@ -31,6 +29,8 @@ export interface UpdateItemRequest {
   amount?: number;
   quantity?: number;
   paidBy?: string;
+  includeService?: boolean;
+  includeTax?: boolean;
   allocation?: { memberId: string; quantity: number }[];
 }
 
@@ -42,8 +42,6 @@ export interface ScanResponse {
   bagi: {
     name: string;
     date: number;
-    includeTax: boolean;
-    includeService: boolean;
   };
-  items: { name: string; amount: number; quantity: number }[];
+  items: { name: string; amount: number; quantity: number; includeService: boolean; includeTax: boolean }[];
 }

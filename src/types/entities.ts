@@ -7,8 +7,6 @@ export interface Bagi {
   id: string;
   name: string;
   date: number;
-  includeService: boolean;
-  includeTax: boolean;
   createdAt: number;
 }
 
@@ -26,6 +24,8 @@ export interface Item {
   amount: number;
   quantity: number;
   paidBy: string;
+  includeService: boolean;
+  includeTax: boolean;
   allocation: Allocation[];
   createdAt: number;
 }
