@@ -28,8 +28,8 @@ export const Section1Header = ({ form }: Section1HeaderProps) => {
         amount: item.amount,
         quantity: item.quantity,
         paidBy: "",
-        includeService: item.includeService,
-        includeTax: item.includeTax,
+        includeService: false,
+        includeTax: false,
         allocation: [],
       }))
     );

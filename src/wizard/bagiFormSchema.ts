@@ -16,8 +16,6 @@ const itemSchema = z.object({
   amount: z.number().int().positive("Amount must be greater than 0"),
   quantity: z.number().int().min(1, "Quantity must be at least 1"),
   paidBy: z.string().min(1, "Must assign who paid"),
-  includeService: z.boolean(),
-  includeTax: z.boolean(),
   allocation: z.array(allocationSchema),
 });
 
@@ -25,7 +23,6 @@ export const bagiFormSchema = z
   .object({
     name: z.string().min(1, "Bagi name cannot be empty"),
     inputMode: z.enum(["form", "scan"]),
-    showTaxService: z.boolean(),
     members: z.array(memberSchema).min(2, "Need at least 2 members"),
     items: z.array(itemSchema),
   })

@@ -1,6 +1,5 @@
 import { useFieldArray } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
-import { useWatch } from "react-hook-form";
 import type { BagiFormData } from "./bagiFormSchema";
 import { ItemCard } from "./ItemCard";
 import { Button } from "@/components/ui/Button";
@@ -12,9 +11,7 @@ interface Section3ItemsProps {
 }
 
 export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps) => {
-  const { control, setValue } = form;
-  const { fields, append, remove } = useFieldArray({ control, name: "items" });
-  const showTaxService = useWatch({ control, name: "showTaxService" });
+  const { fields, append, remove } = useFieldArray({ control: form.control, name: "items" });
 
   const handleAddItem = () => {
     append({
@@ -23,24 +20,12 @@ export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps
       amount: 0,
       quantity: 1,
       paidBy: "",
-      includeService: false,
-      includeTax: false,
       allocation: [],
     });
   };
 
   return (
     <div className="space-y-4">
-      <label className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          checked={showTaxService ?? false}
-          onChange={(e) => setValue("showTaxService", e.target.checked)}
-          className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
-        />
-        <span className="text-sm text-gray-600">Sertakan Pajak & Service</span>
-      </label>
-
       <div className="space-y-3">
         {fields.map((field, index) => (
           <ItemCard
@@ -48,7 +33,6 @@ export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps
             form={form}
             index={index}
             onRemove={() => remove(index)}
-            showTaxService={showTaxService ?? false}
           />
         ))}
       </div>

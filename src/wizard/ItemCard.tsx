@@ -10,12 +10,11 @@ interface ItemCardProps {
   form: UseFormReturn<BagiFormData>;
   index: number;
   onRemove: () => void;
-  showTaxService: boolean;
 }
 
 type AllocMode = "shared" | "perUser";
 
-export const ItemCard = ({ form, index, onRemove, showTaxService }: ItemCardProps) => {
+export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
   const { register, setValue, getValues } = form;
   const members = useWatch({ control: form.control, name: "members" });
   const item = useWatch({ control: form.control, name: `items.${index}` });
@@ -68,10 +67,7 @@ export const ItemCard = ({ form, index, onRemove, showTaxService }: ItemCardProp
   const remaining = getRemaining();
   const isFullyAllocated = allocated > 0 && (mode === "shared" ? true : remaining === 0);
 
-  const serviceMultiplier = (item?.includeService ? 0.1 : 0) + (item?.includeTax ? 0.11 : 0);
-  const displayAmount = item ? Math.round(item.amount * (1 + serviceMultiplier)) : 0;
-
-  const perPersonAmount = allocated > 0 ? Math.round(displayAmount / allocated) : 0;
+  const perPersonAmount = allocated > 0 ? Math.round((item?.amount ?? 0) / allocated) : 0;
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-3">
@@ -107,32 +103,6 @@ export const ItemCard = ({ form, index, onRemove, showTaxService }: ItemCardProp
           ✕
         </button>
       </div>
-
-      {showTaxService && (
-        <div className="mb-2 flex items-center gap-4">
-          <label className="flex items-center gap-1.5 text-xs text-gray-600">
-            <input
-              type="checkbox"
-              checked={item?.includeService ?? false}
-              onChange={(e) => updateItem((it) => ({ ...it, includeService: e.target.checked }))}
-            />
-            Service 10%
-          </label>
-          <label className="flex items-center gap-1.5 text-xs text-gray-600">
-            <input
-              type="checkbox"
-              checked={item?.includeTax ?? false}
-              onChange={(e) => updateItem((it) => ({ ...it, includeTax: e.target.checked }))}
-            />
-            Tax 11%
-          </label>
-          {serviceMultiplier > 0 && (
-            <span className="text-xs font-medium text-brand-600">
-              → {formatRupiah(displayAmount)}
-            </span>
-          )}
-        </div>
-      )}
 
       <div className="mb-2">
         <select

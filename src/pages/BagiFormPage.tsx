@@ -19,7 +19,6 @@ import { ErrorBanner } from "@/components/ui/ErrorBanner";
 const DEFAULT_VALUES: BagiFormData = {
   name: "",
   inputMode: "form",
-  showTaxService: false,
   members: [],
   items: [],
 };
@@ -44,7 +43,6 @@ const BagiFormPage = () => {
       form.reset({
         name: existing.name,
         inputMode: "form",
-        showTaxService: existing.items.some((i) => i.includeService || i.includeTax),
         members: existing.members.map((m) => ({ id: m.id, name: m.name })),
         items: existing.items.map((i) => ({
           id: i.id,
@@ -52,8 +50,6 @@ const BagiFormPage = () => {
           amount: i.amount,
           quantity: i.quantity,
           paidBy: i.paidBy,
-          includeService: i.includeService,
-          includeTax: i.includeTax,
           allocation: i.allocation.map((a) => ({ memberId: a.memberId, quantity: a.quantity })),
         })),
       });
@@ -113,9 +109,7 @@ const BagiFormPage = () => {
               amount: item.amount,
               quantity: item.quantity,
               paidBy: item.paidBy,
-              includeService: item.includeService,
-              includeTax: item.includeTax,
-              allocation: item.allocation,
+              includeService: false, includeTax: false, allocation: item.allocation,
             });
           } else {
             await itemApi.create(bagiId, {
@@ -123,9 +117,7 @@ const BagiFormPage = () => {
               amount: item.amount,
               quantity: item.quantity,
               paidBy: item.paidBy,
-              includeService: item.includeService,
-              includeTax: item.includeTax,
-              allocation: item.allocation,
+              includeService: false, includeTax: false, allocation: item.allocation,
             });
           }
         }
@@ -150,9 +142,7 @@ const BagiFormPage = () => {
             name: item.name,
             amount: item.amount,
             quantity: item.quantity,
-            paidBy: memberIdMap.get(item.paidBy) ?? "",
-            includeService: item.includeService,
-            includeTax: item.includeTax,
+            paidBy: memberIdMap.get(item.paidBy) ?? "", includeService: false, includeTax: false,
             allocation: item.allocation.map((a) => ({
               memberId: memberIdMap.get(a.memberId) ?? "",
               quantity: a.quantity,
