@@ -121,7 +121,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
             mode === "shared" ? "bg-brand-500 text-white shadow-sm" : "text-gray-500"
           )}
         >
-          Shared All
+          Shared All [{mode}]
         </button>
         <button
           type="button"

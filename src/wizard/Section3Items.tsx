@@ -11,7 +11,7 @@ interface Section3ItemsProps {
 }
 
 export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps) => {
-  const { fields, append, remove } = useFieldArray({ control: form.control, name: "items" });
+  const { fields, append, remove, update } = useFieldArray({ control: form.control, name: "items" });
 
   const handleAddItem = () => {
     append({
@@ -24,6 +24,10 @@ export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps
     });
   };
 
+  const handleUpdateItem = (index: number, item: BagiFormData["items"][number]) => {
+    update(index, item);
+  };
+
   return (
     <div className="space-y-4">
       <div className="space-y-3">
@@ -33,6 +37,7 @@ export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps
             form={form}
             index={index}
             onRemove={() => remove(index)}
+            onUpdate={(item) => handleUpdateItem(index, item)}
           />
         ))}
       </div>
