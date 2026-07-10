@@ -73,7 +73,7 @@ const BagiFormPage = () => {
     setIsSubmitting(true);
     try {
       const valid = await form.trigger();
-      if (!valid) return;
+      if (!valid) { setSaveError("Lengkapi semua field sebelum menyimpan."); return; }
 
       const data = form.getValues();
 
