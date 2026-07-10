@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import type { BagiFormData } from "./bagiFormSchema";
 import { useWatch } from "react-hook-form";
+import type { BagiFormData } from "./bagiFormSchema";
 import { Chip } from "@/components/ui/Chip";
 import { cn } from "@/lib/cn";
 import { formatRupiah } from "@/lib/format";
@@ -26,14 +26,16 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
     setValue("items", current.map((it, i) => (i === index ? updater(it) : it)));
   };
 
-  const toggleMemberShared = (memberId: string) => {
-    updateItem((it) => {
-      const existing = it.allocation.find((a) => a.memberId === memberId);
-      const allocation = existing
-        ? it.allocation.filter((a) => a.memberId !== memberId)
-        : [...it.allocation, { memberId, quantity: 1 }];
-      return { ...it, allocation };
-    });
+  const switchMode = (newMode: AllocMode) => {
+    setMode(newMode);
+    if (newMode === "shared") {
+      updateItem((it) => ({
+        ...it,
+        allocation: (members ?? []).map((m) => ({ memberId: m.id, quantity: 1 })),
+      }));
+    } else {
+      updateItem((it) => ({ ...it, allocation: [] }));
+    }
   };
 
   const incrementMemberQty = (memberId: string) => {
@@ -48,25 +50,8 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
     });
   };
 
-  const switchMode = (newMode: AllocMode) => {
-    setMode(newMode);
-    updateItem((it) => ({ ...it, allocation: [] }));
-  };
-
-  const getAllocated = (): number => {
-    if (!item) return 0;
-    return item.allocation.reduce((sum, a) => sum + a.quantity, 0);
-  };
-
-  const getRemaining = (): number => {
-    if (!item) return 0;
-    return item.quantity - getAllocated();
-  };
-
-  const allocated = item ? getAllocated() : 0;
-  const remaining = getRemaining();
-  const isFullyAllocated = allocated > 0 && (mode === "shared" ? true : remaining === 0);
-
+  const allocated = item ? item.allocation.reduce((sum, a) => sum + a.quantity, 0) : 0;
+  const remaining = item ? item.quantity - allocated : 0;
   const perPersonAmount = allocated > 0 ? Math.round((item?.amount ?? 0) / allocated) : 0;
 
   return (
@@ -95,11 +80,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
             placeholder="Harga"
           />
         </div>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="text-xs text-gray-400 hover:text-danger"
-        >
+        <button type="button" onClick={onRemove} className="text-xs text-gray-400 hover:text-danger">
           ✕
         </button>
       </div>
@@ -123,9 +104,12 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
         <button
           type="button"
           onClick={() => switchMode("shared")}
+          disabled={mode === "shared"}
           className={cn(
             "flex-1 rounded px-2 py-1 text-xs font-medium",
-            mode === "shared" ? "bg-white text-brand-600 shadow-sm" : "text-gray-500"
+            mode === "shared"
+              ? "bg-white text-brand-600 shadow-sm cursor-default"
+              : "text-gray-500 cursor-pointer"
           )}
         >
           Shared All
@@ -133,14 +117,23 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
         <button
           type="button"
           onClick={() => switchMode("perUser")}
+          disabled={mode === "perUser"}
           className={cn(
             "flex-1 rounded px-2 py-1 text-xs font-medium",
-            mode === "perUser" ? "bg-white text-brand-600 shadow-sm" : "text-gray-500"
+            mode === "perUser"
+              ? "bg-white text-brand-600 shadow-sm cursor-default"
+              : "text-gray-500 cursor-pointer"
           )}
         >
           Per User
         </button>
       </div>
+
+      {mode === "shared" && perPersonAmount > 0 && (
+        <p className="mb-2 text-xs text-gray-500">
+          Shared equally · {formatRupiah(perPersonAmount)} each
+        </p>
+      )}
 
       {mode === "perUser" && (
         <p className={cn("mb-2 text-xs", remaining === 0 ? "text-green-600" : "text-gray-500")}>
@@ -152,7 +145,6 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
         {members?.map((m) => {
           const allocEntry = item?.allocation.find((a) => a.memberId === m.id);
           const isSelected = !!allocEntry;
-          const isDisabled = mode === "perUser" && !isSelected && remaining === 0;
 
           return (
             <Chip
@@ -160,28 +152,14 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
               label={m.name.charAt(0).toUpperCase()}
               selected={isSelected}
               {...(mode === "perUser" && allocEntry ? { count: allocEntry.quantity } : {})}
-              disabled={isDisabled}
+              disabled={mode === "shared"}
               onClick={() => {
-                if (mode === "shared") {
-                  toggleMemberShared(m.id);
-                } else {
-                  incrementMemberQty(m.id);
-                }
+                if (mode === "perUser") incrementMemberQty(m.id);
               }}
             />
           );
         })}
       </div>
-
-      {isFullyAllocated && (
-        <p className="mt-1 text-[10px] text-gray-400">
-          {mode === "shared"
-            ? `${allocated} × ${formatRupiah(perPersonAmount)} each`
-            : item?.allocation
-                .map((a) => `${members?.find((m) => m.id === a.memberId)?.name ?? "?"}: ${formatRupiah(perPersonAmount * a.quantity)}`)
-                .join(" · ")}
-        </p>
-      )}
     </div>
   );
 };
