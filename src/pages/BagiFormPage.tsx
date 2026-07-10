@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { bagiFormSchema } from "@/wizard/bagiFormSchema";
 import type { BagiFormData } from "@/wizard/bagiFormSchema";
 import { Section1Header } from "@/wizard/Section1Header";
@@ -25,10 +25,9 @@ const DEFAULT_VALUES: BagiFormData = {
 
 const BagiFormPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { bagiId } = useParams<{ bagiId: string }>();
   const isEdit = !!bagiId;
-  const isStep2 = location.pathname.includes("/items");
+  const [step, setStep] = useState(1);
 
   const form = useForm<BagiFormData>({
     resolver: zodResolver(bagiFormSchema),
@@ -64,7 +63,7 @@ const BagiFormPage = () => {
   const handleNext = async () => {
     const valid = await form.trigger(["name"]);
     if (valid) {
-      navigate("/bagi/new/items");
+      setStep(2);
     }
   };
 
@@ -109,7 +108,9 @@ const BagiFormPage = () => {
               amount: item.amount,
               quantity: item.quantity,
               paidBy: item.paidBy,
-              includeService: false, includeTax: false, allocation: item.allocation,
+              includeService: false,
+              includeTax: false,
+              allocation: item.allocation,
             });
           } else {
             await itemApi.create(bagiId, {
@@ -117,7 +118,9 @@ const BagiFormPage = () => {
               amount: item.amount,
               quantity: item.quantity,
               paidBy: item.paidBy,
-              includeService: false, includeTax: false, allocation: item.allocation,
+              includeService: false,
+              includeTax: false,
+              allocation: item.allocation,
             });
           }
         }
@@ -142,7 +145,9 @@ const BagiFormPage = () => {
             name: item.name,
             amount: item.amount,
             quantity: item.quantity,
-            paidBy: memberIdMap.get(item.paidBy) ?? "", includeService: false, includeTax: false,
+            paidBy: memberIdMap.get(item.paidBy) ?? "",
+            includeService: false,
+            includeTax: false,
             allocation: item.allocation.map((a) => ({
               memberId: memberIdMap.get(a.memberId) ?? "",
               quantity: a.quantity,
@@ -175,7 +180,7 @@ const BagiFormPage = () => {
     );
   }
 
-  if (!isEdit && !isStep2) {
+  if (!isEdit && step === 1) {
     return (
       <div className="mx-auto max-w-md px-4 py-6 space-y-6">
         <div className="flex items-center gap-3">
@@ -197,7 +202,10 @@ const BagiFormPage = () => {
   return (
     <div className="mx-auto max-w-md px-4 py-6 space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={() => isEdit ? navigate(-1) : navigate("/bagi/new")} className="text-sm text-brand-600">
+        <button
+          onClick={() => (isEdit ? navigate(-1) : setStep(1))}
+          className="text-sm text-brand-600"
+        >
           ‹ Back
         </button>
         <h1 className="text-lg font-bold text-gray-900">
