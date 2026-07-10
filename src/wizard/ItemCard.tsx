@@ -28,14 +28,13 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
 
   const switchMode = (newMode: AllocMode) => {
     setMode(newMode);
-    if (newMode === "shared") {
-      updateItem((it) => ({
-        ...it,
-        allocation: (members ?? []).map((m) => ({ memberId: m.id, quantity: 1 })),
-      }));
-    } else {
-      updateItem((it) => ({ ...it, allocation: [] }));
-    }
+    updateItem((it) => {
+      if (newMode === "shared") {
+        const allocation = (members ?? []).map((m) => ({ memberId: m.id, quantity: 1 }));
+        return { ...it, allocation };
+      }
+      return { ...it, allocation: [] };
+    });
   };
 
   const incrementMemberQty = (memberId: string) => {
@@ -52,6 +51,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
 
   const allocated = item ? item.allocation.reduce((sum, a) => sum + a.quantity, 0) : 0;
   const remaining = item ? item.quantity - allocated : 0;
+  const memberCount = (members ?? []).length;
   const perPersonAmount = allocated > 0 ? Math.round((item?.amount ?? 0) / allocated) : 0;
 
   return (
@@ -104,12 +104,9 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
         <button
           type="button"
           onClick={() => switchMode("shared")}
-          disabled={false}
           className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium",
-            mode === "shared"
-              ? "bg-white text-brand-600 shadow-sm cursor-default"
-              : "text-gray-500 cursor-pointer"
+            "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
+            mode === "shared" ? "bg-white text-brand-600 shadow-sm" : "text-gray-500"
           )}
         >
           Shared All
@@ -117,21 +114,18 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
         <button
           type="button"
           onClick={() => switchMode("perUser")}
-          disabled={false}
           className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium",
-            mode === "perUser"
-              ? "bg-white text-brand-600 shadow-sm cursor-default"
-              : "text-gray-500 cursor-pointer"
+            "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
+            mode === "perUser" ? "bg-white text-brand-600 shadow-sm" : "text-gray-500"
           )}
         >
           Per User
         </button>
       </div>
 
-      {mode === "shared" && perPersonAmount > 0 && (
+      {mode === "shared" && allocated > 0 && (
         <p className="mb-2 text-xs text-gray-500">
-          Shared equally · {formatRupiah(perPersonAmount)} each
+          Shared equally · {memberCount} × {formatRupiah(perPersonAmount)} each
         </p>
       )}
 
@@ -144,15 +138,14 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
       <div className="flex flex-wrap gap-1.5">
         {members?.map((m) => {
           const allocEntry = item?.allocation.find((a) => a.memberId === m.id);
-          const isSelected = !!allocEntry;
 
           return (
             <Chip
               key={m.id}
               label={m.name.charAt(0).toUpperCase()}
-              selected={isSelected}
+              selected={!!allocEntry}
               {...(mode === "perUser" && allocEntry ? { count: allocEntry.quantity } : {})}
-              disabled={false}
+              disabled={mode === "shared"}
               onClick={() => {
                 if (mode === "perUser") incrementMemberQty(m.id);
               }}
