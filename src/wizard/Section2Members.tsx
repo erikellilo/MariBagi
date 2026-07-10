@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useFieldArray } from "react-hook-form";
 import type { BagiFormData } from "./bagiFormSchema";
@@ -12,9 +12,11 @@ export const Section2Members = ({ form }: Section2MembersProps) => {
   const { register, control } = form;
   const { fields, append, remove } = useFieldArray({ control, name: "members" });
   const errors = form.formState.errors;
+  const seeded = useRef(false);
 
   useEffect(() => {
-    if (fields.length === 0) {
+    if (!seeded.current && fields.length === 0) {
+      seeded.current = true;
       append({ id: crypto.randomUUID(), name: "" });
       append({ id: crypto.randomUUID(), name: "" });
     }
@@ -52,9 +54,9 @@ export const Section2Members = ({ form }: Section2MembersProps) => {
         ))}
       </div>
 
-      {errors.members && (
+      {errors.members?.root?.message && (
         <p className="mt-1 text-xs text-danger">
-          {errors.members.message ?? errors.members.root?.message ?? "Minimal 2 anggota"}
+          {errors.members.root.message}
         </p>
       )}
     </div>
