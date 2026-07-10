@@ -21,35 +21,41 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
 
   const [mode, setMode] = useState<AllocMode>("shared");
 
-  const updateItem = (updater: (item: BagiFormData["items"][number]) => BagiFormData["items"][number]) => {
+  const handleSharedAll = () => {
+    setMode("shared");
     const current = getValues("items");
-    setValue("items", current.map((it, i) => (i === index ? updater(it) : it)));
+    const allocation = (members ?? []).map((m) => ({ memberId: m.id, quantity: 1 }));
+    setValue(
+      "items",
+      current.map((it, i) => (i === index ? { ...it, allocation } : it))
+    );
   };
 
-  const switchMode = (newMode: AllocMode) => {
-    setMode(newMode);
-    updateItem((it) => {
-      if (newMode === "shared") {
-        const allocation = (members ?? []).map((m) => ({ memberId: m.id, quantity: 1 }));
-        return { ...it, allocation };
-      }
-      return { ...it, allocation: [] };
-    });
+  const handlePerUser = () => {
+    setMode("perUser");
+    const current = getValues("items");
+    setValue(
+      "items",
+      current.map((it, i) => (i === index ? { ...it, allocation: [] } : it))
+    );
   };
 
-  const incrementMemberQty = (memberId: string) => {
-    updateItem((it) => {
-      const allocated = it.allocation.reduce((sum, a) => sum + a.quantity, 0);
-      if (allocated >= it.quantity) return it;
-      const existing = it.allocation.find((a) => a.memberId === memberId);
-      const allocation = existing
-        ? it.allocation.map((a) => (a.memberId === memberId ? { ...a, quantity: a.quantity + 1 } : a))
-        : [...it.allocation, { memberId, quantity: 1 }];
-      return { ...it, allocation };
-    });
+  const handleAddMember = (memberId: string) => {
+    const current = getValues("items");
+    const it = current[index];
+    const allocated = it.allocation.reduce((sum: number, a: { quantity: number }) => sum + a.quantity, 0);
+    if (allocated >= it.quantity) return;
+    const existing = it.allocation.find((a: { memberId: string }) => a.memberId === memberId);
+    const allocation = existing
+      ? it.allocation.map((a) => (a.memberId === memberId ? { ...a, quantity: a.quantity + 1 } : a))
+      : [...it.allocation, { memberId, quantity: 1 }];
+    setValue(
+      "items",
+      current.map((itm, i) => (i === index ? { ...itm, allocation } : itm))
+    );
   };
 
-  const allocated = item ? item.allocation.reduce((sum, a) => sum + a.quantity, 0) : 0;
+  const allocated = item ? item.allocation.reduce((sum: number, a: { quantity: number }) => sum + a.quantity, 0) : 0;
   const remaining = item ? item.quantity - allocated : 0;
   const memberCount = (members ?? []).length;
   const perPersonAmount = allocated > 0 ? Math.round((item?.amount ?? 0) / allocated) : 0;
@@ -88,7 +94,13 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
       <div className="mb-2">
         <select
           value={item?.paidBy ?? ""}
-          onChange={(e) => updateItem((it) => ({ ...it, paidBy: e.target.value }))}
+          onChange={(e) => {
+            const current = getValues("items");
+            setValue(
+              "items",
+              current.map((it, i) => (i === index ? { ...it, paidBy: e.target.value } : it))
+            );
+          }}
           className="w-full rounded-md border border-gray-300 bg-white px-2 py-1.5 text-xs"
         >
           <option value="">Dibayar oleh ▾</option>
@@ -103,9 +115,9 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
       <div className="mb-2 flex rounded-md bg-gray-100 p-0.5">
         <button
           type="button"
-          onClick={() => switchMode("shared")}
+          onClick={handleSharedAll}
           className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
+            "flex-1 rounded px-2 py-1 text-xs font-medium",
             mode === "shared" ? "bg-brand-500 text-white shadow-sm" : "text-gray-500"
           )}
         >
@@ -113,9 +125,9 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
         </button>
         <button
           type="button"
-          onClick={() => switchMode("perUser")}
+          onClick={handlePerUser}
           className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
+            "flex-1 rounded px-2 py-1 text-xs font-medium",
             mode === "perUser" ? "bg-brand-500 text-white shadow-sm" : "text-gray-500"
           )}
         >
@@ -138,7 +150,6 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
       <div className="flex flex-wrap gap-1.5">
         {members?.map((m) => {
           const allocEntry = item?.allocation.find((a) => a.memberId === m.id);
-
           return (
             <Chip
               key={m.id}
@@ -147,7 +158,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
               {...(mode === "perUser" && allocEntry ? { count: allocEntry.quantity } : {})}
               disabled={mode === "shared"}
               onClick={() => {
-                if (mode === "perUser") incrementMemberQty(m.id);
+                if (mode === "perUser") handleAddMember(m.id);
               }}
             />
           );
