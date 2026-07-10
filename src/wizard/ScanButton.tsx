@@ -5,13 +5,12 @@ import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 
 interface ScanButtonProps {
-  bagiId: string;
-  onScanned: (data: { name: string; items: { name: string; amount: number; quantity: number }[] }) => void;
+  onScanned: (data: { name: string; items: { name: string; amount: number; quantity: number; includeService: boolean; includeTax: boolean }[] }) => void;
 }
 
-export const ScanButton = ({ bagiId, onScanned }: ScanButtonProps) => {
+export const ScanButton = ({ onScanned }: ScanButtonProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const scanMutation = useScanReceipt(bagiId);
+  const scanMutation = useScanReceipt("draft");
 
   const handleClick = () => {
     fileInputRef.current?.click();
