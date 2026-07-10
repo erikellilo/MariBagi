@@ -41,8 +41,6 @@ export const seedDb = (): void => {
     id: bagiId,
     name: "Tiket Dufan",
     date: now,
-    includeService: false,
-    includeTax: false,
     createdAt: now,
   });
 
@@ -59,6 +57,8 @@ export const seedDb = (): void => {
     amount: 400000,
     quantity: 1,
     paidBy: asepId,
+    includeService: false,
+    includeTax: false,
     allocation: [
       { memberId: asepId, quantity: 1 },
       { memberId: ucupId, quantity: 1 },

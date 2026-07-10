@@ -55,8 +55,6 @@ export const handlers = [
       id,
       name: body.name,
       date: now,
-      includeService: body.includeService,
-      includeTax: body.includeTax,
       createdAt: now,
     };
 
@@ -178,6 +176,8 @@ export const handlers = [
       amount: body.amount,
       quantity: body.quantity,
       paidBy: body.paidBy,
+      includeService: body.includeService,
+      includeTax: body.includeTax,
       allocation: body.allocation,
       createdAt: now,
     };
@@ -206,6 +206,8 @@ export const handlers = [
         amount: itemInput.amount,
         quantity: itemInput.quantity,
         paidBy: "",
+        includeService: false,
+        includeTax: false,
         allocation: [],
         createdAt: now,
       };
