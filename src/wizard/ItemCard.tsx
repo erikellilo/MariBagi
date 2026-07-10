@@ -20,6 +20,7 @@ export const ItemCard = ({ form, index, onRemove, onUpdate }: ItemCardProps) => 
   const item = useWatch({ control: form.control, name: `items.${index}` });
 
   const [mode, setMode] = useState<AllocMode>("shared");
+  const { register } = form;
 
   const handleSharedAll = () => {
     setMode("shared");
