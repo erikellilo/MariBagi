@@ -10,12 +10,12 @@ interface ItemCardProps {
   form: UseFormReturn<BagiFormData>;
   index: number;
   onRemove: () => void;
+  onUpdate: (item: BagiFormData["items"][number]) => void;
 }
 
 type AllocMode = "shared" | "perUser";
 
-export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
-  const { register, setValue, getValues } = form;
+export const ItemCard = ({ form, index, onRemove, onUpdate }: ItemCardProps) => {
   const members = useWatch({ control: form.control, name: "members" });
   const item = useWatch({ control: form.control, name: `items.${index}` });
 
@@ -23,36 +23,31 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
 
   const handleSharedAll = () => {
     setMode("shared");
-    const current = getValues("items");
+    if (!item) return;
     const allocation = (members ?? []).map((m) => ({ memberId: m.id, quantity: 1 }));
-    setValue(
-      "items",
-      current.map((it, i) => (i === index ? { ...it, allocation } : it))
-    );
+    onUpdate({ ...item, allocation });
   };
 
   const handlePerUser = () => {
     setMode("perUser");
-    const current = getValues("items");
-    setValue(
-      "items",
-      current.map((it, i) => (i === index ? { ...it, allocation: [] } : it))
-    );
+    if (!item) return;
+    onUpdate({ ...item, allocation: [] });
   };
 
   const handleAddMember = (memberId: string) => {
-    const current = getValues("items");
-    const it = current[index];
-    const allocated = it.allocation.reduce((sum: number, a: { quantity: number }) => sum + a.quantity, 0);
-    if (allocated >= it.quantity) return;
-    const existing = it.allocation.find((a: { memberId: string }) => a.memberId === memberId);
+    if (!item) return;
+    const allocated = item.allocation.reduce((sum: number, a: { quantity: number }) => sum + a.quantity, 0);
+    if (allocated >= item.quantity) return;
+    const existing = item.allocation.find((a: { memberId: string }) => a.memberId === memberId);
     const allocation = existing
-      ? it.allocation.map((a) => (a.memberId === memberId ? { ...a, quantity: a.quantity + 1 } : a))
-      : [...it.allocation, { memberId, quantity: 1 }];
-    setValue(
-      "items",
-      current.map((itm, i) => (i === index ? { ...itm, allocation } : itm))
-    );
+      ? item.allocation.map((a) => (a.memberId === memberId ? { ...a, quantity: a.quantity + 1 } : a))
+      : [...item.allocation, { memberId, quantity: 1 }];
+    onUpdate({ ...item, allocation });
+  };
+
+  const handlePaidBy = (paidBy: string) => {
+    if (!item) return;
+    onUpdate({ ...item, paidBy });
   };
 
   const allocated = item ? item.allocation.reduce((sum: number, a: { quantity: number }) => sum + a.quantity, 0) : 0;
@@ -94,13 +89,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
       <div className="mb-2">
         <select
           value={item?.paidBy ?? ""}
-          onChange={(e) => {
-            const current = getValues("items");
-            setValue(
-              "items",
-              current.map((it, i) => (i === index ? { ...it, paidBy: e.target.value } : it))
-            );
-          }}
+          onChange={(e) => handlePaidBy(e.target.value)}
           className="w-full rounded-md border border-gray-300 bg-white px-2 py-1.5 text-xs"
         >
           <option value="">Dibayar oleh ▾</option>
@@ -121,7 +110,7 @@ export const ItemCard = ({ form, index, onRemove }: ItemCardProps) => {
             mode === "shared" ? "bg-brand-500 text-white shadow-sm" : "text-gray-500"
           )}
         >
-          Shared All [{mode}]
+          Shared All
         </button>
         <button
           type="button"
