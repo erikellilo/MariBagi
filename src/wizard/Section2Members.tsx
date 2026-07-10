@@ -26,7 +26,7 @@ export const Section2Members = ({ form }: Section2MembersProps) => {
         <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
           Anggota
         </span>
-        <Button variant="ghost" size="sm" onClick={() => append({ id: crypto.randomUUID(), name: "" })}>
+        <Button variant="ghost" onClick={() => append({ id: crypto.randomUUID(), name: "" })}>
           + Tambah
         </Button>
       </div>
