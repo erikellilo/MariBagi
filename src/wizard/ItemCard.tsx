@@ -25,7 +25,6 @@ export const ItemCard = ({ form, index, item, onRemove, onUpdate }: ItemCardProp
 
   const switchTo = (newMode: AllocMode) => {
     modeRef.current = newMode;
-    rerender((n) => n + 1);
     if (!item) return;
     if (newMode === "shared") {
       const allocation = (members ?? []).map((m) => ({ memberId: m.id, quantity: 1 }));
@@ -33,6 +32,7 @@ export const ItemCard = ({ form, index, item, onRemove, onUpdate }: ItemCardProp
     } else {
       onUpdate({ ...item, allocation: [] });
     }
+    rerender((n) => n + 1);
   };
 
   const addMemberQty = (memberId: string) => {
@@ -51,6 +51,9 @@ export const ItemCard = ({ form, index, item, onRemove, onUpdate }: ItemCardProp
   const memberCount = (members ?? []).length;
   const perPersonAmount = allocated > 0 && memberCount > 0 ? Math.round((item?.amount ?? 0) / allocated) : 0;
   const currentMode = modeRef.current;
+
+  const sharedStyle = currentMode === "shared" ? { backgroundColor: "#8cc084", color: "white" } : {};
+  const perUserStyle = currentMode === "perUser" ? { backgroundColor: "#8cc084", color: "white" } : {};
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-3">
@@ -98,24 +101,20 @@ export const ItemCard = ({ form, index, item, onRemove, onUpdate }: ItemCardProp
         </select>
       </div>
 
-      <div className="mb-2 flex rounded-md bg-gray-100 p-0.5">
+      <div className="mb-2 flex gap-1 rounded-md bg-gray-100 p-0.5">
         <button
           type="button"
           onClick={() => switchTo("shared")}
-          className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium",
-            currentMode === "shared" ? "bg-brand-500 text-white shadow-sm" : "text-gray-500"
-          )}
+          style={sharedStyle}
+          className="flex-1 rounded px-2 py-1 text-xs font-medium text-gray-500"
         >
           Shared All
         </button>
         <button
           type="button"
           onClick={() => switchTo("perUser")}
-          className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium",
-            currentMode === "perUser" ? "bg-brand-500 text-white shadow-sm" : "text-gray-500"
-          )}
+          style={perUserStyle}
+          className="flex-1 rounded px-2 py-1 text-xs font-medium text-gray-500"
         >
           Per User
         </button>
