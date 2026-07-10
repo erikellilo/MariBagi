@@ -1,5 +1,6 @@
 import { useFieldArray } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import type { BagiFormData } from "./bagiFormSchema";
 import { ItemCard } from "./ItemCard";
 import { Button } from "@/components/ui/Button";
@@ -12,6 +13,7 @@ interface Section3ItemsProps {
 
 export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps) => {
   const { fields, append, remove, update } = useFieldArray({ control: form.control, name: "items" });
+  const items = useWatch({ control: form.control, name: "items" });
 
   const handleAddItem = () => {
     append({
@@ -24,10 +26,6 @@ export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps
     });
   };
 
-  const handleUpdateItem = (index: number, item: BagiFormData["items"][number]) => {
-    update(index, item);
-  };
-
   return (
     <div className="space-y-4">
       <div className="space-y-3">
@@ -36,8 +34,9 @@ export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps
             key={field.id}
             form={form}
             index={index}
+            item={items?.[index]}
             onRemove={() => remove(index)}
-            onUpdate={(item) => handleUpdateItem(index, item)}
+            onUpdate={(item) => update(index, item)}
           />
         ))}
       </div>

@@ -9,16 +9,16 @@ import { formatRupiah } from "@/lib/format";
 interface ItemCardProps {
   form: UseFormReturn<BagiFormData>;
   index: number;
+  item?: BagiFormData["items"][number];
   onRemove: () => void;
   onUpdate: (item: BagiFormData["items"][number]) => void;
 }
 
 type AllocMode = "shared" | "perUser";
 
-export const ItemCard = ({ form, index, onRemove, onUpdate }: ItemCardProps) => {
+export const ItemCard = ({ form, index, item, onRemove, onUpdate }: ItemCardProps) => {
   const { register } = form;
   const members = useWatch({ control: form.control, name: "members" });
-  const item = useWatch({ control: form.control, name: `items.${index}` });
 
   const modeRef = useRef<AllocMode>("shared");
   const [, rerender] = useState(0);
@@ -49,7 +49,7 @@ export const ItemCard = ({ form, index, onRemove, onUpdate }: ItemCardProps) => 
   const allocated = item ? item.allocation.reduce((sum, a) => sum + a.quantity, 0) : 0;
   const remaining = item ? item.quantity - allocated : 0;
   const memberCount = (members ?? []).length;
-  const perPersonAmount = allocated > 0 ? Math.round((item?.amount ?? 0) / allocated) : 0;
+  const perPersonAmount = allocated > 0 && memberCount > 0 ? Math.round((item?.amount ?? 0) / allocated) : 0;
   const currentMode = modeRef.current;
 
   return (
