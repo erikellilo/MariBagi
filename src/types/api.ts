@@ -29,8 +29,8 @@ export interface UpdateItemRequest {
   amount?: number;
   quantity?: number;
   paidBy?: string;
-  includeService?: boolean;
-  includeTax?: boolean;
+  includeService: boolean;
+  includeTax: boolean;
   allocation?: { memberId: string; quantity: number }[];
 }
 

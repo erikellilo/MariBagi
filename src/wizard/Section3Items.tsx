@@ -12,7 +12,7 @@ interface Section3ItemsProps {
 }
 
 export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps) => {
-  const { fields, append, remove, update } = useFieldArray({ control: form.control, name: "items" });
+  const { fields, append, remove } = useFieldArray({ control: form.control, name: "items" });
   const items = useWatch({ control: form.control, name: "items" });
 
   const handleAddItem = () => {
@@ -36,7 +36,6 @@ export const Section3Items = ({ form, onSave, isSubmitting }: Section3ItemsProps
             index={index}
             item={items?.[index]}
             onRemove={() => remove(index)}
-            onUpdate={(item) => update(index, item)}
           />
         ))}
       </div>
