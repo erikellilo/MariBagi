@@ -15,6 +15,8 @@ MariBagi's UI is built around a **festival/cinema ticket stub metaphor**: cream/
 
 Reference points: festival/cinema ticket poster (scalloped die-cut edges, two-tone palette, dotted perforation with punch-hole notches, barcode); receipt/price-list design (bold headline + eyebrow subtitle, numbered list rows, bold total line). Two false starts — Persona-game diagonal red/black skin, arcade/coin-op pixel-font skin — explicitly rejected as too loud/busy or too gamified for a money app; documented so they aren't re-explored.
 
+**Form factor:** mobile-first. All layouts are designed for phone-width viewports first, scaling up responsively for larger screens. Touch targets ≥44px. No hover-dependent interactions — every action works via tap.
+
 ## 2. Visual Language
 
 ### 2.1 Color
@@ -169,3 +171,8 @@ Ticket-stub shape, distinct from the item-list pattern: scalloped edge on the le
 - **Auto-recalculation on member add/remove** should only touch equal-split ("Untuk Semua") items; weighted items should never silently change — needs a visual indicator so it's obvious which items just changed vs. which still need manual attention.
 - **Whether Qty (item's own quantity field) factors into the "Untuk Semua" calculation,** or whether equal-split always just divides by member count regardless of Qty. To be resolved when building the split-math functions, not the sheet's visual design.
 - **The barcode/scallop-generator component** should be built once as a shared piece (see §2.3) rather than re-implemented per screen.
+
+
+## 7. Deferred (Post-Milestone-1)
+
+- **PWA (installable, offline shell, manifest).** Arrives with the backend milestone — without real persistence, an installable PWA would open to an empty app each launch, so the install benefit is marginal until data survives refresh. Plumbing-only work (vite-plugin-pwa + Workbox); no design changes required.
