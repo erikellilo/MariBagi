@@ -2,7 +2,7 @@
 status: canonical — upstream product spec; all other docs defer to this PRD
 date: 2026-07-06
 stack: target rebuild (TanStack Query + Tailwind v4 + MSW + react-hook-form + zod) — NOT the legacy src/ stack
-supersedes: docs/superpowers/specs/2026-07-06-maribagi-milestone1-design.md (partially — see §7; notably moves split calc INTO milestone 1)
+supersedes: docs/superpowers/specs/2026-07-06-maribagi-milestone1-design.md (absorbed into §6.4, §6.5, §9 — file deleted)
 ---
 
 # MariBagi Product Requirements Document
@@ -52,7 +52,7 @@ Not targeting anonymous or remote-only groups (that requires accounts + cross-de
 **Portfolio bar:**
 - Cloneable — `git clone && npm install && npm run dev` runs in under 5 minutes.
 - Built on the rebuild stack (TanStack Query + Tailwind v4 + MSW + react-hook-form + zod + uuid + native fetch).
-- Design-system-adherent — tokens applied via Tailwind `@theme` in `src/index.css` per the design-system spec (see docs/superpowers/specs/2026-07-06-maribagi-design-system.md; its component examples are in styled-components/legacy and will be re-spec'd for Tailwind at rebuild time).
+- Design-system-adherent — tokens applied via Tailwind `@theme` in `src/index.css` per the design-system spec (see docs/superpowers/specs/2026-07-20-maribagi-design-spec.md).
 - Demoable end-to-end without any external service or internet connection.
 - Lint-clean — `npm run lint` passes with `--max-warnings 0`.
 - Build passes — `npm run build` produces a valid production bundle.
@@ -136,17 +136,95 @@ Not targeting anonymous or remote-only groups (that requires accounts + cross-de
 - Multi-currency — IDR-only for MVP.
 - Data export/import — not needed at milestone 1's scale.
 
+### 6.4 Data Model
+
+Three entities form the core data model. All IDs are UUIDs (v11).
+
+```typescript
+bagi {
+  id: string               // uuid
+  name: string             // "Tiket Dufan"
+  date: number             // Date.now() at creation
+  includeService: boolean  // carried over from old app; default false
+  includeTax: boolean      // carried over from old app; default false
+  createdAt: number
+}
+
+userbagi {
+  id: string               // uuid (primary key — NOT auth, just entity identity)
+  bagiId: string           // FK -> bagi.id
+  name: string             // "asep" (display name only, no login/account)
+  createdAt: number
+}
+
+item {
+  id: string               // uuid
+  bagiId: string           // FK -> bagi.id
+  name: string             // "Hotel" or "Drink"
+  amount: number           // total line amount in Rupiah (e.g. 90000 for "Drink 3x @ 30000")
+  quantity: number         // total units ordered (e.g. 3 for "Drink 3x")
+  paidBy: string           // FK -> userbagi.id (who fronted the money)
+  allocation: [            // per-member share (replaces splitBetween)
+    { memberId: string, quantity: number }
+    // e.g. [{ memberId: "asep-id", quantity: 2 }, { memberId: "ucup-id", quantity: 1 }]
+    // equal split is a special case: everyone has quantity 1
+  ]
+  createdAt: number
+}
+```
+
+**Identity modeling decisions:**
+
+- **IDs over names for references.** `item.paidBy` and the `memberId` values inside `item.allocation[]` store `userbagi.id` values, NOT display names. This is entity primary-key plumbing, NOT authentication. It ensures renaming a member propagates correctly to all items referencing them (no stale name references). Names are resolved to display values at render time via lookup.
+- **No `shared` boolean.** Whether an item is "shared" is derived from `allocation.length > 1`. A separate boolean would create two sources of truth that can disagree.
+- **No comma-separated strings.** `allocation` is a proper array of objects. Comma-separated strings are a relational anti-pattern (breaks querying, integrity, editing, and names containing commas).
+- **Weighted allocation (junction-style).** `item.allocation` is an array of `{ memberId, quantity }` pairs, storing per-member share quantities. This replaces the earlier `splitBetween: string[]` model. It handles both equal split (everyone has quantity 1) and weighted split (e.g. asep 2, ucup 1 for "Drink 3x") with one structure. When the real DB arrives, this maps to a proper junction table.
+
+### 6.5 MSW API Surface (Mock API)
+
+```
+BAGI
+  GET    /api/bagi                       -> list all bagi (lightweight: id, name, date only — no children)
+  GET    /api/bagi/:bagiId               -> single bagi WITH nested { members, items }
+  POST   /api/bagi                       -> create bagi
+  PATCH  /api/bagi/:bagiId               -> update bagi (name, toggles)
+  DELETE /api/bagi/:bagiId               -> cascade delete (removes members + items)
+
+USERBAGI (mutations only — no GET; children come nested with the parent GET)
+  POST   /api/bagi/:bagiId/userbagi      -> add member
+  PATCH  /api/bagi/:bagiId/userbagi/:id  -> rename member
+  DELETE /api/bagi/:bagiId/userbagi/:id  -> remove member
+
+ITEM (mutations only — no GET; children come nested with the parent GET)
+  POST   /api/bagi/:bagiId/item          -> add item (single, manual entry)
+  POST   /api/bagi/:bagiId/item/batch    -> add items in batch (scan review flow)
+  PATCH  /api/bagi/:bagiId/item/:id      -> update item
+  DELETE /api/bagi/:bagiId/item/:id      -> remove item
+
+RECEIPT SCAN (mocked AI)
+  POST   /api/bagi/:bagiId/scan          -> upload image, returns fixture:
+       {
+         bagi: { name, date, includeTax, includeService },  // header (merchant-derived)
+         items: [{ name, amount }, ...]                       // NO paidBy/allocation
+       }
+```
+
+**API design notes:**
+
+- **No redundant child GETs.** `GET /api/bagi/:bagiId` already returns members and items nested. Separate `GET .../userbagi` and `GET .../item` list endpoints are omitted because child collections per bagi are small (a handful of members, maybe 20 items). Fetching nested is correct, not lazy. This is the idiomatic TanStack Query pattern for small nested data.
+- **Lightweight list endpoint.** `GET /api/bagi` (no id) returns only `{ id, name, date }` per row — no members/items. Avoids loading every item of every bagi just to render a session-name list. Eager loading is scoped to the detail view.
+- **Cascade delete is implicit.** `DELETE /api/bagi/:bagiId` removes the bagi AND its members + items in one call. The MSW handler performs the cascade.
+- **Scan returns a partial draft.** Header + items with name/amount/quantity only. `paidBy` and `allocation` are absent — the user assigns these social fields before hitting the batch-save endpoint.
+- **Batch save endpoint** (`POST .../item/batch`) saves N reviewed scanned items in one request rather than N round-trips. Manual entry uses the single `POST .../item`.
+- **TanStack Query implications.** One detail query (`useGetBagiDetail(id)`) fetches parent + children and caches the whole tree. After any child mutation, invalidate the parent detail query → refetch → children update. No optimistic updates in milestone 1 (refetch-after-mutation). Child mutation responses can be empty/204.
+
 ## 7. Milestones
 
 ### Milestone 1 (Frontend MVP)
 
 All in-scope features from §6.2: session CRUD, member management, expense entry (manual + mocked receipt scan via MSW), split calculation (equal + weighted), result view, and MSW in-memory persistence (honest about refresh-reset). Built entirely on the rebuild stack: TanStack Query + Tailwind v4 + MSW + react-hook-form + zod + uuid + native fetch.
 
-**This PRD revises the prior milestone-1 spec** (docs/superpowers/specs/2026-07-06-maribagi-milestone1-design.md) in two ways:
-1. **Split calculation moves INTO milestone 1.** That spec deferred split calc and the "who owes whom" result view to milestone 2. The PRD overrides: a splitter that doesn't split isn't a portfolio-quality deliverable. Split calc (equal + weighted) and result view are in scope for milestone 1.
-2. **Stack claims are now canonical.** That spec correctly identified the target stack (TanStack Query, Tailwind, MSW, react-hook-form, zod). An earlier draft of this PRD wrongly anchored to the legacy `package.json` (Redux, styled-components, localStorage) — this redraft corrects that. The rebuild stack, as described in the milestone-1 design spec, is the authoritative direction.
-
-Cross-refresh persistence is NOT in milestone 1. The MSW in-memory store resets on refresh. This is an explicit tradeoff (mock-backend fidelity over persistence). Real persistence arrives with milestone 2.
+Split calculation (equal + weighted) and the who-owes-whom result view are in scope for milestone 1. Cross-refresh persistence is NOT — the MSW in-memory store resets on refresh. Real persistence arrives with milestone 2.
 
 ### Milestone 2 (Backend) — Preview Only, Not Scoped Here
 
@@ -154,7 +232,7 @@ The BE-later capabilities from §6.3 grouped together: authentication, cross-dev
 
 ### Cross-Cutting
 
-The design system (see docs/superpowers/specs/2026-07-06-maribagi-design-system.md) defines the token values (color ramps, typography scale, spacing 4px grid, radius/elevation). The design-system spec's current component examples are written in styled-components (legacy stack). At rebuild time, these tokens are applied via Tailwind v4's `@theme` directive in `src/index.css`, and component specs are re-expressed as Tailwind utility classes — not as styled-components. The token values remain authoritative; the delivery mechanism changes.
+The visual design language — color tokens, typography (Archivo Black / IBM Plex Mono / Inter), the ticket-stub scallop metaphor, page flow — is defined in docs/superpowers/specs/2026-07-20-maribagi-design-spec.md. Tokens are applied via Tailwind v4's `@theme` directive in `src/index.css`.
 
 ## 8. Technical Constraints & Assumptions
 
@@ -191,7 +269,7 @@ The design system (see docs/superpowers/specs/2026-07-06-maribagi-design-system.
 - The API layer (`api/*.ts`) is a thin fetch wrapper; swapping MSW for a real backend touches only `api/` + `mocks/`.
 
 **Forms:**
-- One react-hook-form instance spans the 3-step wizard (Step 1: Setup, Step 2: Items, Step 3: Sharing). State persists naturally between steps.
+- One react-hook-form instance spans the 3-page wizard (Page 1: Setup, Page 2: Items, Page 3: Review). Allocation happens at item creation in the New Item sheet, not as a separate later step.
 - `useFieldArray` manages items and allocation arrays at the form root.
 - The zod schema (`wizard/bagiFormSchema.ts`) is the single source of truth — used for both manual-entry validation and validating extracted scan data before populating the form.
 
@@ -213,12 +291,41 @@ The design system (see docs/superpowers/specs/2026-07-06-maribagi-design-system.
 - `.tsx` for markup, `.ts` for logic. Full TypeScript — no `.jsx`/`.js` in the rebuild.
 
 **Design system:**
-- Adhere to tokens in docs/superpowers/specs/2026-07-06-maribagi-design-system.md.
-- Colors, spacing, typography, radius, and elevation values from that spec are declared via Tailwind `@theme` in `src/index.css`.
-- The design-system spec's current component snippets are in styled-components/legacy — those are not used. Components are built with Tailwind utility classes.
+- Adhere to the visual language in docs/superpowers/specs/2026-07-20-maribagi-design-spec.md (colors, typography, scallop/divider conventions, page flow).
+- Tokens declared via Tailwind `@theme` in `src/index.css`.
+- Components built with Tailwind utility classes only — no styled-components, no CSS files.
 
 **Assumptions:**
 - Single-user-data per device — no multi-tenant isolation needed in the FE MVP.
 - The app runs entirely in the browser — no server round-trips required (MSW intercepts in-browser).
 - Mobile-first UI but works on desktop viewports.
 - Existing `src/` is legacy code; the rebuild starts from a clean directory (per the implementation plan's Task 1).
+
+## 9. Error Handling
+
+Three categories of errors, each with a distinct strategy. No try/catch in components — all error states come from TanStack Query's `isError` / `error` fields, populated automatically when a fetch or mutation rejects.
+
+### Form validation errors (client-side, synchronous)
+
+- Handled by react-hook-form + zod at the form level.
+- Displayed inline next to the offending field (red text below the input).
+- Examples: empty bagi name, fewer than 2 members, item amount ≤ 0, allocation not fully distributed (sum of allocation quantities !== item.quantity).
+- The "Save Bagi" button stays disabled until the form is valid. zod validates the whole form on submit attempt, surfacing all errors at once.
+
+### Network / mutation errors (from MSW or future real backend)
+
+- TanStack Query exposes `mutation.isError` and `mutation.error`.
+- Displayed as a toast or banner at the top of the current screen: "Failed to save — try again."
+- MSW handlers simulate failures during dev (random error rate or specific error fixtures) so the failure path is actually exercised, not just the happy path.
+- No automatic retry (keep it simple). User taps "Retry" or re-triggers the action.
+
+### Query fetch errors (loading a bagi that doesn't exist, etc.)
+
+- TanStack Query exposes `query.isError`.
+- List page (`/bagi`): error state with a retry button.
+- Detail page of a non-existent bagi (`/bagi/:bagiId`): "Bagi not found" message with a link back to `/bagi`.
+
+### Loading & empty states (not errors, but adjacent)
+
+- `query.isLoading` / `mutation.isPending` → spinner or skeleton placeholder.
+- Empty list (no bagi sessions yet) → friendly empty state with a "Create your first bagi" call-to-action.

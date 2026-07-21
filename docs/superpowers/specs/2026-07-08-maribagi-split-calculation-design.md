@@ -1,7 +1,7 @@
 ---
 status: approved — pending implementation
 date: 2026-07-08
-relates-to: PRD.md (§6.2 split calc, §7 milestone 1), docs/superpowers/specs/2026-07-06-maribagi-milestone1-design.md (deferred split calc — this spec brings it into M1 per PRD §7)
+relates-to: PRD.md (§6.2 split calc, §7 milestone 1). Note: PRD §7.1 overrides the original split-calc deferral; split calc is IN milestone 1.
 ---
 
 # MariBagi — Split Calculation & Result View Design

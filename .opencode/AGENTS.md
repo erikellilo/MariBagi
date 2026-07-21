@@ -1,4 +1,4 @@
-> ⚠️ **Rebuild status — read first.** MariBagi is mid-clean-slate-rebuild. Current `src/` is the **legacy app** (Redux + styled-components + localStorage). The **target rebuild stack** is TanStack Query + Tailwind v4 + MSW + react-hook-form + zod. Canonical for NEW work: `PRD.md` + `docs/superpowers/specs/2026-07-06-maribagi-milestone1-design.md` + `docs/superpowers/plans/2026-07-06-maribagi-milestone1.md`. Rules below describe **legacy code only** — use them when touching existing `src/`; for rebuild work, follow the specs/plans.
+> ⚠️ **Rebuild status — read first.** MariBagi is mid-clean-slate-rebuild. Current `src/` is the **legacy app** (Redux + styled-components + localStorage). The **target rebuild stack** is TanStack Query + Tailwind v4 + MSW + react-hook-form + zod. Canonical for NEW work: \`PRD.md\` + \`docs/superpowers/specs/2026-07-20-maribagi-design-spec.md\`. Rules below describe **legacy code only** — use them when touching existing `src/`; for rebuild work, follow the specs/plans.
 
 ---
 
