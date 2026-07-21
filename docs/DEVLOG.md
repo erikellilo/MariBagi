@@ -1,7 +1,7 @@
 # MariBagi — Milestone 1 Diary
 
 > **Personal progress tracker.** NOT a technical implementation plan.
-> The "what to build" lives in [`docs/superpowers/specs/2026-07-20-maribagi-design-spec.md`](../specs/2026-07-20-maribagi-design-spec.md).
+> The "what to build" lives in [`docs/superpowers/specs/2026-07-20-maribagi-design-spec.md`](superpowers/specs/2026-07-20-maribagi-design-spec.md).
 > This file tracks the journey — schedule, slices, wins, struggles.
 
 ## Goal
