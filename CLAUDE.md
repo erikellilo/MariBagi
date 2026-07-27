@@ -1,4 +1,4 @@
-> ⚠️ **Rebuild status — read first.** MariBagi is mid-clean-slate-rebuild. Current `src/` is the **legacy app** (Redux + styled-components + localStorage). The **target rebuild stack** is TanStack Query + Tailwind v4 + MSW + react-hook-form + zod. Canonical for NEW work: \`PRD.md\` + \`docs/superpowers/specs/2026-07-20-maribagi-design-spec.md\`. Rules below describe **legacy code only** — use them when touching existing `src/`; for rebuild work, follow the specs/plans.
+> ⚠️ **Rebuild status — read first.** MariBagi's `src/` is mid-refactor from a single-page wizard layout to the 3-page flow (Setup → Items → Review) described in `docs/superpowers/specs/2026-07-20-maribagi-design-spec.md`. Stack: Vite + React 18 + TypeScript 5 + TanStack Query 5 + Tailwind v4 + MSW 2 + react-hook-form 7 + zod 3. Canonical for NEW work: `PRD.md` + the design spec. Personal progress tracking lives in `docs/DEVLOG.md` — that file is the user's, never write to it.
 
 ---
 
