@@ -3,32 +3,49 @@
 @theme {
   --font-sans: "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 
-  --color-gray-50: #FCF7FF;
-  --color-gray-100: #F0EDF5;
-  --color-gray-200: #E0DCE8;
-  --color-gray-300: #C8C2D1;
-  --color-gray-400: #AAA0B3;
-  --color-gray-500: #8A8294;
-  --color-gray-600: #6B6475;
-  --color-gray-700: #4D4557;
-  --color-gray-800: #2E2933;
-  --color-gray-900: #0D0014;
+  --color-gray-50: #fcf7ff;
+  --color-gray-100: #f0edf5;
+  --color-gray-200: #e0dce8;
+  --color-gray-300: #c8c2d1;
+  --color-gray-400: #aaa0b3;
+  --color-gray-500: #8a8294;
+  --color-gray-600: #6b6475;
+  --color-gray-700: #4d4557;
+  --color-gray-800: #2e2933;
+  --color-gray-900: #0d0014;
 
-  --color-brand-50: #F7FBF7;
-  --color-brand-100: #F2F8F2;
-  --color-brand-200: #DFF0DE;
-  --color-brand-300: #C5E3C2;
-  --color-brand-400: #A8D3A4;
+  --color-brand-50: #f7fbf7;
+  --color-brand-100: #f2f8f2;
+  --color-brand-200: #dff0de;
+  --color-brand-300: #c5e3c2;
+  --color-brand-400: #a8d3a4;
   --color-brand-500: #8cc084;
-  --color-brand-600: #71A668;
-  --color-brand-700: #517F48;
-  --color-brand-800: #2E5327;
-  --color-brand-900: #080D07;
+  --color-brand-600: #71a668;
+  --color-brand-700: #517f48;
+  --color-brand-800: #2e5327;
+  --color-brand-900: #080d07;
 
-  --color-danger: #F5005E;
-  --color-danger-dark: #FA1E72;
+  --color-danger: #f5005e;
+  --color-danger-dark: #fa1e72;
 
   --shadow-card: 0px 8px 12px 0px rgba(25, 25, 25, 0.027), 0px 2px 6px 0px rgba(25, 25, 25, 0.027);
+
+  --color-page: #ede8dc;
+  --color-card: #f8f5ec;
+  --color-ink: #2a2622;
+  --color-accent: #2f4c7a;
+  --avatar-color-red: #c0432b;
+  --avatar-color-green: #3f8f5c;
+  --avatar-color-gold: #b0862f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-page: #121110;
+    --color-card: #1c1a17;
+    --color-ink: #ede6d6;
+    --color-accent: #6e93d6;
+  }
 }
 
 @layer base {

@@ -36,7 +36,7 @@ const BagiListPage = () => {
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-6">
+    <div className="mx-auto max-w-md px-4 py-6 bg-page">
       <header className="mb-6 flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900">MariBagi</h1>
         <Button onClick={() => navigate("/bagi/new")}>+ New</Button>
@@ -50,7 +50,7 @@ const BagiListPage = () => {
         />
       ) : (
         <ul className="space-y-2">
-          {bagiList.map((bagi) => (
+          {bagiList.map(bagi => (
             <li
               key={bagi.id}
               onClick={() => navigate(`/bagi/${bagi.id}`)}
@@ -62,10 +62,7 @@ const BagiListPage = () => {
                   {bagi.memberCount} members · {bagi.itemCount} items
                 </p>
               </div>
-              <button
-                onClick={(e) => handleDelete(e, bagi.id)}
-                className="text-xs text-danger hover:text-danger-dark"
-              >
+              <button onClick={e => handleDelete(e, bagi.id)} className="text-xs text-danger hover:text-danger-dark">
                 Delete
               </button>
             </li>
