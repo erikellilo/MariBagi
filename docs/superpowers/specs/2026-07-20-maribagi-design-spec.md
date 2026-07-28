@@ -115,16 +115,31 @@ Each item row shows:
 
 **"Done" / "Lanjut" button** → Page 3.
 
-### Page 3 — Review / Conclusion
+### Page 3 — Detail (replaces Review) — `/bagi/:bagiId`
+
+**Spec deviation note (2026-07-28):** Originally specified as a separate "Review" page with
+tax/service toggles + Simpan button. **Superseded** — no separate Review step. User saves
+from the Items page and lands directly on Detail. Detail doubles as the post-save "review"
+with a Share popup containing the tax/service toggles.
 
 - All member names (avatar row, read-only)
 - All items listed (read-only summary)
-- **Tax toggle** — separate toggle. When active, applies fixed **10%**. No manual amount entry (10% is standard Indonesia PPN, regulation-fixed for milestone 1).
-- **Service toggle** — separate toggle. When active, user enters a manual amount (service varies by establishment — needs flexibility).
-- Final per-member breakdown (mono numbers)
-- **"Simpan"** button — persists the bagi
+- Per-member breakdown (mono numbers)
+- **[Share] button** — opens a popup/modal:
+  - Tax toggle (10% on/off)
+  - Service input (manual amount)
+  - Live-updating preview of adjusted breakdown as toggles change
+  - Share / Download / Copy-link actions (future milestone)
+  - **Tax/service are ephemeral** — NOT persisted with the Bagi entity. Each share can use
+    different tax/service settings, so the user can share multiple variants (with/without
+    service, etc.) without mutating the saved record.
 
-**Why separate tax/service toggles:** tax is a fixed % by regulation (10%), service varies by establishment so needs a manual amount. Combining them would force loss of one or both behaviors. This is a deliberate change from earlier specs that grouped them as one toggle.
+**Why no separate Review page:**
+- Simpler data model (Bagi has no tax/service fields)
+- Faster create flow (no tax/service decisions during Setup or Items)
+- Mobile-friendly popup pattern (like Twitter share composer, iOS share sheet)
+- Flexibility per-share (user can produce multiple variants from one Bagi)
+- Action-context alignment: tax/service matters most when sharing, so the toggle lives there
 
 ### History (from Home's "Lihat Semua" or bottom nav)
 
@@ -133,6 +148,36 @@ Ticket-stub rows: scalloped left edge, **vertical** dashed tear at ~1/3 width (n
 ### Bottom nav
 
 3 tabs: Home · Riwayat · Settings. No "Reports"/analytics tab — out of PRD scope, and milestone 1's data is ephemeral (resets on refresh), so a dashboard would mostly reflect the last few minutes, not real history.
+
+### Routing structure (flat, not nested)
+
+```
+/                           → redirect to /bagi
+/bagi                       → Home (list of all bagi)
+/bagi/new                   → Setup page (CREATE mode — empty form, POST on submit)
+/bagi/:bagiId/edit          → Setup page (EDIT mode — same component, prefilled, PATCH on submit)
+/bagi/:bagiId/items         → Items page (operates on existing bagiId, works for fresh + edit)
+/bagi/:bagiId               → Detail page (read-only + Share popup with tax/service toggles)
+*                           → 404 NotFoundPage
+```
+
+**Why flat (not nested children):**
+- After Setup's POST, you have a real `bagiId` — URL naturally becomes `/bagi/:id/items`
+- Clean URL semantics — each URL is a distinct app state
+- Edit mode works for free (`/bagi/:id/edit` vs `/bagi/new` — same component, mode via `useParams`)
+- Items/Detail pages don't care if user came from create or edit — they just operate on the ID
+
+**Mode detection pattern (in Setup page):**
+- `useParams()` returns `{}` on `/bagi/new` → CREATE mode (empty form, POST on submit)
+- `useParams()` returns `{ bagiId: "..." }` on `/bagi/:id/edit` → EDIT mode (prefill via GET, PATCH on submit)
+- URL is the source of truth — no React state, no Context, no prop drilling for mode
+
+**Create-then-edit flow:**
+1. User on `/bagi/new` → fills name + users → clicks "Next"
+2. Setup page submits → POST `/api/bagi` → backend creates record, returns ID
+3. Frontend redirects to `/bagi/:newId/items`
+4. User adds items (each POSTs to `/api/bagi/:id/items`)
+5. User clicks "Save" → navigates to `/bagi/:id` (Detail page)
 
 ## 4. Components & Interaction Patterns
 

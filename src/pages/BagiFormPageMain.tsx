@@ -23,7 +23,7 @@ const DEFAULT_VALUES: BagiFormData = {
   items: [],
 };
 
-const BagiFormPage = () => {
+const BagiFormPageMain = () => {
   const navigate = useNavigate();
   const { bagiId } = useParams<{ bagiId: string }>();
   const isEdit = !!bagiId;
@@ -42,14 +42,14 @@ const BagiFormPage = () => {
       form.reset({
         name: existing.name,
         inputMode: "form",
-        members: existing.members.map((m) => ({ id: m.id, name: m.name })),
-        items: existing.items.map((i) => ({
+        members: existing.members.map(m => ({ id: m.id, name: m.name })),
+        items: existing.items.map(i => ({
           id: i.id,
           name: i.name,
           amount: i.amount,
           quantity: i.quantity,
           paidBy: i.paidBy,
-          allocation: i.allocation.map((a) => ({ memberId: a.memberId, quantity: a.quantity })),
+          allocation: i.allocation.map(a => ({ memberId: a.memberId, quantity: a.quantity })),
         })),
       });
     }
@@ -73,14 +73,17 @@ const BagiFormPage = () => {
     setIsSubmitting(true);
     try {
       const valid = await form.trigger();
-      if (!valid) { setSaveError("Ada field belum diisi — cek per item (shared/per user, dibayar oleh)."); return; }
+      if (!valid) {
+        setSaveError("Ada field belum diisi — cek per item (shared/per user, dibayar oleh).");
+        return;
+      }
 
       const data = form.getValues();
 
       if (isEdit && bagiId) {
         await updateBagi.mutateAsync({ id: bagiId, body: { name: data.name } });
 
-        const existingMemberIds = new Set(existing?.members.map((m) => m.id) ?? []);
+        const existingMemberIds = new Set(existing?.members.map(m => m.id) ?? []);
         const formMemberIds = new Set<string>();
 
         for (const member of data.members) {
@@ -99,7 +102,7 @@ const BagiFormPage = () => {
           }
         }
 
-        const existingItemIds = new Set(existing?.items.map((i) => i.id) ?? []);
+        const existingItemIds = new Set(existing?.items.map(i => i.id) ?? []);
 
         for (const item of data.items) {
           if (existingItemIds.has(item.id)) {
@@ -126,7 +129,7 @@ const BagiFormPage = () => {
         }
 
         for (const existingId of existingItemIds) {
-          if (!data.items.some((i) => i.id === existingId)) {
+          if (!data.items.some(i => i.id === existingId)) {
             await itemApi.delete(bagiId, existingId);
           }
         }
@@ -148,7 +151,7 @@ const BagiFormPage = () => {
             paidBy: memberIdMap.get(item.paidBy) ?? "",
             includeService: false,
             includeTax: false,
-            allocation: item.allocation.map((a) => ({
+            allocation: item.allocation.map(a => ({
               memberId: memberIdMap.get(a.memberId) ?? "",
               quantity: a.quantity,
             })),
@@ -202,15 +205,10 @@ const BagiFormPage = () => {
   return (
     <div className="mx-auto max-w-md px-4 py-6 space-y-6">
       <div className="flex items-center gap-3">
-        <button
-          onClick={() => (isEdit ? navigate(-1) : setStep(1))}
-          className="text-sm text-brand-600"
-        >
+        <button onClick={() => (isEdit ? navigate(-1) : setStep(1))} className="text-sm text-brand-600">
           ‹ Back
         </button>
-        <h1 className="text-lg font-bold text-gray-900">
-          {isEdit ? "Edit Bagi" : "Bagi Baru"}
-        </h1>
+        <h1 className="text-lg font-bold text-gray-900">{isEdit ? "Edit Bagi" : "Bagi Baru"}</h1>
       </div>
 
       {isEdit && <Section1Header form={form} />}
@@ -221,4 +219,4 @@ const BagiFormPage = () => {
   );
 };
 
-export default BagiFormPage;
+export default BagiFormPageMain;
