@@ -24,7 +24,7 @@ const router = createBrowserRouter([
   },
   { path: "/bagi/:bagiId/items", element: <BagiFormPageItem /> },
   {
-    path: "/bagi/:bagiId`",
+    path: "/bagi/:bagiId",
     element: <BagiDetailPage />,
   },
   {

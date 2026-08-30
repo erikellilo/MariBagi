@@ -2,6 +2,7 @@
 
 > **Assumption:** 2 hours/day, 5 days/week.
 > **Stack:** React + TypeScript (frontend), Go/.NET (backend), Supabase Auth (later).
+> **Status:** ✅ done · (blank) = open. Update as tasks complete.
 
 ---
 
