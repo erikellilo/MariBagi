@@ -62,6 +62,10 @@ React 18, Vite 5, TypeScript 5 (strict), TanStack Query 5, react-hook-form 7, zo
   Felt: frustrated at self for the avoidance detour, but good about the architectural clarity
   we reached. Ready to ship code tomorrow.
 
+- **2026-08-30 (Sun, ~15min):** Back after a 3.5-week pause. Zero code guilt — cleaned
+  the tree (commit `99b2fe10`), bumped `general` to glm-5.3. Plan: 2h × 3 days this week
+  (Slices 2→4), free weekend for 5–8. The next slice is the only courage needed.
+
 ## Wins (read this when motivation dips)
 
 > Tiny counts. Got the dev server running on first try counts. Figured out a Tailwind class counts. Showing up on a tired day really counts.

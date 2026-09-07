@@ -39,10 +39,9 @@
   --avatar-color-gold: #b0862f;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --color-page: #121110;
-    --color-card: #1c1a17;
+    --color-page: : --color-page;
     --color-ink: #ede6d6;
     --color-accent: #6e93d6;
   }
@@ -51,5 +50,6 @@
 @layer base {
   body {
     font-family: var(--font-sans);
+    background-color: var(--color-card);
   }
 }

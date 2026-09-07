@@ -1,5 +1,7 @@
 # MariBagi — Development Timeline
 
+> ⚠️ **Pre-rebuild legacy roadmap — phase tables and original dates are void.** Superseded by the clean-slate rebuild; the live plan is the slices menu in `docs/DEVLOG.md`. The calendar below was re-dated 2026-08-30 to the realistic rebuild schedule.
+
 > **Assumption:** 2 hours/day, 5 days/week.
 > **Stack:** React + TypeScript (frontend), Go/.NET (backend), Supabase Auth (later).
 > **Status:** ✅ done · (blank) = open. Update as tasks complete.
@@ -127,21 +129,13 @@
 
 ---
 
-## Calendar (starting July 14, 2026)
+## Calendar (re-dated 2026-08-30 — rebuild slices)
 
-| Week | Dates | Phase |
-|------|-------|-------|
-| 1 | Jul 14 – Jul 18 | Phase 1: Frontend fixes |
-| 2 | Jul 21 – Jul 25 | Phase 2: Frontend features — share + learn AI |
-| 3 | Jul 28 – Aug 1 | Phase 2: Frontend features — OCR integration |
-| 4 | Aug 4 – Aug 8 | Phase 2: Frontend features — OCR + settle-up |
-| 5 | Aug 11 – Aug 15 | Phase 3: Backend API |
-| 6 | Aug 18 – Aug 22 | Phase 4: Integration |
-| 7 | Aug 25 – Aug 29 | Phase 5: Authentication |
-| 8 | Sep 1 – Sep 5 | Phase 6: Styling |
-| 9 | Sep 8 – Sep 12 | Phase 7: Testing |
-| 10 | Sep 15 – Sep 19 | Phase 7: Testing (cont) |
-| 11 | Sep 22 – Sep 26 | Phase 8: Deployment |
-| 12 | Sep 29 – Oct 3 | Buffer / overflow |
+| When | Capacity | Target |
+|------|----------|--------|
+| Mon Aug 31 – Wed Sep 2 | 3 × 2h | Slices 2–4: routing skeleton, Setup static layout, Anggota add/remove inline. Start Slice 5 (MSW) if flowing. |
+| Sat Sep 5 – Sun Sep 6 | Free weekend, ~6h/day | Slice 1b Scallop (Sat AM, fresh brain) + Slices 5–8: MSW mock backend, Items layout, New Item sheet, allocation picker. |
+| Week of Sep 7 | Normal cadence (Tue/Thu/Sat 90min + Sun 2–3h) | Slices 9–11: Detail/review layout, save flow, history rows. |
+| Week of Sep 14 | Normal cadence | Slice 12: bottom nav. Buffer / polish. |
 
-**Target launch: October 3, 2026** (12 weeks, with buffer).
+**Rebuild skeleton target: ~Sep 20, 2026.** Post-rebuild phases (backend, auth, deployment) get re-estimated from the legacy tables above once the skeleton ships.

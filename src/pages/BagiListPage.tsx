@@ -38,9 +38,16 @@ const BagiListPage = () => {
   return (
     <div className="mx-auto max-w-md px-4 py-6 bg-page">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">MariBagi</h1>
-        <Button onClick={() => navigate("/bagi/new")}>+ New</Button>
+        <h1 className="text-xl font-extrabold text-ink">MariBagi</h1>
       </header>
+
+      <button
+        type="button"
+        onClick={() => navigate("/bagi/new")}
+        className="w-full mb-6 rounded bg-accent py-2.5 text-lg font-bold text-page transition active:scale-95"
+      >
+        Buat Bagi Baru
+      </button>
 
       {!bagiList || bagiList.length === 0 ? (
         <EmptyState

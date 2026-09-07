@@ -18,9 +18,7 @@ export const Chip = ({ label, selected, count, disabled, onClick }: ChipProps) =
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors",
         "border",
-        selected
-          ? "border-brand-500 bg-brand-50 text-brand-700"
-          : "border-gray-300 bg-white text-gray-500 hover:border-gray-400",
+        selected ? "border-brand-500 bg-brand-50 text-brand-700" : "border-gray-300 bg-white text-gray-500 hover:border-gray-400",
         disabled && "cursor-not-allowed opacity-40"
       )}
     >
@@ -28,7 +26,7 @@ export const Chip = ({ label, selected, count, disabled, onClick }: ChipProps) =
       {hasCount && (
         <span
           className={cn(
-            "min-w-[18px] rounded px-1 text-center text-[10px] font-bold",
+            "min-w-4.5 rounded px-1 text-center text-[10px] font-bold",
             selected ? "bg-brand-500 text-gray-900" : "bg-gray-200 text-gray-500"
           )}
         >

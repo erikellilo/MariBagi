@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import BagiListPage from "@/pages/BagiListPage";
-import BagiFormPageMain from "@/pages/BagiFormPageMain";
+import SetupPage from "@/pages/SetupPage";
 import BagiDetailPage from "@/pages/BagiDetailPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import BagiFormPageItem from "@/pages/BagiFormPageItem";
@@ -16,11 +16,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/bagi/new",
-    element: <BagiFormPageMain />,
+    element: <SetupPage />,
   },
   {
     path: "/bagi/:bagiId/edit",
-    element: <BagiFormPageMain />,
+    element: <SetupPage />,
   },
   { path: "/bagi/:bagiId/items", element: <BagiFormPageItem /> },
   {
