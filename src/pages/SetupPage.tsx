@@ -1,8 +1,28 @@
 import { useNavigate } from "react-router-dom";
 import UserRound from "@/components/ui/UserRound";
+import { useState } from "react";
+
+type MemberDraft = {
+  name: string;
+  id: string;
+};
 
 const SetupPage = () => {
   const navigate = useNavigate();
+  const [members, setMembers] = useState<MemberDraft[]>([]);
+  const [memberName, setMemberName] = useState<string>("");
+
+  const onSubmitUser = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (memberName.trim() === "") return;
+    if (members.length >= 8) return;
+    setMembers(prev => [...prev, { id: crypto.randomUUID(), name: memberName.trim() }]);
+    setMemberName("");
+  };
+
+  const onDeleteMember = (id: string) => {
+    setMembers(prev => prev.filter(member => member.id !== id));
+  };
 
   return (
     <div className="mx-auto max-w-md px-4 py-6 bg-page">
@@ -13,12 +33,9 @@ const SetupPage = () => {
         <h1 className="text-lg font-bold text-ink">Bagi Baru</h1>
       </header>
 
-      <form id="bagiForm" onSubmit={(e) => e.preventDefault()} className="mb-6">
+      <form id="bagiForm" onSubmit={e => e.preventDefault()} className="mb-6">
         <div>
-          <label
-            htmlFor="namaBagi"
-            className="block text-[10px] font-semibold uppercase tracking-[1.4px] text-ink/55"
-          >
+          <label htmlFor="namaBagi" className="block text-[10px] font-semibold uppercase tracking-[1.4px] text-ink/55">
             Nama Bagi
           </label>
           <input
@@ -54,29 +71,32 @@ const SetupPage = () => {
         <h2 className="mb-6 text-xl font-extrabold text-ink">Anggota</h2>
 
         <div id="listAnggota" className="mb-6 flex gap-6">
-          <UserRound userInitial="RA" />
-          <UserRound userInitial="RU" />
-          <UserRound userInitial="RE" />
+          {members.map(member => (
+            <UserRound
+              key={member.id}
+              userInitial={member.name.slice(0, 2).toUpperCase()}
+              onDelete={() => onDeleteMember(member.id)}
+            />
+          ))}
         </div>
       </div>
 
-      <form onSubmit={(e) => e.preventDefault()} className="mb-6">
+      <form onSubmit={onSubmitUser} className="mb-6">
         <div className="flex gap-2 mb-2">
           <input
             aria-label="Nama Anggota"
             className="flex-2 mt-1 rounded border border-accent bg-card px-4 py-2.5 outline-none focus:border-accent"
             type="text"
             placeholder="Nama Anggota"
+            value={memberName}
+            onChange={e => setMemberName(e.target.value)}
           />
-          <button
-            type="submit"
-            className="flex-1 mt-1 rounded bg-accent py-2.5 text-sm text-page transition active:scale-95"
-          >
+          <button type="submit" className="flex-1 mt-1 rounded bg-accent py-2.5 text-sm text-page transition active:scale-95">
             Tambah Anggota
           </button>
         </div>
         <small className="text-xs text-ink/55">
-          <span className="font-mono">3/8</span> Anggota
+          <span className="font-mono">{members.length}/8</span> Anggota
         </small>
       </form>
 

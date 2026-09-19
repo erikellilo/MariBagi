@@ -34,9 +34,9 @@
   --color-card: #f8f5ec;
   --color-ink: #2a2622;
   --color-accent: #2f4c7a;
-  --avatar-color-red: #c0432b;
-  --avatar-color-green: #3f8f5c;
-  --avatar-color-gold: #b0862f;
+  --color-avatar-red: #c0432b;
+  --color-avatar-green: #3f8f5c;
+  --color-avatar-gold: #b0862f;
 }
 
 @media (prefers-color-scheme: light) {
