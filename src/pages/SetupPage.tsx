@@ -11,10 +11,17 @@ const SetupPage = () => {
   const navigate = useNavigate();
   const [members, setMembers] = useState<MemberDraft[]>([]);
   const [memberName, setMemberName] = useState<string>("");
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const onSubmitUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (memberName.trim() === "") return;
+    if (editingId) {
+      setMembers(prev => prev.map(member => (member.id === editingId ? { ...member, name: memberName.trim() } : member)));
+      setEditingId(null);
+      setMemberName("");
+      return;
+    }
     if (members.length >= 8) return;
     setMembers(prev => [...prev, { id: crypto.randomUUID(), name: memberName.trim() }]);
     setMemberName("");
@@ -22,6 +29,16 @@ const SetupPage = () => {
 
   const onDeleteMember = (id: string) => {
     setMembers(prev => prev.filter(member => member.id !== id));
+  };
+
+  const onEditMember = (id: string, name: string) => {
+    if (editingId === id) {
+      setEditingId(null);
+      setMemberName("");
+      return;
+    }
+    setMemberName(name);
+    setEditingId(id);
   };
 
   return (
@@ -76,6 +93,7 @@ const SetupPage = () => {
               key={member.id}
               userInitial={member.name.slice(0, 2).toUpperCase()}
               onDelete={() => onDeleteMember(member.id)}
+              onEdit={() => onEditMember(member.id, member.name)}
             />
           ))}
         </div>
@@ -92,7 +110,7 @@ const SetupPage = () => {
             onChange={e => setMemberName(e.target.value)}
           />
           <button type="submit" className="flex-1 mt-1 rounded bg-accent py-2.5 text-sm text-page transition active:scale-95">
-            Tambah Anggota
+            {editingId ? "Simpan" : "Tambah Anggota"}
           </button>
         </div>
         <small className="text-xs text-ink/55">
